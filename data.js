@@ -1,7 +1,7 @@
-// data.js - Configurations, 48 Prizes, Seerat Hub, Model Papers & Clean Initial State
+// data.js - Configurations, Clean State Models, 48 Prize Packages & Multi-Language Seerat Data
 window.INITIAL_CONFIG = {
   masjidTitle: "SHAHI MASJID BAGH-E-AAM",
-  masjidSub: "Under the Aegis of Online Madarsa Al Hamoomea for Islamic & Arabic Studies",
+  masjidSub: "Under the Aegis of Online Madarsa Al Hamoomi for Islamic & Arabic Studies",
   compTitle: "3rd Seerat-un-Nabi Competition",
   compSubtitle: '"Bench to Exam Hall: Lessons of Discipline & Success from Seerat-un-Nabi ﷺ"',
   compBadge: "Annual Knowledge Contest",
@@ -19,7 +19,7 @@ window.INITIAL_CONFIG = {
   whatsappChannel: "https://whatsapp.com/channel/ShahiMasjidHyd",
   resultsPublished: false,
   dignitaries: {
-    patron: "Molana Hafiz Dr Ahsan Bin Mohammed Al Hamoomee Sahab",
+    patron: "Molana Hafiz Dr Ahsan Bin Mohammed Al Hamoomi Sahab",
     patronTitle: "Patron & President",
     chiefGuest: "",
     chiefGuestTitle: "Distinguished Guest Speaker"
@@ -38,6 +38,7 @@ window.INITIAL_CONFIG = {
   ]
 };
 
+// 48 Official Prize Award Packages
 window.INITIAL_PRIZES = [
   { id: 1, rank: "1st Prize", category: "Postgraduate (Boys)", ht: "Unassigned", name: "To Be Declared", prize: "HP Core i5 Laptop + Trophy", icon: "laptop" },
   { id: 2, rank: "1st Prize", category: "Postgraduate (Girls)", ht: "Unassigned", name: "To Be Declared", prize: "HP Core i5 Laptop + Trophy", icon: "laptop" },
@@ -124,7 +125,7 @@ window.INITIAL_PAPERS = [
 ];
 
 window.INITIAL_NOTICES = [
-  { id: 1, title: "Advanced Dashboard Operations Active", date: "System", desc: "4-Role in-dashboard login console, 1-click Excel export, and mobile data sync are available." },
+  { id: 1, title: "Advanced Dashboard Operations Active", date: "System", desc: "Right-header portal login, 1-click Excel export, and mobile data sync are available." },
   { id: 2, title: "Digital OMR & Certificate Engine Ready", date: "Examinations", desc: "Batch OMR downloads, attendance audits, and Islamic Participation Certificates are live." }
 ];
 
