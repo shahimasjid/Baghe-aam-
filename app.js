@@ -1,4 +1,4 @@
-// app.js - Full Interactive Logic: Theater Seating, Direct Faculty Approval, KPI Sync & Modal Fixes
+// app.js - Full Interactive Logic: Manual Theater Seat Assignment, Direct Faculty Approval, KPI Sync & Model Paper Upload
 var config = window.DataStore.get('sm_config', window.INITIAL_CONFIG);
 var students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
 var prizes = window.DataStore.get('sm_prizes', window.INITIAL_PRIZES);
@@ -10,6 +10,7 @@ var session = getPersistentSession();
 
 var prizeLayoutMode = 'grid';
 var rosterLayoutMode = 'list';
+var pendingSeatAssignmentCode = null;
 
 window.dismissGreeting = function() {
   var overlay = document.getElementById('greeting-overlay');
@@ -28,6 +29,7 @@ window.navigateTab = function(tabId) {
 
   if (tabId === 'prizes') renderPrizesDisplay();
   if (tabId === 'seerat-hub') renderSeeratHubContent();
+  if (tabId === 'model-papers') renderModelPapers();
   if (tabId === 'dashboard') refreshDashboardState();
 };
 
@@ -145,19 +147,65 @@ function renderNotices() {
 
 function renderModelPapers() {
   var el = document.getElementById('model-papers-list');
-  if (!el) return;
-  el.innerHTML = papers.map(function(p) {
-    return '<div class="p-4 bg-slate-50 border rounded-lg flex justify-between items-center">' +
-      '<div>' +
-        '<h4 class="font-bold text-sm text-slate-800">' + p.title + '</h4>' +
-        '<span class="text-xs text-amber-700 font-semibold">Edition Year: ' + p.year + '</span>' +
-      '</div>' +
-      '<a href="' + p.url + '" target="_blank" class="bg-emerald-950 text-amber-300 px-3 py-1.5 rounded text-xs font-bold hover:bg-emerald-900">' +
-        '<i class="fa-solid fa-download mr-1"></i> Download' +
-      '</a>' +
-    '</div>';
-  }).join('');
+  var adminEl = document.getElementById('admin-model-papers-tbody');
+  
+  if (el) {
+    el.innerHTML = papers.map(function(p) {
+      return '<div class="p-4 bg-slate-50 border rounded-lg flex justify-between items-center">' +
+        '<div>' +
+          '<h4 class="font-bold text-sm text-slate-800">' + p.title + '</h4>' +
+          '<span class="text-xs text-amber-700 font-semibold">Edition Year: ' + p.year + ' | ' + (p.category || 'General') + '</span>' +
+        '</div>' +
+        '<a href="' + p.url + '" target="_blank" class="bg-emerald-950 text-amber-300 px-3 py-1.5 rounded text-xs font-bold hover:bg-emerald-900 shadow">' +
+          '<i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> View / Drive' +
+        '</a>' +
+      '</div>';
+    }).join('');
+  }
+
+  if (adminEl) {
+    adminEl.innerHTML = papers.map(function(p, idx) {
+      return '<tr class="hover:bg-slate-50 text-xs">' +
+        '<td class="p-2 font-bold">' + p.title + '</td>' +
+        '<td class="p-2">' + p.year + '</td>' +
+        '<td class="p-2 font-mono truncate max-w-xs"><a href="' + p.url + '" target="_blank" class="text-blue-600 hover:underline">' + p.url + '</a></td>' +
+        '<td class="p-2 text-center">' +
+          '<button onclick="deleteModelPaper(' + idx + ')" class="text-red-600 hover:underline font-bold">Delete</button>' +
+        '</td>' +
+      '</tr>';
+    }).join('');
+  }
 }
+
+window.handleUploadModelPaper = function(e) {
+  e.preventDefault();
+  var title = document.getElementById('paper-title').value.trim();
+  var year = document.getElementById('paper-year').value.trim();
+  var url = document.getElementById('paper-url').value.trim();
+  var category = document.getElementById('paper-category').value;
+
+  papers.push({
+    id: papers.length + 1,
+    title: title,
+    year: year,
+    url: url,
+    category: category
+  });
+
+  window.DataStore.set('sm_papers', papers);
+  renderModelPapers();
+  window.closeModal('modal-add-model-paper');
+  document.getElementById('form-add-model-paper').reset();
+  alert('Model Paper added with Drive Link successfully!');
+};
+
+window.deleteModelPaper = function(idx) {
+  if (confirm('Delete this question paper?')) {
+    papers.splice(idx, 1);
+    window.DataStore.set('sm_papers', papers);
+    renderModelPapers();
+  }
+};
 
 // ----------------------------------------------------
 // PRIZES GALLERY DISPLAY
@@ -383,6 +431,9 @@ function executeAuthentication(id, pwd, roleHint) {
     return;
   }
 
+  // Refresh faculties from DataStore
+  faculties = window.DataStore.get('sm_faculties', window.INITIAL_FACULTIES);
+
   // Faculty Check
   var fac = faculties.find(function(f) { 
     return f.phone === id || f.email === id || f.id === id || (f.username && f.username.toLowerCase() === id.toLowerCase()); 
@@ -408,6 +459,9 @@ function executeAuthentication(id, pwd, roleHint) {
     }
   }
 
+  // Refresh students from DataStore
+  students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
+
   // Student Check
   var std = students.find(function(s) { return s.ticketNo === id || s.phone === id || s.email === id; });
   if (std) {
@@ -423,13 +477,17 @@ function executeAuthentication(id, pwd, roleHint) {
     }
   }
 
-  alert('Authentication Failed: Check credentials or register if you are a new applicant.');
+  alert('Authentication Failed: Check credentials or complete your enrollment registration.');
 }
 
 // ----------------------------------------------------
 // EXECUTIVE DASHBOARD REFRESHER & METRICS
 // ----------------------------------------------------
 function refreshDashboardState() {
+  students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
+  faculties = window.DataStore.get('sm_faculties', window.INITIAL_FACULTIES);
+  config = window.DataStore.get('sm_config', window.INITIAL_CONFIG);
+
   var isAuth = session && session.user;
   var unauthPrompt = document.getElementById('dashboard-unauth-prompt');
   var authContent = document.getElementById('dashboard-authenticated-content');
@@ -543,7 +601,7 @@ function renderStudentProfileFeatures() {
       <div>
         <i class="fa-solid fa-location-dot text-blue-700 text-2xl mb-2"></i>
         <h4 class="font-bold text-slate-900 text-sm">4. Seating Coordinate Finder</h4>
-        <p class="text-xs text-slate-600 mt-1">Verify assigned row and aisle desk coordinates in Hall A or Hall B.</p>
+        <p class="text-xs text-slate-600 mt-1">Verify assigned row and aisle desk coordinates in Theater Mode.</p>
       </div>
       <button onclick="alert('Your Desk Location: ' + '${cand.seat || 'Pending Allotment by Admin'}')" class="mt-3 bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 rounded text-xs">
         Locate Desk
@@ -567,7 +625,7 @@ function renderStudentProfileFeatures() {
       <div>
         <i class="fa-solid fa-file-pdf text-red-600 text-2xl mb-2"></i>
         <h4 class="font-bold text-slate-900 text-sm">6. Model Papers & Pattern</h4>
-        <p class="text-xs text-slate-600 mt-1">Download official model question papers & past syllabi.</p>
+        <p class="text-xs text-slate-600 mt-1">Download official model question papers & Drive study links.</p>
       </div>
       <button onclick="navigateTab('model-papers')" class="mt-3 bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 rounded text-xs">
         Download Papers
@@ -625,6 +683,8 @@ window.handleFacultyRegister = function(e) {
   var dept = document.getElementById('fac-reg-dept').value;
   var hall = document.getElementById('fac-reg-hall').value;
 
+  faculties = window.DataStore.get('sm_faculties', window.INITIAL_FACULTIES);
+
   if (faculties.some(function(f) { return f.phone === phone || f.email === email; })) {
     alert('A faculty application with this phone number or email already exists.');
     return;
@@ -649,6 +709,7 @@ window.handleFacultyRegister = function(e) {
   alert('Registration Submitted Successfully!\nYour faculty profile is currently PENDING approval from Admin or Super Admin.');
   document.getElementById('modal-faculty-reg-form').reset();
   toggleFacultyModalRegistration(false);
+  window.closeModal('modal-auth');
 };
 
 function renderFacultyDashboard() {
@@ -711,6 +772,7 @@ function renderManagementDashboard() {
   renderDynamicSeatingMatrix();
   renderFacultyApprovalQueue();
   renderFeedbackManagement();
+  renderModelPapers();
   syncConfigUI();
 
   var resBtn = document.getElementById('btn-toggle-results-release');
@@ -757,13 +819,14 @@ window.exportStudentsToExcel = function() {
 // 2. 1-CLICK DATABASE BACKUP & RESTORE
 window.backupDatabaseToJSON = function() {
   var backupData = {
-    version: '4.5',
+    version: '5.0',
     exportDate: new Date().toISOString(),
     config: config,
     students: students,
     prizes: prizes,
     faculties: faculties,
     notices: notices,
+    papers: papers,
     feedbacks: feedbacks
   };
 
@@ -794,19 +857,22 @@ window.handleDatabaseRestoreFile = function(e) {
         config = data.config;
         students = data.students;
         prizes = data.prizes || window.INITIAL_PRIZES;
-        faculties = data.faculties || [];
+        faculties = data.faculties || window.INITIAL_FACULTIES;
         feedbacks = data.feedbacks || [];
+        papers = data.papers || window.INITIAL_PAPERS;
         
         window.DataStore.set('sm_config', config);
         window.DataStore.set('sm_students', students);
         window.DataStore.set('sm_prizes', prizes);
         window.DataStore.set('sm_faculties', faculties);
         window.DataStore.set('sm_feedbacks', feedbacks);
+        window.DataStore.set('sm_papers', papers);
 
         syncConfigUI();
         renderPrayerTimes();
         refreshDashboardState();
         renderPrizesDisplay();
+        renderModelPapers();
         alert('Data Synchronized Successfully! Portal database restored completely.');
       } else {
         alert('Invalid Backup File Format.');
@@ -961,7 +1027,7 @@ window.pullAllAdmitCards = function() {
   window.navigateTab('printable');
 };
 
-// 6. DYNAMIC THEATER & MATRIX SEATING ENGINE
+// 6. DYNAMIC THEATER & MATRIX SEATING ENGINE WITH MANUAL CLICK-TO-ASSIGN
 window.changeSeatingLayoutType = function(type) {
   config.seatingConfig.layoutType = type;
   if (type === 'theater') { config.seatingConfig.colsPerRow = 14; }
@@ -990,9 +1056,9 @@ window.renderDynamicSeatingMatrix = function() {
 
   if (layout === 'theater') {
     html += `
-      <div class="mb-3 text-center">
-        <div class="w-3/4 mx-auto bg-slate-800 text-amber-300 py-1 rounded-t-xl text-[10px] font-black uppercase tracking-widest shadow">
-          <i class="fa-solid fa-chalkboard mr-1.5"></i> STAGE & SCREEN AREA
+      <div class="mb-4 text-center">
+        <div class="w-3/4 mx-auto bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 text-amber-300 py-1.5 rounded-t-xl text-[10px] font-black uppercase tracking-widest shadow border-b-2 border-amber-500">
+          <i class="fa-solid fa-chalkboard mr-1.5"></i> CINEMA THEATER STAGE & CENTRAL SCREEN AREA
         </div>
       </div>
     `;
@@ -1009,8 +1075,8 @@ window.renderDynamicSeatingMatrix = function() {
 
       // Aisle separation markers
       if (layout === 'theater') {
-        if (c === 4) html += '<span class="px-1.5 py-0.5 text-[8px] bg-amber-100 text-amber-800 font-bold rounded">AISLE</span>';
-        if (c === 10) html += '<span class="px-1.5 py-0.5 text-[8px] bg-amber-100 text-amber-800 font-bold rounded">AISLE</span>';
+        if (c === 4) html += '<span class="px-1.5 py-0.5 text-[8px] bg-amber-100 text-amber-800 font-bold rounded">AISLE 1</span>';
+        if (c === 10) html += '<span class="px-1.5 py-0.5 text-[8px] bg-amber-100 text-amber-800 font-bold rounded">AISLE 2</span>';
       } else if ((layout === '2x2' && c === 2) || (layout === '3x3' && c === 3) || (layout === '4x4' && c === 4) || (layout === 'nxn' && c === Math.floor(cols / 2))) {
         html += '<span class="px-1.5 py-0.5 text-[8px] bg-amber-100 text-amber-800 font-bold rounded">AISLE</span>';
       }
@@ -1018,11 +1084,11 @@ window.renderDynamicSeatingMatrix = function() {
       var occ = students.find(function(s) { return s.seat && s.seat.indexOf(seatLabel) !== -1; });
       if (occ) {
         var isBoy = occ.gender === 'M';
-        html += '<button onclick="alert(\'Seat ' + seatLabel + ' allocated to: ' + occ.name + ' (' + occ.ticketNo + ')\')" class="px-1.5 py-1 rounded text-[10px] font-bold border truncate w-14 text-center ' + (isBoy ? 'bg-blue-100 text-blue-900 border-blue-400' : 'bg-pink-100 text-pink-900 border-pink-400') + '">' +
+        html += '<button onclick="openSeatCandidateAssignModal(\'' + seatLabel + '\')" class="px-1.5 py-1 rounded text-[10px] font-bold border truncate w-16 text-center ' + (isBoy ? 'bg-blue-100 text-blue-900 border-blue-400' : 'bg-pink-100 text-pink-900 border-pink-400') + '" title="Assigned to ' + occ.name + ' (' + occ.ticketNo + ')">' +
           seatLabel + ' (' + (isBoy ? 'B' : 'G') + ')' +
         '</button>';
       } else {
-        html += '<button onclick="manualAssignSeatPrompt(\'' + seatLabel + '\')" class="px-1.5 py-1 rounded text-[10px] border border-dashed border-slate-300 bg-white hover:border-emerald-700 text-slate-400 w-14 text-center">' +
+        html += '<button onclick="openSeatCandidateAssignModal(\'' + seatLabel + '\')" class="px-1.5 py-1 rounded text-[10px] border border-dashed border-slate-300 bg-white hover:border-emerald-700 text-slate-400 w-16 text-center" title="Click to manually assign seat">' +
           seatLabel +
         '</button>';
       }
@@ -1033,18 +1099,66 @@ window.renderDynamicSeatingMatrix = function() {
   container.innerHTML = html;
 };
 
-window.manualAssignSeatPrompt = function(seatCode) {
-  var roll = prompt('Enter Hall Ticket number to allocate seat ' + seatCode + ':');
-  if (!roll) return;
-  var cand = students.find(function(s) { return s.ticketNo === roll.trim().toUpperCase(); });
-  if (!cand) return alert('Candidate not found.');
+window.openSeatCandidateAssignModal = function(seatCode) {
+  pendingSeatAssignmentCode = seatCode;
+  document.getElementById('modal-seat-code-display').innerText = seatCode;
+  
+  var select = document.getElementById('seat-candidate-select');
+  select.innerHTML = '<option value="">-- Select Registered Student --</option>' +
+    students.map(function(s) {
+      return '<option value="' + s.ticketNo + '">' + s.name + ' (' + s.ticketNo + ') - Seat: ' + (s.seat || 'Unassigned') + '</option>';
+    }).join('');
 
-  var hall = (cand.gender === 'M') ? 'Hall A (Boys Wing)' : 'Hall B (Girls Wing)';
-  cand.seat = hall + ' - ' + seatCode;
+  var currentOcc = students.find(function(s) { return s.seat && s.seat.indexOf(seatCode) !== -1; });
+  var infoBox = document.getElementById('seat-occupied-info');
+  if (currentOcc) {
+    infoBox.innerHTML = '<span class="text-amber-800 font-bold">Currently Occupied: ' + currentOcc.name + ' (' + currentOcc.ticketNo + ')</span>';
+    document.getElementById('btn-seat-unassign').classList.remove('hidden');
+  } else {
+    infoBox.innerHTML = '<span class="text-emerald-700 font-bold">Status: Seat is Open / Vacant</span>';
+    document.getElementById('btn-seat-unassign').classList.add('hidden');
+  }
+
+  window.openModal('modal-seat-assign');
+};
+
+window.saveManualSeatAssignment = function() {
+  if (!pendingSeatAssignmentCode) return;
+  var selectedRoll = document.getElementById('seat-candidate-select').value;
+  var hall = document.getElementById('seat-hall-select').value;
+
+  if (!selectedRoll) return alert('Please select a student to assign to this seat.');
+
+  var cand = students.find(function(s) { return s.ticketNo === selectedRoll; });
+  if (!cand) return alert('Student not found.');
+
+  // Unseat anyone currently in this seat
+  students.forEach(function(s) {
+    if (s.seat && s.seat.indexOf(pendingSeatAssignmentCode) !== -1) {
+      s.seat = 'Unassigned';
+    }
+  });
+
+  cand.seat = hall + ' - ' + pendingSeatAssignmentCode;
   window.DataStore.set('sm_students', students);
+  window.closeModal('modal-seat-assign');
   renderDynamicSeatingMatrix();
   renderManagementRoster();
-  alert('Seat ' + seatCode + ' mapped to ' + cand.name);
+  alert('Assigned seat ' + pendingSeatAssignmentCode + ' to ' + cand.name);
+};
+
+window.unassignCurrentSeat = function() {
+  if (!pendingSeatAssignmentCode) return;
+  students.forEach(function(s) {
+    if (s.seat && s.seat.indexOf(pendingSeatAssignmentCode) !== -1) {
+      s.seat = 'Unassigned';
+    }
+  });
+  window.DataStore.set('sm_students', students);
+  window.closeModal('modal-seat-assign');
+  renderDynamicSeatingMatrix();
+  renderManagementRoster();
+  alert('Seat ' + pendingSeatAssignmentCode + ' unassigned successfully.');
 };
 
 window.autoGenerateDynamicSeating = function() {
@@ -1084,6 +1198,7 @@ window.clearSeatingPlan = function() {
 
 // 7. FACULTY APPROVAL & VETTING WORKFLOW
 function renderFacultyApprovalQueue() {
+  faculties = window.DataStore.get('sm_faculties', window.INITIAL_FACULTIES);
   var tbody = document.getElementById('faculty-approval-tbody');
   if (!tbody) return;
 
@@ -1102,8 +1217,9 @@ function renderFacultyApprovalQueue() {
       '<td class="p-2.5 font-mono">' + f.password + '</td>' +
       '<td class="p-2.5"><span class="px-2 py-0.5 rounded text-[10px] font-bold ' + statusClass + '">' + f.status + '</span></td>' +
       '<td class="p-2.5 space-x-1 text-center">' +
-        (f.status !== 'Approved' ? '<button onclick="setFacultyStatus(' + idx + ', \'Approved\')" class="bg-emerald-800 hover:bg-emerald-900 text-white px-2 py-0.5 rounded text-[10px] font-bold">Approve</button>' : '') +
-        (f.status !== 'Denied' && f.status !== 'Blocked' ? '<button onclick="setFacultyStatus(' + idx + ', \'Denied\')" class="bg-red-600 hover:bg-red-700 text-white px-2 py-0.5 rounded text-[10px] font-bold">Deny</button>' : '') +
+        (f.status !== 'Approved' ? '<button onclick="setFacultyStatus(' + idx + ', \'Approved\')" class="bg-emerald-800 hover:bg-emerald-900 text-white px-2 py-0.5 rounded text-[10px] font-bold shadow">Approve</button>' : '') +
+        (f.status !== 'Denied' && f.status !== 'Blocked' ? '<button onclick="setFacultyStatus(' + idx + ', \'Denied\')" class="bg-red-600 hover:bg-red-700 text-white px-2 py-0.5 rounded text-[10px] font-bold shadow">Deny</button>' : '') +
+        (f.status === 'Approved' ? '<button onclick="setFacultyStatus(' + idx + ', \'Blocked\')" class="bg-amber-600 hover:bg-amber-700 text-white px-2 py-0.5 rounded text-[10px] font-bold shadow">Revoke Access</button>' : '') +
         '<button onclick="openEditFacultyModal(' + idx + ')" class="text-blue-600 font-bold hover:underline ml-1">Edit</button>' +
         (session.user.role === 'super_admin' ? '<button onclick="removeFaculty(' + idx + ')" class="text-slate-500 hover:text-red-700 text-[11px] font-bold ml-1">Del</button>' : '') +
       '</td>' +
@@ -1112,6 +1228,7 @@ function renderFacultyApprovalQueue() {
 }
 
 window.setFacultyStatus = function(idx, newStatus) {
+  faculties = window.DataStore.get('sm_faculties', window.INITIAL_FACULTIES);
   faculties[idx].status = newStatus;
   window.DataStore.set('sm_faculties', faculties);
   renderFacultyApprovalQueue();
@@ -1187,6 +1304,7 @@ window.switchRosterLayout = function(mode) {
 };
 
 function renderManagementRoster() {
+  students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
   var tbody = document.getElementById('admin-roster-tbody');
   var gridWrap = document.getElementById('roster-grid-wrapper');
   if (!tbody || !gridWrap) return;
@@ -1342,7 +1460,7 @@ window.saveSuperAdminConfig = function() {
 
   window.DataStore.set('sm_config', config);
   syncConfigUI();
-  alert('Configurations and Dignitary details saved globally.');
+  alert('Configurations and Exam Timings saved globally across portal!');
 };
 
 // ----------------------------------------------------
@@ -1488,7 +1606,7 @@ window.handleStudentRegister = function(e) {
   var appId = 'APP-HAMOOMI-2026-' + (students.length + 1001);
 
   var hall = (gender === 'M') ? 'Hall A (Boys Wing)' : 'Hall B (Girls Wing)';
-  var seat = hall + ' - Row ' + (Math.floor(students.length / 4) + 1) + ' (Desk #' + ((students.length % 50) + 1) + ')';
+  var seat = hall + ' - Row ' + (Math.floor(students.length / 14) + 1) + ' (Desk #' + ((students.length % 50) + 1) + ')';
 
   var cand = {
     appId: appId,
