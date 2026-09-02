@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shahi Masjid Bagh-e-Aam | Central Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    @media print {
+      body * { visibility: hidden; }
+      #printable-ticket, #printable-ticket * { visibility: visible; }
+      #printable-ticket { position: absolute; left: 0; top: 0; width: 100%; border: none !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+
+  <header class="bg-emerald-950 text-white border-b-4 border-amber-500 shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('home')">
+        <div class="w-12 h-12 rounded-full bg-amber-500 flex items-center justify-center text-emerald-950 text-2xl font-bold">
+          <i class="fa-solid fa-mosque"></i>
+        </div>
+        <div>
+          <h1 class="font-extrabold text-lg md:text-xl tracking-tight leading-none">SHAHI MASJID BAGH-E-AAM</h1>
+          <p class="text-xs text-emerald-300">Public Guidance, Academic & Seerat-un-Nabi Competition Portal</p>
+        </div>
+      </div>
+
+      <nav class="flex items-center gap-2 text-xs md:text-sm font-semibold">
+        <button onclick="navigateTo('home')" class="px-3 py-1.5 hover:text-amber-400">Home</button>
+        <button onclick="navigateTo('competitions')" class="px-3 py-1.5 hover:text-amber-400">Competitions</button>
+        <button onclick="navigateTo('notices')" class="px-3 py-1.5 hover:text-amber-400">Notice Board</button>
+        <span id="auth-nav-slot">
+          <button onclick="openModal('login-modal')" class="bg-amber-500 text-emerald-950 px-4 py-1.5 rounded-full font-bold hover:bg-amber-400">Login / Sign Up</button>
+        </span>
+      </nav>
+    </div>
+  </header>
+
+  <aside class="bg-emerald-900 text-emerald-100 text-xs py-2 px-4 shadow-inner">
+    <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-moon text-amber-400"></i>
+        <span id="ribbon-hijri-date" class="font-semibold text-white">11 Sha'ban 1447 AH</span>
+        <span class="text-emerald-400">|</span>
+        <span id="ribbon-geo-date" class="text-emerald-200"></span>
+      </div>
+      <div id="prayer-ribbon" class="flex flex-wrap gap-3 font-mono text-[11px]">
+        </div>
+    </div>
+  </aside>
+
+  <main class="flex-grow max-w-7xl mx-auto w-full p-4 md:p-6">
+
+    <section id="view-home" class="space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+          <div class="flex justify-between items-center mb-4 border-b pb-2">
+            <h2 class="font-bold text-slate-800 text-base flex items-center gap-2">
+              <i class="fa-regular fa-clock text-emerald-700"></i> Daily Prayer Timetable
+            </h2>
+            <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold">Standard Time</span>
+          </div>
+          <div id="prayer-card-list" class="space-y-2 text-sm">
+            </div>
+          <div class="mt-4 p-3 bg-amber-50 border-l-4 border-amber-500 text-[11px] text-amber-900">
+            Juma Khutbah: 1:00 PM | Juma Namaz: 1:30 PM.
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+          <div class="flex justify-between items-center mb-4 border-b pb-2">
+            <h2 class="font-bold text-slate-800 text-base flex items-center gap-2">
+              <i class="fa-solid fa-bullhorn text-emerald-700"></i> Official Notice Board
+            </h2>
+            <span class="text-xs text-gray-400">Live Feed</span>
+          </div>
+          <div id="notice-board-feed" class="space-y-3 max-h-80 overflow-y-auto pr-1">
+            </div>
+        </div>
+
+        <div class="bg-gradient-to-br from-emerald-950 to-emerald-900 text-white rounded-xl shadow-md p-6 flex flex-col justify-between">
+          <div>
+            <div class="inline-block bg-amber-500 text-emerald-950 text-[10px] font-black px-2.5 py-1 rounded-md uppercase tracking-wider mb-2">
+              Annual Mega Contest
+            </div>
+            <h3 class="text-2xl font-black text-amber-300">2nd Seerat-un-Nabi Competition</h3>
+            <p class="text-xs text-emerald-200 italic mt-1">"Bench to Exam Hall: Lessons of Discipline & Success"</p>
+            <p class="text-xs text-slate-300 mt-3 leading-relaxed">
+              Open for Intermediate, Graduate, and Postgraduate levels across separate Male & Female brackets. 48 winners will be awarded prizes.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-emerald-800 flex items-center justify-between">
+            <div>
+              <span class="text-[10px] text-emerald-400 block">Exam Date:</span>
+              <strong id="banner-exam-date" class="text-xs font-semibold text-white"></strong>
+            </div>
+            <button onclick="navigateTo('competitions')" class="bg-amber-500 text-emerald-950 font-bold text-xs px-4 py-2 rounded-lg hover:bg-amber-400 transition">
+              Enroll Now
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="view-competitions" class="hidden space-y-6">
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <div class="max-w-2xl">
+          <span class="text-xs font-bold text-emerald-700 uppercase tracking-wider">Academic Wing</span>
+          <h2 class="text-2xl font-extrabold text-slate-900 mt-1">Seerat-un-Nabi Candidate Enrolment</h2>
+          <p class="text-xs text-slate-500 mt-1">Fill this form carefully. Your Hall Ticket will be generated directly with your permanent roll number.</p>
+        </div>
+
+        <form id="student-reg-form" onsubmit="handleStudentRegistration(event)" class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold mb-1">Student Full Name *</label>
+            <input type="text" id="reg-name" required class="w-full border rounded p-2.5 text-sm focus:ring-2 focus:ring-emerald-700 outline-none" placeholder="e.g. Mohammed Farhan" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold mb-1">Father's Name *</label>
+            <input type="text" id="reg-father" required class="w-full border rounded p-2.5 text-sm focus:ring-2 focus:ring-emerald-700 outline-none" placeholder="e.g. Abdul Rahman" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold mb-1">Mobile / WhatsApp Number *</label>
+            <input type="tel" id="reg-phone" required class="w-full border rounded p-2.5 text-sm focus:ring-2 focus:ring-emerald-700 outline-none" placeholder="10-digit number" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold mb-1">Email ID</label>
+            <input type="email" id="reg-email" class="w-full border rounded p-2.5 text-sm focus:ring-2 focus:ring-emerald-700 outline-none" placeholder="student@example.com" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold mb-1">Category *</label>
+            <select id="reg-category" required class="w-full border rounded p-2.5 text-sm focus:ring-2 focus:ring-emerald-700 outline-none">
+              <option value="">Select Level</option>
+              <option value="INT">Intermediate (11th & 12th)</option>
+              <option value="GRAD">Graduate (Bachelors / Equivalent)</option>
+              <option value="PG">Postgraduate (Masters / PhD)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold mb-1">Gender *</label>
+            <select id="reg-gender" required class="w-full border rounded p-2.5 text-sm focus:ring-2 focus:ring-emerald-700 outline-none">
+              <option value="">Select Gender</option>
+              <option value="M">Male</option>
+              <option value="F">Female</option>
+            </select>
+          </div>
+          <div class="col-span-full">
+            <label class="block text-xs font-bold mb-1">Full Residential Address *</label>
+            <textarea id="reg-address" required rows="2" class="w-full border rounded p-2.5 text-sm focus:ring-2 focus:ring-emerald-700 outline-none" placeholder="House/Flat No, Street, Landmark, Mandal/City"></textarea>
+          </div>
+
+          <div class="col-span-full pt-3">
+            <button type="submit" class="w-full md:w-auto bg-emerald-900 text-amber-400 font-bold px-8 py-3 rounded-lg hover:bg-emerald-800 transition">
+              Submit & Issue Hall Ticket
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <section id="view-notices" class="hidden space-y-4">
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <h2 class="text-xl font-bold text-slate-800 mb-4">Community Announcements & Instructions</h2>
+        <div id="full-notices-container" class="space-y-4">
+          </div>
+      </div>
+    </section>
+
+    <section id="view-ticket" class="hidden space-y-4">
+      <div class="flex justify-end gap-3 no-print">
+        <button onclick="window.print()" class="bg-slate-800 text-white text-xs font-semibold px-4 py-2 rounded shadow">
+          <i class="fa-solid fa-print mr-1"></i> Print Hall Ticket
+        </button>
+        <button onclick="downloadHallTicketPDF()" class="bg-emerald-800 text-white text-xs font-semibold px-4 py-2 rounded shadow">
+          <i class="fa-solid fa-file-pdf mr-1"></i> Download PDF
+        </button>
+      </div>
+
+      <div id="printable-ticket" class="bg-white border-2 border-emerald-900 rounded-lg p-6 max-w-3xl mx-auto shadow-sm text-slate-900">
+        <div class="flex items-center justify-between border-b-2 border-emerald-900 pb-4 mb-4">
+          <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 bg-emerald-900 text-amber-400 flex items-center justify-center rounded-full text-2xl font-bold">
+              <i class="fa-solid fa-award"></i>
+            </div>
+            <div>
+              <h2 class="text-xl font-black tracking-tight text-emerald-950">2nd SEERAT-UN-NABI COMPETITION</h2>
+              <p class="text-[11px] text-gray-600 font-medium">SHAHI MASJID BAGH-E-AAM, NAMPALLY, HYDERABAD</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">Hall Ticket No</span>
+            <span id="ticket-number" class="text-lg font-mono font-black text-red-600"></span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-12 gap-4">
+          <div class="col-span-8 space-y-2 text-xs">
+            <p><strong>Candidate Name:</strong> <span id="ticket-name" class="uppercase font-semibold"></span></p>
+            <p><strong>Father's Name:</strong> <span id="ticket-father" class="uppercase"></span></p>
+            <p><strong>Academic Bracket:</strong> <span id="ticket-category" class="font-semibold text-emerald-900"></span> (<span id="ticket-gender"></span>)</p>
+            <p><strong>Address:</strong> <span id="ticket-address"></span></p>
+            <p><strong>Contact:</strong> <span id="ticket-phone"></span></p>
+            <p><strong>Exam Date & Time:</strong> <span id="ticket-exam-time" class="font-bold text-red-700"></span></p>
+            <p><strong>Exam Venue:</strong> <span id="ticket-exam-venue" class="font-bold"></span></p>
+          </div>
+
+          <div class="col-span-4 flex flex-col items-center justify-between border-l pl-4">
+            <div class="w-28 h-32 border-2 border-dashed border-gray-400 flex flex-col items-center justify-center text-center p-1 bg-slate-50 text-[10px] text-gray-500 rounded">
+              <i class="fa-regular fa-user text-gray-400 text-xl mb-1"></i>
+              <span>Affix Recent Passport Size Photograph</span>
+            </div>
+
+            <div class="mt-2 text-center">
+              <div id="ticket-qrcode-box" class="p-1 border bg-white inline-block"></div>
+              <span class="block text-[9px] text-gray-400 mt-0.5">Invigilator Scan Verified</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 border-t pt-3 text-[10px] text-slate-600 space-y-1">
+          <p><strong>Important Guidelines:</strong></p>
+          <ul class="list-disc pl-4 space-y-0.5">
+            <li>Candidate must affix a valid passport-size photo and carry this printed ticket along with a government ID card.</li>
+            <li>Reporting time is strictly 30 minutes prior to the exam start time mentioned above.</li>
+            <li>Total 48 prizes will be awarded across all categories based on merit.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-dashboard" class="hidden space-y-6">
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <div class="flex flex-wrap justify-between items-center border-b pb-4 gap-2">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900" id="dash-greeting">Control Center</h2>
+            <p class="text-xs text-slate-500" id="dash-role-badge"></p>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="openModal('change-password-modal')" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded font-semibold">
+              <i class="fa-solid fa-key mr-1"></i> Change Password
+            </button>
+            <button onclick="handleLogout()" class="text-xs bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded font-semibold">
+              Logout
+            </button>
+          </div>
+        </div>
+
+        <div id="maintenance-panel" class="hidden mt-6 space-y-6">
+          <div class="bg-amber-50 border border-amber-200 rounded-lg p-4">
+            <h3 class="text-sm font-bold text-amber-900 flex items-center gap-2 mb-3">
+              <i class="fa-solid fa-sliders"></i> Master Event & Competition Config (Full Access)
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+              <div>
+                <label class="block font-semibold mb-1">Competition Date & Time</label>
+                <input type="text" id="cfg-exam-date" class="w-full border rounded p-2 bg-white" />
+              </div>
+              <div>
+                <label class="block font-semibold mb-1">Competition Venue Details</label>
+                <input type="text" id="cfg-exam-venue" class="w-full border rounded p-2 bg-white" />
+              </div>
+              <div class="col-span-full">
+                <button onclick="saveGlobalExamConfig()" class="bg-emerald-900 text-white px-4 py-2 rounded text-xs font-bold">
+                  Save & Update All Tickets
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-slate-50 border rounded-lg p-4">
+            <h3 class="text-sm font-bold text-slate-800 mb-3">Publish Announcement to Notice Board</h3>
+            <div class="space-y-3 text-xs">
+              <input type="text" id="new-notice-title" placeholder="Notice Title" class="w-full border rounded p-2" />
+              <textarea id="new-notice-desc" rows="2" placeholder="Notice Content" class="w-full border rounded p-2"></textarea>
+              <button onclick="publishNotice()" class="bg-slate-800 text-white px-4 py-2 rounded text-xs font-semibold">
+                Post Notice
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="roster-panel" class="hidden mt-6">
+          <div class="flex justify-between items-center mb-3">
+            <h3 class="text-sm font-bold text-slate-800">Enrolled Student Directory</h3>
+            <span id="roster-count" class="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold"></span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left border">
+              <thead class="bg-slate-100 uppercase text-[10px] text-slate-600">
+                <tr>
+                  <th class="p-2.5 border">Roll No</th>
+                  <th class="p-2.5 border">Candidate Name</th>
+                  <th class="p-2.5 border">Father's Name</th>
+                  <th class="p-2.5 border">Level</th>
+                  <th class="p-2.5 border">Gender</th>
+                  <th class="p-2.5 border">Phone</th>
+                  <th class="p-2.5 border text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody id="roster-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="student-self-panel" class="hidden mt-6">
+          <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
+            <h3 class="text-sm font-bold text-emerald-950 mb-1">Your Competition Hall Ticket</h3>
+            <p class="text-xs text-emerald-800 mb-4">Your registration is confirmed. You can view or reprint your official admit card at any time.</p>
+            <button onclick="viewMyTicket()" class="bg-emerald-800 text-amber-300 font-bold px-4 py-2 rounded text-xs">
+              Open Admit Card
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <div id="login-modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-xl max-w-sm w-full p-6 shadow-2xl relative">
+      <button onclick="closeModal('login-modal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div id="auth-state-login">
+        <h3 class="text-lg font-bold text-slate-800 mb-1">Sign In to Account</h3>
+        <p class="text-xs text-gray-500 mb-4">Students, Madarsa Admin, & Maintenance</p>
+        
+        <form onsubmit="handleLoginSubmit(event)" class="space-y-3">
+          <div>
+            <label class="block text-xs font-semibold mb-1">Username / Email / Mobile</label>
+            <input type="text" id="login-identity" required class="w-full border rounded p-2 text-xs focus:ring-2 focus:ring-emerald-700 outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold mb-1">Password</label>
+            <input type="password" id="login-password" required class="w-full border rounded p-2 text-xs focus:ring-2 focus:ring-emerald-700 outline-none" />
+          </div>
+          <div class="flex justify-between items-center text-[11px]">
+            <button type="button" onclick="toggleAuthState('forgot')" class="text-emerald-700 hover:underline">Forgot password?</button>
+          </div>
+          <button type="submit" class="w-full bg-emerald-900 text-amber-400 py-2 rounded text-xs font-bold hover:bg-emerald-800 transition">
+            Sign In
+          </button>
+        </form>
+
+        <div class="border-t mt-4 pt-3 text-center text-xs text-gray-600">
+          New Student? 
+          <button onclick="toggleAuthState('signup')" class="text-emerald-800 font-bold hover:underline">Register Account</button>
+        </div>
+      </div>
+
+      <div id="auth-state-signup" class="hidden">
+        <h3 class="text-lg font-bold text-slate-800 mb-1">Create Student Account</h3>
+        <p class="text-xs text-gray-500 mb-4">Enter email or phone number to begin</p>
+
+        <form onsubmit="handleSignupSubmit(event)" class="space-y-3">
+          <div>
+            <label class="block text-xs font-semibold mb-1">Full Name</label>
+            <input type="text" id="signup-name" required class="w-full border rounded p-2 text-xs outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold mb-1">Email or Mobile Number</label>
+            <input type="text" id="signup-identity" required class="w-full border rounded p-2 text-xs outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold mb-1">Create Password</label>
+            <input type="password" id="signup-password" required minlength="4" class="w-full border rounded p-2 text-xs outline-none" />
+          </div>
+          <button type="submit" class="w-full bg-emerald-900 text-white py-2 rounded text-xs font-bold hover:bg-emerald-800">
+            Sign Up
+          </button>
+        </form>
+
+        <div class="border-t mt-4 pt-3 text-center text-xs text-gray-600">
+          Already registered? 
+          <button onclick="toggleAuthState('login')" class="text-emerald-800 font-bold hover:underline">Sign In</button>
+        </div>
+      </div>
+
+      <div id="auth-state-forgot" class="hidden">
+        <h3 class="text-lg font-bold text-slate-800 mb-1">Recover Password</h3>
+        <p class="text-xs text-gray-500 mb-4">We will dispatch an automated recovery link.</p>
+
+        <form onsubmit="handleForgotSubmit(event)" class="space-y-3">
+          <div>
+            <label class="block text-xs font-semibold mb-1">Registered Email or Phone</label>
+            <input type="text" id="forgot-identity" required class="w-full border rounded p-2 text-xs outline-none" />
+          </div>
+          <button type="submit" class="w-full bg-slate-800 text-white py-2 rounded text-xs font-bold">
+            Send Reset Instructions
+          </button>
+        </form>
+
+        <div class="border-t mt-4 pt-3 text-center text-xs text-gray-600">
+          <button onclick="toggleAuthState('login')" class="text-emerald-800 font-semibold hover:underline">Back to Login</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="change-password-modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-xl max-w-sm w-full p-6 shadow-2xl relative">
+      <button onclick="closeModal('change-password-modal')" class="absolute top-4 right-4 text-gray-400">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <h3 class="text-base font-bold text-slate-800 mb-3">Update Profile Password</h3>
+      <form onsubmit="handleChangePassword(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold mb-1">Current Password</label>
+          <input type="password" id="chg-old-pass" required class="w-full border rounded p-2" />
+        </div>
+        <div>
+          <label class="block font-semibold mb-1">New Password</label>
+          <input type="password" id="chg-new-pass" required minlength="4" class="w-full border rounded p-2" />
+        </div>
+        <button type="submit" class="w-full bg-emerald-900 text-white py-2 rounded font-bold">
+          Save New Password
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // State Initializers & Local Persistence
+    const DEFAULT_CONFIG = {
+      examDate: "January 31, 2026 | 10:30 AM to 1:00 PM",
+      examVenue: "Shahi Masjid Bagh-e-Aam, Nampally, Hyderabad, TS",
+      hijriDate: "11 Sha'ban 1447 AH",
+      prayers: [
+        { name: "Fajr", adhan: "5:20 AM", iqamah: "5:45 AM" },
+        { name: "Dhuhr", adhan: "12:30 PM", iqamah: "1:15 PM" },
+        { name: "Asr", adhan: "4:30 PM", iqamah: "4:50 PM" },
+        { name: "Maghrib", adhan: "6:20 PM", iqamah: "6:25 PM" },
+        { name: "Isha", adhan: "7:45 PM", iqamah: "8:10 PM" }
+      ]
+    };
+
+    let appConfig = JSON.parse(localStorage.getItem('shahi_config')) || DEFAULT_CONFIG;
+    let students = JSON.parse(localStorage.getItem('shahi_students')) || [];
+    let accounts = JSON.parse(localStorage.getItem('shahi_accounts')) || [
+      { identity: "madarsa_admin", pass: "madarsa123", role: "madarsa", name: "Madarsa Coordinator" }
+    ];
+    let notices = JSON.parse(localStorage.getItem('shahi_notices')) || [
+      { id: 1, title: "Seerat-un-Nabi Syllabus Out", date: "Jan 12", body: "Reference chapters are accessible at the Madarsa office." },
+      { id: 2, title: "Hall Ticket Requirement", date: "Jan 15", body: "Please ensure a physical photo is affixed prior to venue entry." }
+    ];
+
+    let currentUser = JSON.parse(sessionStorage.getItem('shahi_user')) || null;
+
+    // Window Init
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('ribbon-geo-date').innerText = new Date().toDateString();
+      renderPrayerSchedules();
+      renderNotices();
+      syncExamInfo();
+      updateAuthUI();
+    });
+
+    function navigateTo(viewId) {
+      ['home', 'competitions', 'notices', 'ticket', 'dashboard'].forEach(id => {
+        const el = document.getElementById(`view-${id}`);
+        if (el) el.classList.add('hidden');
+      });
+      document.getElementById(`view-${viewId}`).classList.remove('hidden');
+      window.scrollTo(0, 0);
+    }
+
+    function syncExamInfo() {
+      document.getElementById('banner-exam-date').innerText = appConfig.examDate;
+      document.getElementById('ribbon-hijri-date').innerText = appConfig.hijriDate;
+      const cfgDate = document.getElementById('cfg-exam-date');
+      const cfgVenue = document.getElementById('cfg-exam-venue');
+      if (cfgDate) cfgDate.value = appConfig.examDate;
+      if (cfgVenue) cfgVenue.value = appConfig.examVenue;
+    }
+
+    function renderPrayerSchedules() {
+      const ribbon = document.getElementById('prayer-ribbon');
+      const card = document.getElementById('prayer-card-list');
+      
+      ribbon.innerHTML = appConfig.prayers.map(p => `
+        <span><strong>${p.name}:</strong> ${p.iqamah}</span>
+      `).join('');
+
+      card.innerHTML = appConfig.prayers.map(p => `
+        <div class="flex justify-between items-center py-1.5 border-b border-slate-100 last:border-none">
+          <span class="font-bold text-slate-700">${p.name}</span>
+          <div class="text-xs space-x-2">
+            <span class="text-gray-400">Adhan: ${p.adhan}</span>
+            <span class="text-emerald-700 font-bold font-mono">Iqamah: ${p.iqamah}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderNotices() {
+      const feed = document.getElementById('notice-board-feed');
+      const fullFeed = document.getElementById('full-notices-container');
+
+      const html = notices.map(n => `
+        <div class="p-3 bg-slate-50 border rounded-lg hover:border-slate-300 transition">
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-xs font-bold text-slate-800">${n.title}</span>
+            <span class="text-[10px] text-gray-400">${n.date}</span>
+          </div>
+          <p class="text-[11px] text-slate-600 leading-snug">${n.body}</p>
+        </div>
+      `).join('');
+
+      feed.innerHTML = html;
+      fullFeed.innerHTML = html;
+    }
+
+    // AUTHENTICATION LOGIC
+    function openModal(id) { document.getElementById(id).classList.remove('hidden'); document.getElementById(id).classList.add('flex'); }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('flex'); }
+
+    function toggleAuthState(state) {
+      document.getElementById('auth-state-login').classList.toggle('hidden', state !== 'login');
+      document.getElementById('auth-state-signup').classList.toggle('hidden', state !== 'signup');
+      document.getElementById('auth-state-forgot').classList.toggle('hidden', state !== 'forgot');
+    }
+
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      const identity = document.getElementById('login-identity').value.trim();
+      const pass = document.getElementById('login-password').value;
+
+      // 1. Maintenance Admin Check (Exact condition: Admin / 9290)
+      if (identity === "Admin" && pass === "9290") {
+        currentUser = { identity: "Admin", name: "Maintenance Administrator", role: "maintenance" };
+        loginSuccess();
+        return;
+      }
+
+      // 2. Custom Accounts & Students Check
+      const found = accounts.find(a => a.identity.toLowerCase() === identity.toLowerCase() && a.pass === pass);
+      if (found) {
+        currentUser = found;
+        loginSuccess();
+        return;
+      }
+
+      alert("Invalid login credentials. Please check identity and password.");
+    }
+
+    function handleSignupSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('signup-name').value.trim();
+      const identity = document.getElementById('signup-identity').value.trim();
+      const pass = document.getElementById('signup-password').value;
+
+      if (accounts.some(a => a.identity.toLowerCase() === identity.toLowerCase())) {
+        alert("This email or number is already registered.");
+        return;
+      }
+
+      const newAcc = { identity, pass, role: "student", name };
+      accounts.push(newAcc);
+      localStorage.setItem('shahi_accounts', JSON.stringify(accounts));
+      
+      currentUser = newAcc;
+      loginSuccess();
+    }
+
+    function handleForgotSubmit(e) {
+      e.preventDefault();
+      const identity = document.getElementById('forgot-identity').value.trim();
+      alert(`Recovery request confirmed for [${identity}]. A password reset link has been dispatched to your email/phone.`);
+      closeModal('login-modal');
+      toggleAuthState('login');
+    }
+
+    function handleChangePassword(e) {
+      e.preventDefault();
+      const oldPass = document.getElementById('chg-old-pass').value;
+      const newPass = document.getElementById('chg-new-pass').value;
+
+      if (currentUser.role === 'maintenance') {
+        alert("Maintenance credentials can only be updated through server config files.");
+        return;
+      }
+
+      const accIndex = accounts.findIndex(a => a.identity === currentUser.identity);
+      if (accIndex !== -1 && accounts[accIndex].pass === oldPass) {
+        accounts[accIndex].pass = newPass;
+        localStorage.setItem('shahi_accounts', JSON.stringify(accounts));
+        alert("Password updated successfully.");
+        closeModal('change-password-modal');
+      } else {
+        alert("Current password did not match.");
+      }
+    }
+
+    function loginSuccess() {
+      sessionStorage.setItem('shahi_user', JSON.stringify(currentUser));
+      closeModal('login-modal');
+      updateAuthUI();
+      openDashboard();
+    }
+
+    function handleLogout() {
+      currentUser = null;
+      sessionStorage.removeItem('shahi_user');
+      updateAuthUI();
+      navigateTo('home');
+    }
+
+    function updateAuthUI() {
+      const slot = document.getElementById('auth-nav-slot');
+      if (currentUser) {
+        slot.innerHTML = `
+          <button onclick="openDashboard()" class="bg-amber-500 text-emerald-950 font-bold px-3 py-1.5 rounded-full text-xs hover:bg-amber-400">
+            <i class="fa-solid fa-user-shield mr-1"></i> Dashboard (${currentUser.identity})
+          </button>
+        `;
+      } else {
+        slot.innerHTML = `
+          <button onclick="openModal('login-modal')" class="bg-amber-500 text-emerald-950 px-4 py-1.5 rounded-full font-bold hover:bg-amber-400">Login / Sign Up</button>
+        `;
+      }
+    }
+
+    // DASHBOARD VIEWS
+    function openDashboard() {
+      if (!currentUser) return;
+
+      document.getElementById('dash-greeting').innerText = `Welcome, ${currentUser.name || currentUser.identity}`;
+      document.getElementById('dash-role-badge').innerText = `Privilege Level: ${currentUser.role.toUpperCase()}`;
+
+      document.getElementById('maintenance-panel').classList.toggle('hidden', currentUser.role !== 'maintenance');
+      document.getElementById('roster-panel').classList.toggle('hidden', currentUser.role === 'student');
+      document.getElementById('student-self-panel').classList.toggle('hidden', currentUser.role !== 'student');
+
+      if (currentUser.role !== 'student') {
+        renderStudentRoster();
+      }
+
+      navigateTo('dashboard');
+    }
+
+    // REGISTRATION & HALL TICKET ENGINE
+    function handleStudentRegistration(e) {
+      e.preventDefault();
+
+      const category = document.getElementById('reg-category').value;
+      const gender = document.getElementById('reg-gender').value;
+      const sequence = 1000 + students.length + 1;
+      const hallTicketNo = `SUN-${category}-${gender}-${sequence}`;
+
+      const candidateData = {
+        ticketNo: hallTicketNo,
+        name: document.getElementById('reg-name').value.trim(),
+        father: document.getElementById('reg-father').value.trim(),
+        phone: document.getElementById('reg-phone').value.trim(),
+        email: document.getElementById('reg-email').value.trim(),
+        category,
+        gender,
+        address: document.getElementById('reg-address').value.trim(),
+        registeredOn: new Date().toISOString()
+      };
+
+      students.push(candidateData);
+      localStorage.setItem('shahi_students', JSON.stringify(students));
+
+      // Auto create student account if not present
+      if (!accounts.some(a => a.identity === candidateData.phone)) {
+        accounts.push({
+          identity: candidateData.phone,
+          pass: "1234",
+          role: "student",
+          name: candidateData.name
+        });
+        localStorage.setItem('shahi_accounts', JSON.stringify(accounts));
+      }
+
+      displayHallTicket(candidateData);
+    }
+
+    function displayHallTicket(cand) {
+      document.getElementById('ticket-number').innerText = cand.ticketNo;
+      document.getElementById('ticket-name').innerText = cand.name;
+      document.getElementById('ticket-father').innerText = cand.father;
+      document.getElementById('ticket-category').innerText = cand.category;
+      document.getElementById('ticket-gender').innerText = cand.gender === 'M' ? 'Male' : 'Female';
+      document.getElementById('ticket-address').innerText = cand.address;
+      document.getElementById('ticket-phone').innerText = cand.phone;
+      document.getElementById('ticket-exam-time').innerText = appConfig.examDate;
+      document.getElementById('ticket-exam-venue').innerText = appConfig.examVenue;
+
+      // Render Dynamic Verification QR
+      const qrBox = document.getElementById('ticket-qrcode-box');
+      qrBox.innerHTML = '';
+      new QRCode(qrBox, {
+        text: `VERIFY:SHAHI-MASJID|ID:${cand.ticketNo}|NAME:${cand.name}|GEN:${cand.gender}|CAT:${cand.category}`,
+        width: 84,
+        height: 84
+      });
+
+      navigateTo('ticket');
+    }
+
+    function viewMyTicket() {
+      if (!currentUser) return;
+      const found = students.find(s => s.phone === currentUser.identity || s.email === currentUser.identity);
+      if (found) {
+        displayHallTicket(found);
+      } else {
+        alert("No completed competition registrations found under this identity. Please fill out the enrollment form.");
+        navigateTo('competitions');
+      }
+    }
+
+    // ADMIN PRIVILEGES
+    function saveGlobalExamConfig() {
+      appConfig.examDate = document.getElementById('cfg-exam-date').value;
+      appConfig.examVenue = document.getElementById('cfg-exam-venue').value;
+      localStorage.setItem('shahi_config', JSON.stringify(appConfig));
+      syncExamInfo();
+      alert("Exam time and venue details updated globally for all tickets.");
+    }
+
+    function publishNotice() {
+      const title = document.getElementById('new-notice-title').value.trim();
+      const body = document.getElementById('new-notice-desc').value.trim();
+
+      if (!title || !body) return alert("Title and content are required.");
+
+      notices.unshift({ id: Date.now(), title, date: "Just now", body });
+      localStorage.setItem('shahi_notices', JSON.stringify(notices));
+      renderNotices();
+      alert("Notice posted live.");
+      document.getElementById('new-notice-title').value = '';
+      document.getElementById('new-notice-desc').value = '';
+    }
+
+    function renderStudentRoster() {
+      const tbody = document.getElementById('roster-table-body');
+      document.getElementById('roster-count').innerText = `${students.length} Enrolled`;
+
+      tbody.innerHTML = students.map((s, idx) => `
+        <tr class="border-b hover:bg-slate-50">
+          <td class="p-2.5 font-mono font-bold text-red-600">${s.ticketNo}</td>
+          <td class="p-2.5 font-semibold">${s.name}</td>
+          <td class="p-2.5">${s.father}</td>
+          <td class="p-2.5">${s.category}</td>
+          <td class="p-2.5">${s.gender}</td>
+          <td class="p-2.5">${s.phone}</td>
+          <td class="p-2.5 text-center">
+            <button onclick='viewSpecificTicket(${idx})' class="text-blue-600 hover:underline mr-2">Ticket</button>
+            ${currentUser.role === 'maintenance' ? `<button onclick="deleteStudent(${idx})" class="text-red-600 hover:underline">Delete</button>` : ''}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function viewSpecificTicket(idx) {
+      displayHallTicket(students[idx]);
+    }
+
+    function deleteStudent(idx) {
+      if (confirm("Delete this candidate record?")) {
+        students.splice(idx, 1);
+        localStorage.setItem('shahi_students', JSON.stringify(students));
+        renderStudentRoster();
+      }
+    }
+
+    function downloadHallTicketPDF() {
+      const element = document.getElementById('printable-ticket');
+      html2pdf().set({
+        margin: 10,
+        filename: 'HallTicket_Seerat_Competition.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      }).from(element).save();
+    }
+  </script>
+</body>
+</html>
