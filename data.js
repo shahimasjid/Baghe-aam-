@@ -17,7 +17,7 @@ window.INITIAL_CONFIG = {
   facebook: "https://facebook.com/ShahiMasjidHyderabad",
   instagram: "https://instagram.com/ShahiMasjidHyderabad",
   whatsappChannel: "https://whatsapp.com/channel/ShahiMasjidHyd",
-  resultsPublished: false, // 1-Click Master Result Release Toggle
+  resultsPublished: false,
   dignitaries: {
     patron: "Molana Hafiz Dr Ahsan Bin Mohammed Al Hamoomee Sahab",
     patronTitle: "Patron & President",
@@ -38,7 +38,6 @@ window.INITIAL_CONFIG = {
   ]
 };
 
-// 48 Official Prize Award Packages
 window.INITIAL_PRIZES = [
   { id: 1, rank: "1st Prize", category: "Postgraduate (Boys)", ht: "Unassigned", name: "To Be Declared", prize: "HP Core i5 Laptop + Trophy", icon: "laptop" },
   { id: 2, rank: "1st Prize", category: "Postgraduate (Girls)", ht: "Unassigned", name: "To Be Declared", prize: "HP Core i5 Laptop + Trophy", icon: "laptop" },
@@ -73,12 +72,10 @@ for (var i = 19; i <= 48; i++) {
   });
 }
 
-// Clean Initial Arrays
 window.INITIAL_STUDENTS = [];
 window.INITIAL_FACULTIES = [];
 window.INITIAL_FEEDBACKS = [];
 
-// 500+ Words Seerat Hub Text
 window.SEERAT_COMPREHENSIVE_TEXT = {
   en: {
     title: "The Comprehensive Biography of Prophet Muhammad ﷺ",
@@ -127,8 +124,8 @@ window.INITIAL_PAPERS = [
 ];
 
 window.INITIAL_NOTICES = [
-  { id: 1, title: "OMR & Admit Card Engines Deployed", date: "Official", desc: "Batch OMR download, 1-click Excel export, and mobile-to-browser sync are live." },
-  { id: 2, title: "Result Release System Online", date: "Results", desc: "Multi-stage faculty verification and 1-click administrative result release are active." }
+  { id: 1, title: "Advanced Dashboard Operations Active", date: "System", desc: "4-Role in-dashboard login console, 1-click Excel export, and mobile data sync are available." },
+  { id: 2, title: "Digital OMR & Certificate Engine Ready", date: "Examinations", desc: "Batch OMR downloads, attendance audits, and Islamic Participation Certificates are live." }
 ];
 
 window.DataStore = {
