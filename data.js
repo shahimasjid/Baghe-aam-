@@ -1,4 +1,4 @@
-// data.js - Configurations, Clean State Models, 48 Prizes, Seerat Hub & Default Faculty Credentials
+// data.js - Configurations, 48 Prizes, Seerat Hub, Model Papers & Clean Initial State
 window.INITIAL_CONFIG = {
   masjidTitle: "SHAHI MASJID BAGH-E-AAM",
   masjidSub: "Under the Aegis of Online Madarsa Al Hamoomi for Islamic & Arabic Studies",
@@ -27,7 +27,7 @@ window.INITIAL_CONFIG = {
   seatingConfig: {
     layoutType: "theater", // 'theater', '2x2', '3x3', '4x4', 'nxn'
     rows: 20,
-    colsPerRow: 14 // Theater layout defaults: 4 Left, 6 Center, 4 Right
+    colsPerRow: 14 // 4 Left, 6 Center, 4 Right
   },
   prayers: [
     { name: "Fajr", adhan: "5:18 AM", iqama: "5:45 AM" },
@@ -73,7 +73,6 @@ for (var i = 19; i <= 48; i++) {
   });
 }
 
-// Clean Students Store
 window.INITIAL_STUDENTS = [];
 
 // Default Active Faculty Account
@@ -138,13 +137,13 @@ window.SEERAT_COMPREHENSIVE_TEXT = {
 };
 
 window.INITIAL_PAPERS = [
-  { id: 1, title: "1st Seerat Competition Question Paper (All Categories)", year: "2024", url: "#", category: "General" },
-  { id: 2, title: "2nd Seerat Competition Model Paper & Answer Key", year: "2025", url: "#", category: "General" }
+  { id: 1, title: "1st Seerat Competition Question Paper (All Categories)", year: "2024", url: "https://drive.google.com", category: "General" },
+  { id: 2, title: "2nd Seerat Competition Model Paper & Answer Key", year: "2025", url: "https://drive.google.com", category: "General" }
 ];
 
 window.INITIAL_NOTICES = [
-  { id: 1, title: "Cinema Theater Layout Matrix Active", date: "System", desc: "Interactive Left, Center, and Right aisle theater seating plan is live." },
-  { id: 2, title: "Faculty Vetting & Approval Online", date: "Staff", desc: "Administrators can approve, edit, or deny faculty access instantly." }
+  { id: 1, title: "Cinema Theater Layout Matrix Active", date: "System", desc: "Interactive Left, Center, and Right aisle theater seating plan with manual candidate assignment is live." },
+  { id: 2, title: "Faculty Vetting & Approval Queue Online", date: "Staff", desc: "Administrators can approve, edit, or deny faculty access instantly." }
 ];
 
 window.DataStore = {
