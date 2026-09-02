@@ -74,10 +74,10 @@
         <button onclick="navigateTab('home')" class="px-3 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Home</button>
         <button onclick="navigateTab('competitions')" class="px-3 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Enrollment</button>
         <button onclick="navigateTab('prizes')" class="px-3 py-1.5 bg-amber-100 text-amber-900 border border-amber-300 rounded hover:bg-amber-200 transition">
-          <i class="fa-solid fa-trophy mr-1 text-amber-600"></i> 48 Winners & Prizes
+          <i class="fa-solid fa-trophy mr-1 text-amber-600"></i> 48 Prizes & Awards
         </button>
         <button onclick="navigateTab('seerat-hub')" class="px-3 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">
-          <i class="fa-solid fa-book-open mr-1 text-emerald-800"></i> Seerat Hub (500+ Words)
+          <i class="fa-solid fa-book-open mr-1 text-emerald-800"></i> Seerat Hub
         </button>
         <button onclick="navigateTab('model-papers')" class="px-3 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Papers</button>
         <button onclick="navigateTab('doc-lookup')" class="px-3 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Admit Card</button>
@@ -143,7 +143,6 @@
         </div>
 
         <div class="lg:col-span-3 space-y-6">
-          
           <div class="arabic-pattern text-white rounded-2xl shadow-md p-6 md:p-8 border-2 border-amber-500 relative overflow-hidden">
             <div class="absolute -right-8 -bottom-8 text-emerald-800/30 text-9xl pointer-events-none font-arabic">ﷺ</div>
             
@@ -319,17 +318,22 @@
               <span class="w-8 h-8 rounded-full bg-amber-500 text-emerald-950 flex items-center justify-center font-bold">
                 <i class="fa-solid fa-trophy"></i>
               </span>
-              <h2 class="text-xl font-bold text-emerald-950 font-cinzel">Official 48 Prize Winners Gallery</h2>
+              <h2 class="text-xl font-bold text-emerald-950 font-cinzel">Official 48 Prize & Award Allocations</h2>
             </div>
-            <p class="text-xs text-slate-500 mt-1">Merit standings, Hall Ticket IDs, candidate names, and allotted awards.</p>
+            <p class="text-xs text-slate-500 mt-1">Authorized prize items, ranks, candidate roll mappings, and categories.</p>
           </div>
 
-          <div class="flex items-center gap-2 bg-slate-100 p-1 rounded-lg border text-xs">
-            <button id="btn-prize-grid" onclick="switchPrizeLayout('grid')" class="px-3 py-1 rounded font-bold bg-white text-emerald-950 shadow-sm">
-              <i class="fa-solid fa-grip mr-1"></i> Grid
-            </button>
-            <button id="btn-prize-list" onclick="switchPrizeLayout('list')" class="px-3 py-1 rounded font-bold text-slate-600 hover:text-emerald-950">
-              <i class="fa-solid fa-list mr-1"></i> List
+          <div class="flex items-center gap-3">
+            <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-lg border text-xs">
+              <button id="btn-prize-grid" onclick="switchPrizeLayout('grid')" class="px-3 py-1 rounded font-bold bg-white text-emerald-950 shadow-sm">
+                <i class="fa-solid fa-grip mr-1"></i> Grid
+              </button>
+              <button id="btn-prize-list" onclick="switchPrizeLayout('list')" class="px-3 py-1 rounded font-bold text-slate-600 hover:text-emerald-950">
+                <i class="fa-solid fa-list mr-1"></i> List
+              </button>
+            </div>
+            <button onclick="openModal('modal-add-prize')" id="btn-admin-add-prize" class="hidden bg-emerald-950 text-amber-300 font-bold px-3 py-1.5 rounded-lg text-xs hover:bg-emerald-900 shadow">
+              <i class="fa-solid fa-plus mr-1"></i> Add / Configure Prize
             </button>
           </div>
         </div>
@@ -499,13 +503,13 @@
         <div id="dash-section-student" class="hidden mt-6 space-y-6">
           <div class="p-4 bg-gradient-to-r from-emerald-900 to-emerald-950 text-white rounded-xl border border-amber-400 flex flex-wrap justify-between items-center gap-4">
             <div>
-              <span class="text-[10px] bg-amber-400 text-emerald-950 font-black px-2 py-0.5 rounded uppercase">Exam Window</span>
+              <span class="text-[10px] bg-amber-400 text-emerald-950 font-black px-2 py-0.5 rounded uppercase">Feature 1: Live Exam Alert</span>
               <h3 class="text-lg font-bold text-amber-300 mt-1">Reporting & Seating Verification</h3>
               <p class="text-xs text-emerald-100 mt-0.5">Preparation Window: <strong id="student-prep-time" class="text-white"></strong></p>
               <p class="text-xs text-emerald-200">Exam Window: <strong id="student-exam-time" class="text-white"></strong></p>
             </div>
             <div class="text-right text-xs">
-              <span class="block text-emerald-300">Your Assigned Desk:</span>
+              <span class="block text-emerald-300">Feature 2: Allocated Desk Seat</span>
               <span id="student-dash-seat-badge" class="font-mono text-base font-black text-amber-300"></span>
             </div>
           </div>
@@ -514,7 +518,7 @@
             <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex flex-col justify-between hover:shadow transition">
               <div>
                 <i class="fa-solid fa-id-badge text-emerald-800 text-2xl mb-2"></i>
-                <h3 class="text-sm font-bold text-emerald-950">Hall Ticket (Admit Card)</h3>
+                <h3 class="text-sm font-bold text-emerald-950">Feature 3: Hall Ticket (Admit Card)</h3>
                 <p class="text-xs text-slate-600 mt-1">Official permit with unique serial, allotted seat, and official madarsa seal.</p>
               </div>
               <button onclick="showCurrentStudentDoc('ticket')" class="mt-4 bg-emerald-950 text-amber-300 font-bold py-2 rounded text-xs">
@@ -525,7 +529,7 @@
             <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl flex flex-col justify-between hover:shadow transition">
               <div>
                 <i class="fa-solid fa-file-signature text-amber-700 text-2xl mb-2"></i>
-                <h3 class="text-sm font-bold text-amber-950">Registration Dossier</h3>
+                <h3 class="text-sm font-bold text-amber-950">Feature 4: Registration Dossier</h3>
                 <p class="text-xs text-slate-600 mt-1">Formal enrollment application with DOB and government ID record.</p>
               </div>
               <button onclick="showCurrentStudentDoc('form')" class="mt-4 bg-amber-600 text-white font-bold py-2 rounded text-xs">
@@ -536,22 +540,66 @@
             <div class="p-4 bg-blue-50 border border-blue-200 rounded-xl flex flex-col justify-between hover:shadow transition">
               <div>
                 <i class="fa-solid fa-book-open text-blue-800 text-2xl mb-2"></i>
-                <h3 class="text-sm font-bold text-blue-950">Seerat Reference Hub</h3>
-                <p class="text-xs text-slate-600 mt-1">Study complete 500+ word biography & Prophetic lineage.</p>
+                <h3 class="text-sm font-bold text-blue-950">Feature 5: Seerat Reference Hub</h3>
+                <p class="text-xs text-slate-600 mt-1">Study complete 500+ word biography & Prophetic lineage in 3 languages.</p>
               </div>
               <button onclick="navigateTab('seerat-hub')" class="mt-4 bg-blue-900 text-white font-bold py-2 rounded text-xs">
                 Open Seerat Hub
               </button>
             </div>
 
-            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl flex flex-col justify-between hover:shadow transition">
+            <div class="p-4 bg-purple-50 border border-purple-200 rounded-xl flex flex-col justify-between hover:shadow transition">
               <div>
-                <i class="fa-solid fa-award text-slate-700 text-2xl mb-2"></i>
-                <h3 class="text-sm font-bold text-slate-800">Result Standing</h3>
+                <i class="fa-solid fa-award text-purple-800 text-2xl mb-2"></i>
+                <h3 class="text-sm font-bold text-purple-950">Feature 6: Score & Standing Card</h3>
                 <div id="student-dash-result-box" class="mt-2 text-xs font-semibold"></div>
               </div>
-              <button onclick="navigateTab('prizes')" class="mt-4 bg-slate-800 text-white font-bold py-2 rounded text-xs">
-                View 48 Winners
+              <button onclick="navigateTab('prizes')" class="mt-4 bg-purple-900 text-white font-bold py-2 rounded text-xs">
+                Check Prize Roster
+              </button>
+            </div>
+
+            <div class="p-4 bg-rose-50 border border-rose-200 rounded-xl flex flex-col justify-between hover:shadow transition">
+              <div>
+                <i class="fa-solid fa-file-pdf text-rose-800 text-2xl mb-2"></i>
+                <h3 class="text-sm font-bold text-rose-950">Feature 7: Model Papers Library</h3>
+                <p class="text-xs text-slate-600 mt-1">Previous years' solved question banks and answer keys.</p>
+              </div>
+              <button onclick="navigateTab('model-papers')" class="mt-4 bg-rose-900 text-white font-bold py-2 rounded text-xs">
+                Download Papers
+              </button>
+            </div>
+
+            <div class="p-4 bg-teal-50 border border-teal-200 rounded-xl flex flex-col justify-between hover:shadow transition">
+              <div>
+                <i class="fa-solid fa-bell text-teal-800 text-2xl mb-2"></i>
+                <h3 class="text-sm font-bold text-teal-950">Feature 8: Real-Time Alerts Feed</h3>
+                <p class="text-xs text-slate-600 mt-1">Live updates, schedule adjustments, and hall directions.</p>
+              </div>
+              <button onclick="navigateTab('home')" class="mt-4 bg-teal-900 text-white font-bold py-2 rounded text-xs">
+                Read Notice Board
+              </button>
+            </div>
+
+            <div class="p-4 bg-cyan-50 border border-cyan-200 rounded-xl flex flex-col justify-between hover:shadow transition">
+              <div>
+                <i class="fa-solid fa-comments text-cyan-800 text-2xl mb-2"></i>
+                <h3 class="text-sm font-bold text-cyan-950">Feature 9: Student Helpdesk Desk</h3>
+                <p class="text-xs text-slate-600 mt-1">Direct inquiries to the Madarsa & Mosque committee.</p>
+              </div>
+              <button onclick="navigateTab('feedback')" class="mt-4 bg-cyan-900 text-white font-bold py-2 rounded text-xs">
+                Submit Inquiry
+              </button>
+            </div>
+
+            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl flex flex-col justify-between hover:shadow transition">
+              <div>
+                <i class="fa-solid fa-lock text-slate-800 text-2xl mb-2"></i>
+                <h3 class="text-sm font-bold text-slate-950">Feature 10: In-Profile Security</h3>
+                <p class="text-xs text-slate-600 mt-1">Manage profile password with 24-hour persistent token.</p>
+              </div>
+              <button onclick="openModal('modal-change-password')" class="mt-4 bg-slate-800 text-white font-bold py-2 rounded text-xs">
+                Change Password
               </button>
             </div>
           </div>
@@ -559,6 +607,34 @@
 
         <div id="dash-section-management" class="hidden mt-6 space-y-6">
           
+          <div class="p-4 bg-slate-900 text-white rounded-xl flex flex-wrap justify-between items-center gap-4">
+            <div>
+              <span class="text-[10px] bg-amber-400 text-slate-950 font-black px-2 py-0.5 rounded uppercase">Master Data Safety</span>
+              <h3 class="text-sm font-bold text-amber-300 mt-1">JSON Database Backup & Cloud Device-to-Device Sync</h3>
+              <p class="text-xs text-slate-300">1-Click JSON export of all student profiles, awards, faculty accounts, prayer timings, and settings.</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <button onclick="exportEntireDatabaseJSON()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold">
+                <i class="fa-solid fa-download mr-1"></i> Download JSON Backup
+              </button>
+              <label class="bg-amber-600 hover:bg-amber-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer">
+                <i class="fa-solid fa-upload mr-1"></i> Restore JSON
+                <input type="file" id="json-upload-input" accept=".json" class="hidden" onchange="importEntireDatabaseJSON(event)" />
+              </label>
+              <button onclick="exportStudentsToCSV()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold">
+                <i class="fa-solid fa-file-excel mr-1"></i> 1-Click Excel/CSV Export
+              </button>
+            </div>
+          </div>
+
+          <div id="faculty-approval-panel" class="hidden p-5 bg-blue-50 border border-blue-200 rounded-xl space-y-3">
+            <h3 class="text-sm font-black text-blue-950 flex items-center gap-2">
+              <i class="fa-solid fa-user-shield text-blue-700"></i> Faculty Registration Approval Queue
+            </h3>
+            <p class="text-xs text-slate-600">Review faculty registration requests before granting permissions to modify marks, seats, and candidate details.</p>
+            <div id="faculty-queue-table" class="overflow-x-auto"></div>
+          </div>
+
           <div id="super-admin-master-card" class="hidden p-5 bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-400 rounded-xl space-y-4">
             <h3 class="text-sm font-black text-amber-950 flex items-center gap-2">
               <i class="fa-solid fa-pen-to-square text-amber-700"></i> Master Portal, Social Handles, Schedule & Prayer Time Config
@@ -623,13 +699,13 @@
             <div class="flex flex-wrap justify-between items-center gap-3">
               <div>
                 <h3 class="text-sm font-black text-emerald-950 flex items-center gap-2">
-                  <i class="fa-solid fa-plane-slash text-emerald-800"></i> Interactive 2x2 Aeroplane Seating Grid
+                  <i class="fa-solid fa-chair text-emerald-800"></i> Dynamic Seating Grid Engine (2x2 up to 6x6 / Custom N x N)
                 </h3>
-                <p class="text-[11px] text-slate-600">Configurable $2 \times 2$ grid (Left Pair - Aisle - Right Pair) with click-to-assign manual mode & auto-distribution.</p>
+                <p class="text-[11px] text-slate-600">Configure desk pairs per row, aisle width, and total halls to match the physical hall space.</p>
               </div>
               <div class="flex flex-wrap gap-2">
                 <button onclick="autoGenerateSeatingPlan()" class="bg-emerald-950 text-amber-300 font-bold px-3.5 py-1.5 rounded text-xs hover:bg-emerald-900 shadow">
-                  <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Auto-Arrange Matrix
+                  <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Auto-Arrange Desks
                 </button>
                 <button onclick="clearSeatingPlan()" class="bg-red-100 text-red-700 font-semibold px-3 py-1.5 rounded text-xs hover:bg-red-200">
                   Reset Seats
@@ -637,16 +713,25 @@
               </div>
             </div>
 
-            <div class="flex flex-wrap items-center gap-4 bg-white p-3 rounded-lg border text-xs">
-              <div class="flex items-center gap-2">
-                <label class="font-bold text-slate-700">Rows per Hall:</label>
-                <input type="number" id="cfg-seating-rows" min="10" max="100" value="25" class="border rounded p-1 w-16 text-center" onchange="renderSeatingMatrixPreview()" />
-                <span class="text-slate-500 text-[10px]">(Total 100 Seats: 25 Rows × 4 Desks)</span>
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 bg-white p-3 rounded-lg border text-xs">
+              <div>
+                <label class="font-bold text-slate-700 block mb-1">Layout Style:</label>
+                <select id="cfg-seating-pattern" onchange="renderSeatingMatrixPreview()" class="w-full border rounded p-1.5 font-semibold">
+                  <option value="2x2">2x2 (2 Left - Aisle - 2 Right)</option>
+                  <option value="3x3">3x3 (3 Left - Aisle - 3 Right)</option>
+                  <option value="4x4">4x4 (4 Left - Aisle - 4 Right)</option>
+                  <option value="5x5">5x5 (5 Left - Aisle - 5 Right)</option>
+                  <option value="6x6">6x6 (6 Left - Aisle - 6 Right)</option>
+                </select>
               </div>
-              <div class="flex items-center gap-4 ml-auto text-[11px]">
+              <div>
+                <label class="font-bold text-slate-700 block mb-1">Rows per Wing:</label>
+                <input type="number" id="cfg-seating-rows" min="5" max="100" value="25" class="w-full border rounded p-1 text-center" onchange="renderSeatingMatrixPreview()" />
+              </div>
+              <div class="sm:col-span-2 flex items-end justify-between text-[11px] pb-1">
                 <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-blue-100 border border-blue-400 inline-block"></span> Boy Occupied</span>
                 <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-pink-100 border border-pink-400 inline-block"></span> Girl Occupied</span>
-                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-slate-50 border border-dashed border-slate-300 inline-block"></span> Open Seat</span>
+                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-slate-50 border border-dashed border-slate-300 inline-block"></span> Open Desk</span>
               </div>
             </div>
 
@@ -668,7 +753,7 @@
               </div>
               <div class="flex items-center gap-2">
                 <button onclick="pullAllApplicationForms()" class="bg-emerald-950 text-amber-300 font-bold px-3 py-1.5 rounded text-xs shadow">
-                  1-Click: Print All Forms
+                  Print All Forms
                 </button>
                 <input type="text" id="roster-search" onkeyup="filterRosterTable()" placeholder="Search Name/HT/Phone..." class="border text-xs rounded px-3 py-1.5 outline-none w-56" />
               </div>
@@ -713,45 +798,89 @@
           <div class="w-10 h-10 rounded-xl bg-amber-500 text-emerald-950 flex items-center justify-center font-bold text-xl mb-3">
             <i class="fa-solid fa-mosque"></i>
           </div>
-          <h3 class="font-cinzel text-base font-bold text-amber-300">Shahi Masjid Central Portal</h3>
-          <p class="text-[11px] text-emerald-200 mt-1">3rd Seerat-un-Nabi Competition & Madarsa Al Hamoomea</p>
+          <h3 class="font-cinzel text-base font-bold text-amber-300">Shahi Masjid Portal</h3>
+          <p class="text-[11px] text-emerald-200 mt-1">Faculty & Student Authentication Hub</p>
         </div>
         <div class="text-[10px] text-emerald-300/80 space-y-1 mt-6">
           <p>• Verified candidate result tracking</p>
-          <p>• Instant admit cards with madarsa seal</p>
-          <p>• Flight-style 2x2 aeroplane desk seats</p>
+          <p>• Dynamic seating grid engine</p>
+          <p>• Faculty authorization workflows</p>
         </div>
       </div>
 
       <div class="md:col-span-3 p-6 bg-white flex flex-col justify-center">
-        <h3 class="text-base font-bold text-emerald-950">Account Sign In</h3>
-        <p class="text-xs text-slate-500 mb-4">Select your portal role to authenticate:</p>
+        <div id="auth-sub-login">
+          <h3 class="text-base font-bold text-emerald-950">Portal Sign In</h3>
+          <p class="text-xs text-slate-500 mb-3">Select your role to continue:</p>
 
-        <div class="flex rounded-lg bg-slate-100 p-1 mb-4 text-[11px] font-bold">
-          <button type="button" onclick="setLoginRoleHint('student')" id="role-hint-student" class="flex-1 py-1 rounded bg-white text-emerald-950 shadow-sm">Student</button>
-          <button type="button" onclick="setLoginRoleHint('faculty')" id="role-hint-faculty" class="flex-1 py-1 rounded text-slate-600">Faculty</button>
-          <button type="button" onclick="setLoginRoleHint('super')" id="role-hint-super" class="flex-1 py-1 rounded text-slate-600">Super Admin</button>
+          <div class="flex rounded-lg bg-slate-100 p-1 mb-4 text-[11px] font-bold">
+            <button type="button" onclick="setLoginRoleHint('student')" id="role-hint-student" class="flex-1 py-1 rounded bg-white text-emerald-950 shadow-sm">Student</button>
+            <button type="button" onclick="setLoginRoleHint('faculty')" id="role-hint-faculty" class="flex-1 py-1 rounded text-slate-600">Faculty</button>
+            <button type="button" onclick="setLoginRoleHint('super')" id="role-hint-super" class="flex-1 py-1 rounded text-slate-600">Super Admin</button>
+          </div>
+
+          <form onsubmit="handleUniversalLogin(event)" class="space-y-3 text-xs">
+            <div>
+              <label class="block font-bold mb-1 text-slate-700" id="login-label-id">Mobile Number / Hall Ticket ID</label>
+              <input type="text" id="login-id" required class="w-full border rounded p-2 outline-none focus:ring-2 focus:ring-emerald-800" />
+            </div>
+            <div>
+              <label class="block font-bold mb-1 text-slate-700">Password</label>
+              <input type="password" id="login-pwd" required class="w-full border rounded p-2 outline-none focus:ring-2 focus:ring-emerald-800" />
+            </div>
+            <div class="flex items-center justify-between text-[11px]">
+              <label class="flex items-center text-slate-600">
+                <input type="checkbox" id="login-save-24h" checked class="mr-1 text-emerald-900" />
+                Remember for 24 hours
+              </label>
+            </div>
+            <button type="submit" class="w-full bg-emerald-950 text-amber-300 font-bold py-2.5 rounded hover:bg-emerald-900 transition shadow">
+              Sign In
+            </button>
+          </form>
+
+          <div class="mt-4 pt-3 border-t text-center text-xs">
+            <span class="text-slate-500">New Faculty Member?</span>
+            <button onclick="toggleFacultyRegisterForm(true)" class="font-bold text-emerald-900 ml-1 hover:underline">
+              Register Faculty Account
+            </button>
+          </div>
         </div>
 
-        <form onsubmit="handleUniversalLogin(event)" class="space-y-3 text-xs">
-          <div>
-            <label class="block font-bold mb-1 text-slate-700" id="login-label-id">Username / Phone / Hall Ticket</label>
-            <input type="text" id="login-id" required class="w-full border rounded p-2 outline-none focus:ring-2 focus:ring-emerald-800" />
-          </div>
-          <div>
-            <label class="block font-bold mb-1 text-slate-700">Password</label>
-            <input type="password" id="login-pwd" required class="w-full border rounded p-2 outline-none focus:ring-2 focus:ring-emerald-800" />
-          </div>
-          <div class="flex items-center justify-between text-[11px]">
-            <label class="flex items-center text-slate-600">
-              <input type="checkbox" id="login-save-24h" checked class="mr-1 text-emerald-900" />
-              Remember for 24 hours
-            </label>
-          </div>
-          <button type="submit" class="w-full bg-emerald-950 text-amber-300 font-bold py-2.5 rounded hover:bg-emerald-900 transition shadow">
-            Sign In to Dashboard
+        <div id="auth-sub-faculty-reg" class="hidden">
+          <h3 class="text-base font-bold text-emerald-950">Faculty Registration</h3>
+          <p class="text-xs text-slate-500 mb-3">Your account will be activated upon Admin approval.</p>
+
+          <form onsubmit="handleFacultySelfRegister(event)" class="space-y-2.5 text-xs">
+            <div>
+              <label class="block font-bold text-slate-700">Full Name *</label>
+              <input type="text" id="fac-reg-name" required class="w-full border rounded p-1.5" />
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700">Department / Madarsa Role *</label>
+              <input type="text" id="fac-reg-dept" placeholder="e.g. Invigilator / Arabic Faculty" required class="w-full border rounded p-1.5" />
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700">Desired Username *</label>
+              <input type="text" id="fac-reg-username" required class="w-full border rounded p-1.5" />
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700">Mobile / Contact Number *</label>
+              <input type="tel" id="fac-reg-phone" required class="w-full border rounded p-1.5" />
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700">Set Password *</label>
+              <input type="password" id="fac-reg-pwd" minlength="4" required class="w-full border rounded p-1.5" />
+            </div>
+            <button type="submit" class="w-full bg-blue-900 text-white font-bold py-2 rounded mt-2">
+              Submit Request for Approval
+            </button>
+          </form>
+
+          <button onclick="toggleFacultyRegisterForm(false)" class="mt-3 text-xs text-slate-500 hover:text-slate-800 text-center block w-full">
+            Back to Sign In
           </button>
-        </form>
+        </div>
       </div>
     </div>
   </div>
@@ -784,22 +913,15 @@
           </div>
         </div>
         <div>
-          <label class="block font-bold mb-1">Prize Item / Standing Allotment</label>
-          <select id="edit-cand-prize" class="w-full border rounded p-2 font-semibold">
-            <option value="None">None (Participant)</option>
-            <option value="1st Prize - HP Core i5 Laptop">1st Prize - HP Core i5 Laptop</option>
-            <option value="2nd Prize - Samsung Galaxy Tablet">2nd Prize - Samsung Galaxy Tablet</option>
-            <option value="3rd Prize - Deluxe Islamic Books Library Set">3rd Prize - Deluxe Islamic Books Library Set</option>
-            <option value="Consolation Prize - ₹5,000 Cash Scholarship">Consolation Prize - ₹5,000 Cash Scholarship</option>
-            <option value="Special Mention Award - Smart Watch & Trophy">Special Mention Award - Smart Watch & Trophy</option>
-          </select>
+          <label class="block font-bold mb-1">Prize Item Allotment</label>
+          <select id="edit-cand-prize" class="w-full border rounded p-2 font-semibold"></select>
         </div>
         <div>
           <label class="block font-bold mb-1">Candidate Status</label>
           <select id="edit-cand-status" class="w-full border rounded p-2">
             <option value="Enrolled">Enrolled (Active)</option>
             <option value="Verified">Verified (Genuine)</option>
-            <option value="Blocked">Blocked (Duplicate / Audit Issue)</option>
+            <option value="Blocked">Blocked (Duplicate / Security Lock)</option>
             <option value="Prize Winner">Prize Winner (Top 48)</option>
           </select>
         </div>
@@ -812,6 +934,47 @@
             Save Modifications
           </button>
         </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-add-prize" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-xl max-w-sm w-full p-6 shadow-2xl relative text-xs">
+      <button onclick="closeModal('modal-add-prize')" class="absolute top-4 right-4 text-gray-400">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <h3 class="text-sm font-bold text-emerald-950 mb-3">Add / Configure Prize Item</h3>
+
+      <form onsubmit="handleAddNewPrize(event)" class="space-y-2.5">
+        <div>
+          <label class="block font-bold mb-1">Award Rank / Level *</label>
+          <input type="text" id="prize-new-rank" required placeholder="e.g. 1st Prize or Consolation #1" class="w-full border rounded p-2" />
+        </div>
+        <div>
+          <label class="block font-bold mb-1">Target Category *</label>
+          <input type="text" id="prize-new-cat" required placeholder="e.g. Postgraduate (Boys)" class="w-full border rounded p-2" />
+        </div>
+        <div>
+          <label class="block font-bold mb-1">Award Item / Gift Name *</label>
+          <input type="text" id="prize-new-item" required placeholder="e.g. HP Core i5 Laptop or ₹5,000 Cash" class="w-full border rounded p-2" />
+        </div>
+        <div>
+          <label class="block font-bold mb-1">Map to Candidate Hall Ticket (Optional)</label>
+          <input type="text" id="prize-new-ht" placeholder="e.g. SUN3-B-PG-1001" class="w-full border rounded p-2 uppercase font-mono" />
+        </div>
+        <div>
+          <label class="block font-bold mb-1">Icon Style</label>
+          <select id="prize-new-icon" class="w-full border rounded p-2">
+            <option value="laptop">Laptop</option>
+            <option value="tablet-screen-button">Tablet</option>
+            <option value="book-bookmark">Book Set</option>
+            <option value="money-bill-wave">Cash Scholarship</option>
+            <option value="trophy">Trophy</option>
+          </select>
+        </div>
+        <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 rounded mt-2">
+          Save Award Item
+        </button>
       </form>
     </div>
   </div>
