@@ -1,4 +1,4 @@
-// data.js - Configurations, Clean State Models, 48 Prize Packages & Multi-Language Seerat Data
+// data.js - Configurations, Clean State Models, 48 Prizes, Seerat Hub & Default Faculty Credentials
 window.INITIAL_CONFIG = {
   masjidTitle: "SHAHI MASJID BAGH-E-AAM",
   masjidSub: "Under the Aegis of Online Madarsa Al Hamoomi for Islamic & Arabic Studies",
@@ -25,9 +25,9 @@ window.INITIAL_CONFIG = {
     chiefGuestTitle: "Distinguished Guest Speaker"
   },
   seatingConfig: {
-    layoutType: "2x2",
-    rows: 25,
-    colsPerRow: 4
+    layoutType: "theater", // 'theater', '2x2', '3x3', '4x4', 'nxn'
+    rows: 20,
+    colsPerRow: 14 // Theater layout defaults: 4 Left, 6 Center, 4 Right
   },
   prayers: [
     { name: "Fajr", adhan: "5:18 AM", iqama: "5:45 AM" },
@@ -38,7 +38,7 @@ window.INITIAL_CONFIG = {
   ]
 };
 
-// 48 Official Prize Award Packages
+// 48 Official Prize Packages
 window.INITIAL_PRIZES = [
   { id: 1, rank: "1st Prize", category: "Postgraduate (Boys)", ht: "Unassigned", name: "To Be Declared", prize: "HP Core i5 Laptop + Trophy", icon: "laptop" },
   { id: 2, rank: "1st Prize", category: "Postgraduate (Girls)", ht: "Unassigned", name: "To Be Declared", prize: "HP Core i5 Laptop + Trophy", icon: "laptop" },
@@ -73,8 +73,26 @@ for (var i = 19; i <= 48; i++) {
   });
 }
 
+// Clean Students Store
 window.INITIAL_STUDENTS = [];
-window.INITIAL_FACULTIES = [];
+
+// Default Active Faculty Account
+window.INITIAL_FACULTIES = [
+  {
+    id: "FAC-101",
+    name: "Moulana Examination Supervisor",
+    username: "Faculty1",
+    phone: "Faculty1",
+    email: "faculty1@madarsa.org",
+    password: "8341",
+    dept: "Exam Controller & Invigilation Wing",
+    assignedHall: "Hall A (Boys Wing)",
+    status: "Approved",
+    role: "faculty",
+    registeredDate: "2026-01-15"
+  }
+];
+
 window.INITIAL_FEEDBACKS = [];
 
 window.SEERAT_COMPREHENSIVE_TEXT = {
@@ -125,16 +143,24 @@ window.INITIAL_PAPERS = [
 ];
 
 window.INITIAL_NOTICES = [
-  { id: 1, title: "Advanced Dashboard Operations Active", date: "System", desc: "Right-header portal login, 1-click Excel export, and mobile data sync are available." },
-  { id: 2, title: "Digital OMR & Certificate Engine Ready", date: "Examinations", desc: "Batch OMR downloads, attendance audits, and Islamic Participation Certificates are live." }
+  { id: 1, title: "Cinema Theater Layout Matrix Active", date: "System", desc: "Interactive Left, Center, and Right aisle theater seating plan is live." },
+  { id: 2, title: "Faculty Vetting & Approval Online", date: "Staff", desc: "Administrators can approve, edit, or deny faculty access instantly." }
 ];
 
 window.DataStore = {
   get: function(key, fallback) {
-    var raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : fallback;
+    try {
+      var raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    } catch (e) {
+      return fallback;
+    }
   },
   set: function(key, value) {
-    localStorage.setItem(key, JSON.stringify(value));
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch (e) {
+      console.error('Storage quota exceeded or error saving data:', e);
+    }
   }
 };
