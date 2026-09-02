@@ -1,4 +1,4 @@
-// app.js - Full Interactive Logic: In-Dashboard Multi-Role Login, Excel Export, Data Sync, OMR & Seating
+// app.js - Full Interactive Logic: Right Header Login, Relocated Faculty Register, Excel Export, OMR & Seating
 var config = window.DataStore.get('sm_config', window.INITIAL_CONFIG);
 var students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
 var prizes = window.DataStore.get('sm_prizes', window.INITIAL_PRIZES);
@@ -17,7 +17,7 @@ window.dismissGreeting = function() {
 };
 
 window.navigateTab = function(tabId) {
-  var tabs = ['home', 'competitions', 'prizes', 'seerat-hub', 'model-papers', 'doc-lookup', 'results-public', 'feedback', 'faculty-register', 'printable', 'dashboard'];
+  var tabs = ['home', 'competitions', 'prizes', 'seerat-hub', 'model-papers', 'doc-lookup', 'results-public', 'feedback', 'printable', 'dashboard'];
   tabs.forEach(function(id) {
     var el = document.getElementById('tab-' + id);
     if (el) el.classList.add('hidden');
@@ -271,7 +271,7 @@ window.renderSeeratHubContent = function() {
 };
 
 // ----------------------------------------------------
-// AUTHENTICATION & MULTI-ROLE HANDLING
+// AUTHENTICATION & MULTI-ROLE MODAL / HEADER LOGIC
 // ----------------------------------------------------
 function saveSession(user, remember24h) {
   var expiry = new Date().getTime() + (remember24h ? 24 * 3600 * 1000 : 2 * 3600 * 1000);
@@ -307,49 +307,55 @@ function updateAuthUI() {
   var slot = document.getElementById('nav-auth-slot');
   if (!slot) return;
   if (session && session.user) {
-    slot.innerHTML = '<button onclick="navigateTab(\'dashboard\')" class="bg-amber-500 hover:bg-amber-400 text-emerald-950 px-3 py-1.5 rounded-lg font-bold shadow">' +
+    slot.innerHTML = '<button onclick="navigateTab(\'dashboard\')" class="bg-amber-500 hover:bg-amber-400 text-emerald-950 px-3.5 py-1.5 rounded-lg font-bold shadow">' +
       'Dashboard (' + session.user.name + ')' +
     '</button>';
   } else {
-    slot.innerHTML = '<button onclick="openModal(\'modal-auth\')" class="bg-emerald-950 text-amber-300 px-4 py-1.5 rounded-lg font-bold border border-amber-500/50 hover:bg-emerald-900 shadow">' +
-      '<i class="fa-solid fa-arrow-right-to-bracket mr-1"></i> Login' +
+    slot.innerHTML = '<button onclick="openModal(\'modal-auth\')" class="bg-emerald-950 text-amber-300 px-4 py-1.5 rounded-lg font-bold border border-amber-500/60 hover:bg-emerald-900 shadow">' +
+      '<i class="fa-solid fa-right-to-bracket mr-1.5 text-amber-400"></i> Central Portal Sign In' +
     '</button>';
   }
 }
 
-// In-Dashboard Role Tab Switcher
-window.selectDashboardLoginRole = function(role) {
+// Modal Role Selector
+window.setModalRoleHint = function(role) {
+  document.getElementById('modal-login-role-hint').value = role;
   ['student', 'faculty', 'admin', 'super'].forEach(function(r) {
-    var tabBtn = document.getElementById('tab-btn-' + r);
-    if (tabBtn) {
-      tabBtn.className = (r === role) ? 
-        'py-2 px-3 rounded-lg font-bold text-xs bg-emerald-950 text-amber-300 shadow' : 
-        'py-2 px-3 rounded-lg font-bold text-xs bg-slate-100 text-slate-600 hover:bg-slate-200';
-    }
+    var btn = document.getElementById('role-hint-' + r);
+    if (btn) btn.className = (r === role) ? 'flex-1 py-1.5 rounded-lg bg-white text-emerald-950 font-bold shadow-sm' : 'flex-1 py-1.5 rounded-lg text-slate-600 font-bold';
   });
 
-  var lbl = document.getElementById('dash-login-label-id');
-  var roleInput = document.getElementById('dash-login-role-type');
-  if (roleInput) roleInput.value = role;
+  var facRegisterToggle = document.getElementById('modal-faculty-reg-toggle');
+  var facRegForm = document.getElementById('modal-faculty-registration-pane');
+  var loginForm = document.getElementById('modal-login-form');
 
-  if (role === 'student') {
-    if (lbl) lbl.innerText = 'Mobile Number / Hall Ticket Number';
-  } else if (role === 'faculty') {
-    if (lbl) lbl.innerText = 'Registered Mobile Number / Faculty Email';
-  } else if (role === 'admin') {
-    if (lbl) lbl.innerText = 'Admin Username (Default: Admin1)';
+  if (role === 'faculty') {
+    if (facRegisterToggle) facRegisterToggle.classList.remove('hidden');
   } else {
-    if (lbl) lbl.innerText = 'Super Admin Username (Default: Admin)';
+    if (facRegisterToggle) facRegisterToggle.classList.add('hidden');
+    if (facRegForm) facRegForm.classList.add('hidden');
+    if (loginForm) loginForm.classList.remove('hidden');
+  }
+
+  var lbl = document.getElementById('modal-login-label-id');
+  if (lbl) {
+    if (role === 'student') lbl.innerText = 'Mobile Number / Hall Ticket ID';
+    else if (role === 'faculty') lbl.innerText = 'Faculty Mobile Number / Email';
+    else if (role === 'admin') lbl.innerText = 'Admin Username (e.g. Admin1)';
+    else lbl.innerText = 'Super Admin Username (e.g. Admin)';
   }
 };
 
-window.handleDashboardDirectLogin = function(e) {
-  e.preventDefault();
-  var role = document.getElementById('dash-login-role-type').value;
-  var id = document.getElementById('dash-login-id').value.trim();
-  var pwd = document.getElementById('dash-login-pwd').value.trim();
-
-  executeAuthentication(id, pwd, role);
+window.toggleFacultyModalRegistration = function(showReg) {
+  var loginForm = document.getElementById('modal-login-form');
+  var regForm = document.getElementById('modal-faculty-registration-pane');
+  if (showReg) {
+    loginForm.classList.add('hidden');
+    regForm.classList.remove('hidden');
+  } else {
+    regForm.classList.add('hidden');
+    loginForm.classList.remove('hidden');
+  }
 };
 
 window.handleUniversalLogin = function(e) {
@@ -382,7 +388,7 @@ function executeAuthentication(id, pwd, roleHint) {
   var fac = faculties.find(function(f) { return f.phone === id || f.email === id || f.id === id; });
   if (fac) {
     if (fac.status === 'Denied' || fac.status === 'Revoked') {
-      alert('Access Denied: Your faculty registration request has been denied or revoked by the Admin.');
+      alert('Access Denied: Your faculty registration request has been rejected or revoked by the Admin.');
       return;
     }
     if (fac.status === 'Pending') {
@@ -415,33 +421,24 @@ function executeAuthentication(id, pwd, roleHint) {
     }
   }
 
-  alert('Authentication Failed: Check credentials or register if you are a new applicant.');
+  alert('Authentication Failed: Check credentials or complete your enrollment registration.');
 }
-
-window.setModalRoleHint = function(role) {
-  document.getElementById('modal-login-role-hint').value = role;
-  ['student', 'faculty', 'super'].forEach(function(r) {
-    var btn = document.getElementById('role-hint-' + r);
-    if (btn) btn.className = (r === role) ? 'flex-1 py-1 rounded bg-white text-emerald-950 shadow-sm' : 'flex-1 py-1 rounded text-slate-600';
-  });
-};
 
 // ----------------------------------------------------
 // EXECUTIVE DASHBOARD REFRESHER & METRICS
 // ----------------------------------------------------
 function refreshDashboardState() {
   var isAuth = session && session.user;
-  var unauthCard = document.getElementById('dashboard-unauthenticated-card');
+  var unauthPrompt = document.getElementById('dashboard-unauth-prompt');
   var authContent = document.getElementById('dashboard-authenticated-content');
 
   if (!isAuth) {
-    if (unauthCard) unauthCard.classList.remove('hidden');
+    if (unauthPrompt) unauthPrompt.classList.remove('hidden');
     if (authContent) authContent.classList.add('hidden');
-    selectDashboardLoginRole('student');
     return;
   }
 
-  if (unauthCard) unauthCard.classList.add('hidden');
+  if (unauthPrompt) unauthPrompt.classList.add('hidden');
   if (authContent) authContent.classList.remove('hidden');
 
   var role = session.user.role;
@@ -452,7 +449,7 @@ function refreshDashboardState() {
   pill.className = 'text-[10px] font-black uppercase px-3 py-1 rounded-full ' +
     (role === 'super_admin' ? 'bg-red-100 text-red-700 border border-red-200' : role === 'admin' ? 'bg-amber-100 text-amber-800 border border-amber-200' : role === 'faculty' ? 'bg-purple-100 text-purple-800 border border-purple-200' : 'bg-emerald-100 text-emerald-800 border border-emerald-200');
 
-  // Update Executive KPI Statistics
+  // Update KPI Statistics
   document.getElementById('stat-total-students').innerText = students.length;
   document.getElementById('stat-present-count').innerText = students.filter(function(s) { return s.attendance === 'Present'; }).length;
   document.getElementById('stat-faculty-count').innerText = faculties.filter(function(f) { return f.status === 'Approved'; }).length;
@@ -647,8 +644,8 @@ window.handleFacultyRegister = function(e) {
   faculties.push(fac);
   window.DataStore.set('sm_faculties', faculties);
   alert('Registration Submitted Successfully!\nYour faculty profile is currently PENDING approval from Admin or Super Admin.');
-  document.getElementById('faculty-reg-form').reset();
-  window.navigateTab('home');
+  document.getElementById('modal-faculty-reg-form').reset();
+  toggleFacultyModalRegistration(false);
 };
 
 function renderFacultyDashboard() {
@@ -757,7 +754,7 @@ window.exportStudentsToExcel = function() {
 // 2. 1-CLICK FULL DATABASE BACKUP & RESTORE (MOBILE TO BROWSER SYNC)
 window.backupDatabaseToJSON = function() {
   var backupData = {
-    version: '3.5',
+    version: '4.0',
     exportDate: new Date().toISOString(),
     config: config,
     students: students,
@@ -1368,7 +1365,7 @@ window.generateParticipationCertificate = function(ticketNo) {
 
         <div class="w-24 h-24 rounded-full border-2 border-emerald-900 flex flex-col items-center justify-center p-1 text-center bg-emerald-50 shadow-inner">
           <i class="fa-solid fa-certificate text-amber-600 text-lg mb-0.5"></i>
-          <span class="text-[7px] font-black uppercase text-emerald-950 leading-tight">MADARSA AL HAMOOMEA</span>
+          <span class="text-[7px] font-black uppercase text-emerald-950 leading-tight">MADARSA AL HAMOOMI</span>
           <span class="text-[6px] text-amber-800 font-bold">OFFICIAL SEAL</span>
           <span class="text-[6px] text-slate-500 font-mono mt-0.5">Verified 2026</span>
         </div>
@@ -1431,7 +1428,7 @@ window.handleStudentRegister = function(e) {
   var attempt = attemptEl ? attemptEl.value : '1st Time (New Applicant)';
   
   var ticketNo = generateUniqueHallTicket(gender, category);
-  var appId = 'APP-HAMOOMEA-2026-' + (students.length + 1001);
+  var appId = 'APP-HAMOOMI-2026-' + (students.length + 1001);
 
   var hall = (gender === 'M') ? 'Hall A (Boys Wing)' : 'Hall B (Girls Wing)';
   var seat = hall + ' - Row ' + (Math.floor(students.length / 4) + 1) + ' (Desk #' + ((students.length % 50) + 1) + ')';
@@ -1507,7 +1504,7 @@ function buildHallTicketHTML(cand) {
 
         <div class="w-28 h-28 rounded-full border-2 border-emerald-900 flex flex-col items-center justify-center text-center p-1.5 bg-emerald-50/50 shadow-inner">
           <i class="fa-solid fa-certificate text-amber-600 text-sm mb-0.5"></i>
-          <span class="text-[8px] font-black uppercase text-emerald-950 leading-tight">MADARSA AL HAMOOMEA</span>
+          <span class="text-[8px] font-black uppercase text-emerald-950 leading-tight">MADARSA AL HAMOOMI</span>
           <span class="text-[7px] text-amber-800 font-bold">OFFICIAL SEAL</span>
           <span class="text-[7px] text-slate-500 font-mono mt-0.5">Verified & Valid</span>
         </div>
