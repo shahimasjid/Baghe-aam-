@@ -14,6 +14,7 @@
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col selection:bg-amber-600 selection:text-white">
 
+  <!-- Islamic Welcome Overlay -->
   <div id="greeting-overlay" class="fixed inset-0 splash-screen-bg z-[100] flex items-center justify-center p-4">
     <div class="max-w-xl w-full bg-white rounded-2xl shadow-2xl p-6 md:p-8 text-center islamic-border relative animate-fade-scale">
       <div class="w-16 h-16 md:w-20 md:h-20 mx-auto rounded-full bg-emerald-950 text-amber-400 flex items-center justify-center text-3xl md:text-4xl shadow border-2 border-amber-500 animate-float mb-3">
@@ -40,6 +41,7 @@
     </div>
   </div>
 
+  <!-- Topbar -->
   <div class="bg-indigo-950 text-white text-xs py-1.5 px-4 border-b border-indigo-900">
     <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
       <div class="flex items-center space-x-3 text-[11px]">
@@ -55,6 +57,7 @@
     </div>
   </div>
 
+  <!-- Header & Navigation -->
   <header class="bg-white border-b-2 border-amber-500 shadow-sm sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
       <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTab('home')">
@@ -72,7 +75,10 @@
 
       <nav class="flex flex-wrap items-center gap-1 text-xs font-bold text-slate-700">
         <button onclick="navigateTab('home')" class="px-3 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Home</button>
-        <button onclick="navigateTab('competitions')" class="px-3 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Enrollment</button>
+        <button onclick="navigateTab('competitions')" class="px-3 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Student Enrollment</button>
+        <button onclick="navigateTab('faculty-register')" class="px-3 py-1.5 bg-purple-50 text-purple-900 border border-purple-300 rounded hover:bg-purple-100 transition">
+          <i class="fa-solid fa-user-plus mr-1"></i> Faculty Register
+        </button>
         <button onclick="navigateTab('prizes')" class="px-3 py-1.5 bg-amber-100 text-amber-900 border border-amber-300 rounded hover:bg-amber-200 transition">
           <i class="fa-solid fa-trophy mr-1 text-amber-600"></i> 48 Winners & Prizes
         </button>
@@ -87,6 +93,7 @@
     </div>
   </header>
 
+  <!-- Hijri Ribbon -->
   <aside class="bg-emerald-900 text-emerald-100 text-xs py-2 px-4 shadow-inner">
     <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
       <div class="flex items-center space-x-2">
@@ -101,8 +108,10 @@
     </div>
   </aside>
 
+  <!-- Main Viewports -->
   <main class="flex-grow max-w-7xl mx-auto w-full p-4 md:p-6">
     
+    <!-- Tab: Home -->
     <section id="tab-home" class="space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
         
@@ -143,7 +152,6 @@
         </div>
 
         <div class="lg:col-span-3 space-y-6">
-          
           <div class="arabic-pattern text-white rounded-2xl shadow-md p-6 md:p-8 border-2 border-amber-500 relative overflow-hidden">
             <div class="absolute -right-8 -bottom-8 text-emerald-800/30 text-9xl pointer-events-none font-arabic">ﷺ</div>
             
@@ -178,6 +186,9 @@
                 <button onclick="navigateTab('competitions')" class="bg-amber-500 hover:bg-amber-400 text-emerald-950 font-black text-xs px-5 py-2.5 rounded-lg shadow transition">
                   Enroll Student Now
                 </button>
+                <button onclick="navigateTab('faculty-register')" class="bg-purple-900 hover:bg-purple-800 text-white font-bold text-xs px-4 py-2.5 rounded-lg border border-purple-400 transition">
+                  Register as Faculty
+                </button>
                 <button onclick="navigateTab('prizes')" class="bg-white/10 hover:bg-white/20 text-white font-bold text-xs px-4 py-2.5 rounded-lg border border-white/20 transition">
                   View 48 Prize Roster
                 </button>
@@ -202,15 +213,16 @@
                 <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-emerald-700 mt-0.5"></i> <span>Chief Guest Address by Janab Munavar Zama Sahab</span></li>
                 <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-emerald-700 mt-0.5"></i> <span>Participants Feedback & Reading Journey Reflections</span></li>
                 <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-emerald-700 mt-0.5"></i> <span>Grand Prize Distribution (48 Major Awards)</span></li>
-                <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-emerald-700 mt-0.5"></i> <span>Launch of Online Madarsa Al Hamoomea for Islamic & Arabic Studies</span></li>
+                <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-emerald-700 mt-0.5"></i> <span>Launch of Online Madarsa Al Hamoomea</span></li>
               </ul>
             </div>
           </div>
-
         </div>
+
       </div>
     </section>
 
+    <!-- Tab: Student Registration -->
     <section id="tab-competitions" class="hidden space-y-6">
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 max-w-3xl mx-auto">
         <div class="border-b pb-3">
@@ -246,12 +258,12 @@
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <div>
                 <select id="reg-id-type" class="w-full border rounded p-2 text-xs font-semibold focus:ring-2 focus:ring-emerald-800 outline-none">
-                  <option value="Aadhaar Card">Aadhaar Card</option>
-                  <option value="PAN Card">PAN Card</option>
+                  <option value="Government ID">Government Identity Card</option>
+                  <option value="Student ID">College / Student ID</option>
                 </select>
               </div>
               <div class="sm:col-span-2">
-                <input type="text" id="reg-id-number" required placeholder="Enter Exact Aadhaar / PAN Number" class="w-full border rounded p-2 text-xs focus:ring-2 focus:ring-emerald-800 outline-none uppercase font-mono" />
+                <input type="text" id="reg-id-number" placeholder="Verified at Exam Gate" class="w-full border rounded p-2 text-xs focus:ring-2 focus:ring-emerald-800 outline-none uppercase font-mono" />
               </div>
             </div>
           </div>
@@ -266,7 +278,7 @@
             </select>
           </div>
           <div>
-            <label class="block font-bold text-slate-700 mb-1">Gender * (Determines Hall Ticket Series)</label>
+            <label class="block font-bold text-slate-700 mb-1">Gender *</label>
             <select id="reg-gender" required class="w-full border rounded p-2.5 focus:ring-2 focus:ring-emerald-800 outline-none font-semibold">
               <option value="">Select Gender</option>
               <option value="M">Male (Boys Series: SUN3-B-####)</option>
@@ -311,6 +323,53 @@
       </div>
     </section>
 
+    <!-- Tab: Faculty Registration -->
+    <section id="tab-faculty-register" class="hidden space-y-6">
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 max-w-xl mx-auto">
+        <div class="border-b pb-3">
+          <span class="text-[11px] font-bold text-purple-700 uppercase tracking-wider">Faculty & Invigilator Wing</span>
+          <h2 class="text-xl font-extrabold text-emerald-950 mt-0.5">Faculty Registration Portal</h2>
+          <p class="text-xs text-slate-500">All registered faculty profiles are submitted to the committee and require verification by Admin or Super Admin.</p>
+        </div>
+
+        <form onsubmit="handleFacultyRegister(event)" class="mt-5 space-y-3 text-xs">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Full Name (with Title) *</label>
+            <input type="text" id="fac-reg-name" required placeholder="e.g. Moulana / Mufti / Dr." class="w-full border rounded p-2.5 focus:ring-2 focus:ring-purple-800 outline-none" />
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Official / Personal Email *</label>
+            <input type="email" id="fac-reg-email" required placeholder="faculty@institution.org" class="w-full border rounded p-2.5 focus:ring-2 focus:ring-purple-800 outline-none" />
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Mobile / WhatsApp Contact Number *</label>
+            <input type="tel" id="fac-reg-phone" required placeholder="10-digit mobile number" class="w-full border rounded p-2.5 focus:ring-2 focus:ring-purple-800 outline-none" />
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Academic Department / Specialization *</label>
+            <select id="fac-reg-dept" required class="w-full border rounded p-2.5 focus:ring-2 focus:ring-purple-800 outline-none font-medium">
+              <option value="Islamic Jurisprudence & Hadith">Islamic Jurisprudence & Hadith</option>
+              <option value="Arabic Language & Grammar">Arabic Language & Grammar</option>
+              <option value="Seerat & Islamic History">Seerat & Islamic History</option>
+              <option value="Exam Controller & Invigilation Wing">Exam Controller & Invigilation Wing</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Preferred Exam Hall Assignment</label>
+            <select id="fac-reg-hall" class="w-full border rounded p-2.5 focus:ring-2 focus:ring-purple-800 outline-none font-medium">
+              <option value="Hall A (Boys Wing)">Hall A (Boys Wing)</option>
+              <option value="Hall B (Girls Wing)">Hall B (Girls Wing)</option>
+              <option value="Central Verification Counter">Central Verification Counter</option>
+            </select>
+          </div>
+          <button type="submit" class="w-full bg-purple-900 hover:bg-purple-800 text-white font-bold py-3 rounded-lg shadow transition mt-2 text-xs">
+            Submit Faculty Application for Admin Approval
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Tab: 48 Prizes Display -->
     <section id="tab-prizes" class="hidden space-y-6">
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
         <div class="flex flex-wrap justify-between items-center border-b pb-4 gap-3">
@@ -338,6 +397,7 @@
       </div>
     </section>
 
+    <!-- Tab: Seerat Knowledge Hub -->
     <section id="tab-seerat-hub" class="hidden space-y-6">
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 max-w-5xl mx-auto">
         <div class="flex flex-wrap justify-between items-center border-b pb-4 gap-3">
@@ -365,6 +425,7 @@
       </div>
     </section>
 
+    <!-- Tab: Model Papers -->
     <section id="tab-model-papers" class="hidden space-y-6">
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 max-w-4xl mx-auto">
         <div class="border-b pb-3 mb-4">
@@ -376,6 +437,7 @@
       </div>
     </section>
 
+    <!-- Tab: Admit Card & Dossier Lookup -->
     <section id="tab-doc-lookup" class="hidden space-y-6">
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 max-w-lg mx-auto">
         <div class="text-center mb-4 border-b pb-3">
@@ -413,21 +475,7 @@
       </div>
     </section>
 
-    <section id="tab-results-public" class="hidden space-y-6">
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 max-w-lg mx-auto text-center">
-        <h2 class="text-xl font-black text-emerald-950 font-cinzel">Seerat Competition Results</h2>
-        <p class="text-xs text-slate-500 mt-1 mb-4">Enter your Hall Ticket number to verify score, rank, and prize status.</p>
-        
-        <div class="flex gap-2">
-          <input type="text" id="public-ht-input" placeholder="e.g. SUN3-B-INT-1001" class="border rounded p-2.5 w-full text-xs font-mono uppercase outline-none focus:ring-2 focus:ring-emerald-800" />
-          <button onclick="handlePublicResultLookup()" class="bg-emerald-950 text-amber-300 font-bold px-5 rounded text-xs hover:bg-emerald-900 transition">
-            Search
-          </button>
-        </div>
-        <div id="public-result-display" class="mt-6 hidden text-left p-4 rounded-lg border"></div>
-      </div>
-    </section>
-
+    <!-- Tab: Helpdesk Feedback -->
     <section id="tab-feedback" class="hidden space-y-6">
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 max-w-lg mx-auto">
         <h2 class="text-lg font-bold text-emerald-950 mb-1">Student & Public Helpdesk</h2>
@@ -439,8 +487,12 @@
             <input type="text" id="fb-name" required class="w-full border rounded p-2" />
           </div>
           <div>
-            <label class="block font-bold text-slate-700 mb-1">Mobile Number *</label>
+            <label class="block font-bold text-slate-700 mb-1">Mobile / WhatsApp Number *</label>
             <input type="tel" id="fb-phone" required class="w-full border rounded p-2" />
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Email Address (Optional)</label>
+            <input type="email" id="fb-email" class="w-full border rounded p-2" />
           </div>
           <div>
             <label class="block font-bold text-slate-700 mb-1">Inquiry / Message *</label>
@@ -453,23 +505,25 @@
       </div>
     </section>
 
+    <!-- Tab: Printable Area (Certificates / Hall Tickets / Dossiers) -->
     <section id="tab-printable" class="hidden space-y-4">
       <div class="flex justify-between items-center max-w-4xl mx-auto no-print">
-        <button onclick="navigateTab('home')" class="text-xs text-slate-600 hover:text-slate-900 font-semibold">
-          <i class="fa-solid fa-arrow-left mr-1"></i> Return Home
+        <button onclick="navigateTab('dashboard')" class="text-xs text-slate-600 hover:text-slate-900 font-bold">
+          <i class="fa-solid fa-arrow-left mr-1"></i> Return to Dashboard
         </button>
         <div class="flex gap-2">
           <button onclick="window.print()" class="bg-slate-800 text-white text-xs font-semibold px-4 py-2 rounded shadow hover:bg-slate-700">
             <i class="fa-solid fa-print mr-1"></i> Print
           </button>
           <button onclick="downloadPDFDoc()" class="bg-emerald-900 text-amber-300 text-xs font-semibold px-4 py-2 rounded shadow hover:bg-emerald-800">
-            <i class="fa-solid fa-file-pdf mr-1"></i> PDF
+            <i class="fa-solid fa-file-pdf mr-1"></i> Download PDF
           </button>
         </div>
       </div>
       <div id="printable-document" class="bg-white p-6 md:p-8 max-w-4xl mx-auto shadow-md text-slate-900 islamic-border"></div>
     </section>
 
+    <!-- Tab: Unified Dashboard (Student, Faculty, Admin, Super Admin) -->
     <section id="tab-dashboard" class="hidden space-y-6">
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
         
@@ -487,78 +541,51 @@
             </div>
           </div>
           <div class="flex items-center gap-2">
-            <button onclick="openModal('modal-change-password')" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded font-semibold border">
-              Change Password
-            </button>
             <button onclick="handleSessionLogout()" class="text-xs bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded font-bold border border-red-200">
               Logout
             </button>
           </div>
         </div>
 
-        <div id="dash-section-student" class="hidden mt-6 space-y-6">
-          <div class="p-4 bg-gradient-to-r from-emerald-900 to-emerald-950 text-white rounded-xl border border-amber-400 flex flex-wrap justify-between items-center gap-4">
+        <!-- Student Profile Dashboard: 10 Advanced Features -->
+        <div id="dash-section-student" class="hidden mt-6 space-y-4">
+          <h3 class="text-sm font-black text-emerald-950 flex items-center gap-2">
+            <i class="fa-solid fa-graduation-cap text-emerald-800"></i> Student Portal Services & Utilities (10 Advanced Features)
+          </h3>
+          <div id="student-features-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </div>
+
+        <!-- Faculty Dashboard: Exam Hall Attendance Tracker -->
+        <div id="dash-section-faculty" class="hidden mt-6 space-y-6">
+          <div class="p-4 bg-purple-50 border border-purple-200 rounded-xl flex justify-between items-center">
             <div>
-              <span class="text-[10px] bg-amber-400 text-emerald-950 font-black px-2 py-0.5 rounded uppercase">Exam Window</span>
-              <h3 class="text-lg font-bold text-amber-300 mt-1">Reporting & Seating Verification</h3>
-              <p class="text-xs text-emerald-100 mt-0.5">Preparation Window: <strong id="student-prep-time" class="text-white"></strong></p>
-              <p class="text-xs text-emerald-200">Exam Window: <strong id="student-exam-time" class="text-white"></strong></p>
-            </div>
-            <div class="text-right text-xs">
-              <span class="block text-emerald-300">Your Assigned Desk:</span>
-              <span id="student-dash-seat-badge" class="font-mono text-base font-black text-amber-300"></span>
+              <h3 class="text-sm font-bold text-purple-950">Faculty Invigilation Panel</h3>
+              <p class="text-xs text-slate-600">Assigned Duty Wing: <strong id="faculty-assigned-hall"></strong></p>
             </div>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex flex-col justify-between hover:shadow transition">
-              <div>
-                <i class="fa-solid fa-id-badge text-emerald-800 text-2xl mb-2"></i>
-                <h3 class="text-sm font-bold text-emerald-950">Hall Ticket (Admit Card)</h3>
-                <p class="text-xs text-slate-600 mt-1">Official permit with unique serial, allotted seat, and official madarsa seal.</p>
-              </div>
-              <button onclick="showCurrentStudentDoc('ticket')" class="mt-4 bg-emerald-950 text-amber-300 font-bold py-2 rounded text-xs">
-                View Hall Ticket
-              </button>
-            </div>
-
-            <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl flex flex-col justify-between hover:shadow transition">
-              <div>
-                <i class="fa-solid fa-file-signature text-amber-700 text-2xl mb-2"></i>
-                <h3 class="text-sm font-bold text-amber-950">Registration Dossier</h3>
-                <p class="text-xs text-slate-600 mt-1">Formal enrollment application with DOB and government ID record.</p>
-              </div>
-              <button onclick="showCurrentStudentDoc('form')" class="mt-4 bg-amber-600 text-white font-bold py-2 rounded text-xs">
-                View Application
-              </button>
-            </div>
-
-            <div class="p-4 bg-blue-50 border border-blue-200 rounded-xl flex flex-col justify-between hover:shadow transition">
-              <div>
-                <i class="fa-solid fa-book-open text-blue-800 text-2xl mb-2"></i>
-                <h3 class="text-sm font-bold text-blue-950">Seerat Reference Hub</h3>
-                <p class="text-xs text-slate-600 mt-1">Study complete 500+ word biography & Prophetic lineage.</p>
-              </div>
-              <button onclick="navigateTab('seerat-hub')" class="mt-4 bg-blue-900 text-white font-bold py-2 rounded text-xs">
-                Open Seerat Hub
-              </button>
-            </div>
-
-            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl flex flex-col justify-between hover:shadow transition">
-              <div>
-                <i class="fa-solid fa-award text-slate-700 text-2xl mb-2"></i>
-                <h3 class="text-sm font-bold text-slate-800">Result Standing</h3>
-                <div id="student-dash-result-box" class="mt-2 text-xs font-semibold"></div>
-              </div>
-              <button onclick="navigateTab('prizes')" class="mt-4 bg-slate-800 text-white font-bold py-2 rounded text-xs">
-                View 48 Winners
-              </button>
+          <div>
+            <h4 class="text-xs font-bold text-slate-900 mb-2">Participant Attendance Tracker (Present / Absent / Not Interested)</h4>
+            <div class="overflow-x-auto border rounded-lg bg-white">
+              <table class="w-full text-xs text-left">
+                <thead class="bg-slate-100 uppercase text-[10px] text-slate-600 border-b">
+                  <tr>
+                    <th class="p-2.5">HT Number</th>
+                    <th class="p-2.5">Candidate Name</th>
+                    <th class="p-2.5">Seat Desk</th>
+                    <th class="p-2.5">Exam Day Attendance</th>
+                  </tr>
+                </thead>
+                <tbody id="faculty-attendance-tbody" class="divide-y"></tbody>
+              </table>
             </div>
           </div>
         </div>
 
+        <!-- Management Dashboard: Admin & Super Admin (15 Advanced Features) -->
         <div id="dash-section-management" class="hidden mt-6 space-y-6">
           
+          <!-- Super Admin Configuration Card -->
           <div id="super-admin-master-card" class="hidden p-5 bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-400 rounded-xl space-y-4">
             <h3 class="text-sm font-black text-amber-950 flex items-center gap-2">
               <i class="fa-solid fa-pen-to-square text-amber-700"></i> Master Portal, Social Handles, Schedule & Prayer Time Config
@@ -619,51 +646,86 @@
             </div>
           </div>
 
+          <!-- Interactive Dynamic Seating Matrix Generator (2x2, 3x3, 4x4, NxN) -->
           <div class="p-5 bg-emerald-50 border border-emerald-300 rounded-xl space-y-4">
             <div class="flex flex-wrap justify-between items-center gap-3">
               <div>
                 <h3 class="text-sm font-black text-emerald-950 flex items-center gap-2">
-                  <i class="fa-solid fa-plane-slash text-emerald-800"></i> Interactive 2x2 Aeroplane Seating Grid
+                  <i class="fa-solid fa-couch text-emerald-800"></i> Dynamic Seating Matrix Configurator
                 </h3>
-                <p class="text-[11px] text-slate-600">Configurable $2 \times 2$ grid (Left Pair - Aisle - Right Pair) with click-to-assign manual mode & auto-distribution.</p>
+                <p class="text-[11px] text-slate-600">Select mode: 2x2 (Aeroplane), 3x3, 4x4, or Custom NxN. Includes click-to-assign & auto-distribution.</p>
               </div>
               <div class="flex flex-wrap gap-2">
-                <button onclick="autoGenerateSeatingPlan()" class="bg-emerald-950 text-amber-300 font-bold px-3.5 py-1.5 rounded text-xs hover:bg-emerald-900 shadow">
-                  <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Auto-Arrange Matrix
+                <button onclick="changeSeatingLayoutType('2x2')" class="px-2.5 py-1 text-xs font-bold bg-white border rounded hover:bg-slate-50">2x2 Mode</button>
+                <button onclick="changeSeatingLayoutType('3x3')" class="px-2.5 py-1 text-xs font-bold bg-white border rounded hover:bg-slate-50">3x3 Mode</button>
+                <button onclick="changeSeatingLayoutType('4x4')" class="px-2.5 py-1 text-xs font-bold bg-white border rounded hover:bg-slate-50">4x4 Mode</button>
+                <button onclick="changeSeatingLayoutType('nxn')" class="px-2.5 py-1 text-xs font-bold bg-amber-500 text-emerald-950 rounded shadow">NxN Mode</button>
+                <button onclick="autoGenerateDynamicSeating()" class="bg-emerald-950 text-amber-300 font-bold px-3 py-1 rounded text-xs hover:bg-emerald-900 shadow">
+                  <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Auto-Assign
                 </button>
-                <button onclick="clearSeatingPlan()" class="bg-red-100 text-red-700 font-semibold px-3 py-1.5 rounded text-xs hover:bg-red-200">
-                  Reset Seats
+                <button onclick="clearSeatingPlan()" class="bg-red-100 text-red-700 font-semibold px-3 py-1 rounded text-xs hover:bg-red-200">
+                  Reset
                 </button>
               </div>
             </div>
 
-            <div class="flex flex-wrap items-center gap-4 bg-white p-3 rounded-lg border text-xs">
-              <div class="flex items-center gap-2">
-                <label class="font-bold text-slate-700">Rows per Hall:</label>
-                <input type="number" id="cfg-seating-rows" min="10" max="100" value="25" class="border rounded p-1 w-16 text-center" onchange="renderSeatingMatrixPreview()" />
-                <span class="text-slate-500 text-[10px]">(Total 100 Seats: 25 Rows × 4 Desks)</span>
-              </div>
-              <div class="flex items-center gap-4 ml-auto text-[11px]">
-                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-blue-100 border border-blue-400 inline-block"></span> Boy Occupied</span>
-                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-pink-100 border border-pink-400 inline-block"></span> Girl Occupied</span>
-                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-slate-50 border border-dashed border-slate-300 inline-block"></span> Open Seat</span>
-              </div>
+            <div class="flex items-center gap-3 text-xs bg-white p-2.5 rounded border">
+              <label class="font-bold">Total Rows per Hall:</label>
+              <input type="number" id="cfg-seating-rows" min="5" max="100" value="25" class="border rounded p-1 w-16 text-center" onchange="renderDynamicSeatingMatrix()" />
             </div>
 
-            <div id="seating-matrix-preview" class="p-3 bg-white rounded-lg border border-emerald-200 max-h-96 overflow-y-auto"></div>
+            <div id="dynamic-seating-matrix-preview" class="p-3 bg-white rounded-lg border max-h-80 overflow-y-auto"></div>
           </div>
 
-          <div>
-            <div class="flex flex-wrap justify-between items-center mb-3 gap-2">
+          <!-- Faculty Approval Queue -->
+          <div class="p-4 bg-white border rounded-xl space-y-3">
+            <h4 class="text-xs font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-user-shield text-purple-700"></i> Faculty Registration Approval Queue
+            </h4>
+            <div class="overflow-x-auto border rounded bg-white">
+              <table class="w-full text-xs text-left">
+                <thead class="bg-slate-100 uppercase text-[10px] text-slate-600 border-b">
+                  <tr>
+                    <th class="p-2.5">Faculty Name</th>
+                    <th class="p-2.5">Department</th>
+                    <th class="p-2.5">Phone</th>
+                    <th class="p-2.5">Status</th>
+                    <th class="p-2.5 text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="faculty-approval-tbody" class="divide-y"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Inbound Feedback Management Desk -->
+          <div class="p-4 bg-white border rounded-xl space-y-3">
+            <h4 class="text-xs font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-envelope-open-text text-teal-700"></i> Inbound Feedback Desk (Direct WhatsApp & Email Responder)
+            </h4>
+            <div class="overflow-x-auto border rounded bg-white">
+              <table class="w-full text-xs text-left">
+                <thead class="bg-slate-100 uppercase text-[10px] text-slate-600 border-b">
+                  <tr>
+                    <th class="p-2.5">From</th>
+                    <th class="p-2.5">Inquiry Message</th>
+                    <th class="p-2.5">Contact</th>
+                    <th class="p-2.5 text-center">Direct Reply</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-feedback-tbody" class="divide-y"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Candidate Master Directory & Prize Allotment -->
+          <div class="p-4 bg-white border rounded-xl space-y-3">
+            <div class="flex flex-wrap justify-between items-center gap-2">
               <div class="flex items-center gap-3">
-                <h3 class="text-sm font-bold text-slate-900">Enrolled Student Directory</h3>
+                <h4 class="text-xs font-bold text-slate-900">Enrolled Student Directory & Prize Allotment Control</h4>
                 <div class="flex items-center gap-1 bg-slate-100 p-0.5 rounded border text-[11px]">
-                  <button id="btn-roster-list" onclick="switchRosterLayout('list')" class="px-2 py-0.5 rounded font-bold bg-white text-emerald-950 shadow-sm">
-                    <i class="fa-solid fa-list mr-1"></i> List
-                  </button>
-                  <button id="btn-roster-grid" onclick="switchRosterLayout('grid')" class="px-2 py-0.5 rounded font-bold text-slate-600 hover:text-emerald-950">
-                    <i class="fa-solid fa-grip mr-1"></i> Grid
-                  </button>
+                  <button id="btn-roster-list" onclick="switchRosterLayout('list')" class="px-2 py-0.5 rounded font-bold bg-white text-emerald-950 shadow-sm">List</button>
+                  <button id="btn-roster-grid" onclick="switchRosterLayout('grid')" class="px-2 py-0.5 rounded font-bold text-slate-600 hover:text-emerald-950">Grid</button>
                 </div>
               </div>
               <div class="flex items-center gap-2">
@@ -681,10 +743,9 @@
                     <th class="p-2.5">HT Number</th>
                     <th class="p-2.5">Candidate</th>
                     <th class="p-2.5">Father</th>
-                    <th class="p-2.5">DOB</th>
-                    <th class="p-2.5">Category</th>
                     <th class="p-2.5">Seat</th>
-                    <th class="p-2.5">Prize Allotment</th>
+                    <th class="p-2.5">Prize Assigned</th>
+                    <th class="p-2.5">Attendance</th>
                     <th class="p-2.5 text-center">Manage</th>
                   </tr>
                 </thead>
@@ -702,6 +763,7 @@
 
   </main>
 
+  <!-- Universal Authentication Modal -->
   <div id="modal-auth" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
     <div class="bg-white rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl relative grid grid-cols-1 md:grid-cols-5">
       <button onclick="closeModal('modal-auth')" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 text-lg z-10">
@@ -719,7 +781,7 @@
         <div class="text-[10px] text-emerald-300/80 space-y-1 mt-6">
           <p>• Verified candidate result tracking</p>
           <p>• Instant admit cards with madarsa seal</p>
-          <p>• Flight-style 2x2 aeroplane desk seats</p>
+          <p>• Dynamic multi-layout desk seats</p>
         </div>
       </div>
 
@@ -730,12 +792,12 @@
         <div class="flex rounded-lg bg-slate-100 p-1 mb-4 text-[11px] font-bold">
           <button type="button" onclick="setLoginRoleHint('student')" id="role-hint-student" class="flex-1 py-1 rounded bg-white text-emerald-950 shadow-sm">Student</button>
           <button type="button" onclick="setLoginRoleHint('faculty')" id="role-hint-faculty" class="flex-1 py-1 rounded text-slate-600">Faculty</button>
-          <button type="button" onclick="setLoginRoleHint('super')" id="role-hint-super" class="flex-1 py-1 rounded text-slate-600">Super Admin</button>
+          <button type="button" onclick="setLoginRoleHint('super')" id="role-hint-super" class="flex-1 py-1 rounded text-slate-600">Admin</button>
         </div>
 
         <form onsubmit="handleUniversalLogin(event)" class="space-y-3 text-xs">
           <div>
-            <label class="block font-bold mb-1 text-slate-700" id="login-label-id">Username / Phone / Hall Ticket</label>
+            <label class="block font-bold mb-1 text-slate-700" id="login-label-id">Mobile Number / Hall Ticket ID</label>
             <input type="text" id="login-id" required class="w-full border rounded p-2 outline-none focus:ring-2 focus:ring-emerald-800" />
           </div>
           <div>
@@ -756,6 +818,7 @@
     </div>
   </div>
 
+  <!-- Candidate Edit & Prize Allotment Modal -->
   <div id="modal-edit-candidate" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
     <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl relative text-xs">
       <button onclick="closeModal('modal-edit-candidate')" class="absolute top-4 right-4 text-gray-400">
@@ -784,8 +847,8 @@
           </div>
         </div>
         <div>
-          <label class="block font-bold mb-1">Prize Item / Standing Allotment</label>
-          <select id="edit-cand-prize" class="w-full border rounded p-2 font-semibold">
+          <label class="block font-bold mb-1 text-amber-800">Prize Item / Award Allotment</label>
+          <select id="edit-cand-prize" class="w-full border rounded p-2 font-bold text-emerald-900">
             <option value="None">None (Participant)</option>
             <option value="1st Prize - HP Core i5 Laptop">1st Prize - HP Core i5 Laptop</option>
             <option value="2nd Prize - Samsung Galaxy Tablet">2nd Prize - Samsung Galaxy Tablet</option>
