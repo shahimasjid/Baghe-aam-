@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Online Madarsa Al Hamoomea & Shahi Masjid | 3rd Seerat-un-Nabi Portal</title>
+  <title>Shahi Masjid Bagh-e-Aam & Online Madarsa Al Hamoomea | Seerat Portal</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="animation.css" />
   <link rel="stylesheet" href="style.css" />
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col selection:bg-amber-600 selection:text-white">
+<body class="bg-[#fcfbf7] text-slate-800 font-sans min-h-screen flex flex-col selection:bg-amber-600 selection:text-white">
 
   <!-- Islamic Welcome Overlay -->
   <div id="greeting-overlay" class="fixed inset-0 splash-screen-bg z-[100] flex items-center justify-center p-4">
@@ -30,7 +30,7 @@
         <p class="text-xs font-serif italic text-emerald-950">"My Lord, increase me in knowledge." (Surah Ta-Ha 20:114)</p>
         <div class="h-px bg-amber-200 w-24 mx-auto my-2"></div>
         <p class="text-xs text-slate-700 leading-relaxed font-medium">
-          Seeking knowledge of the blessed life of the Prophet Muhammad ﷺ illuminates the heart and disciplines the character. Step forth with sincere intention, dedication, and high aspirations. May Allah grant you success and excellence in this life and the hereafter.
+          Seeking knowledge of the blessed life of the Prophet Muhammad ﷺ illuminates the heart and disciplines character. Step forth with sincere intention, dedication, and high aspirations.
         </p>
       </div>
 
@@ -49,10 +49,8 @@
         <span class="text-slate-400">|</span>
         <span class="text-emerald-200"><i class="fa-solid fa-phone text-amber-400 mr-1"></i> Helpline: <strong id="topbar-poc" class="text-white"></strong></span>
       </div>
-      <div class="flex items-center space-x-3 text-xs">
+      <div class="text-xs">
         <span class="text-slate-300 font-mono" id="ist-live-clock"></span>
-        <span class="text-slate-400">|</span>
-        <div id="social-links-ribbon" class="flex items-center space-x-3 text-sm"></div>
       </div>
     </div>
   </div>
@@ -66,10 +64,10 @@
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <h1 id="txt-header-masjid" class="font-cinzel font-black text-lg md:text-xl tracking-tight text-emerald-950 leading-tight">SHAHI MASJID BAGH-E-AAM</h1>
+            <h1 id="txt-header-masjid" class="font-cinzel font-black text-lg md:text-xl tracking-tight text-emerald-950 leading-tight"></h1>
             <span class="font-arabic text-sm text-emerald-700 font-bold">جامع شاهى</span>
           </div>
-          <p id="txt-header-sub" class="text-[11px] text-amber-800 tracking-tight font-bold">Online Madarsa Al Hamoomea for Islamic & Arabic Studies</p>
+          <p id="txt-header-sub" class="text-[11px] text-amber-800 tracking-tight font-bold"></p>
         </div>
       </div>
 
@@ -77,17 +75,17 @@
         <button onclick="navigateTab('home')" class="px-3 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Home</button>
         <button onclick="navigateTab('competitions')" class="px-3 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Student Enrollment</button>
         <button onclick="navigateTab('faculty-register')" class="px-3 py-1.5 bg-purple-50 text-purple-900 border border-purple-300 rounded hover:bg-purple-100 transition">
-          <i class="fa-solid fa-user-plus mr-1"></i> Faculty Register
+          <i class="fa-solid fa-user-tie mr-1"></i> Faculty Register
         </button>
-        <button onclick="navigateTab('prizes')" class="px-3 py-1.5 bg-amber-100 text-amber-900 border border-amber-300 rounded hover:bg-amber-200 transition">
-          <i class="fa-solid fa-trophy mr-1 text-amber-600"></i> 48 Winners & Prizes
+        <button onclick="navigateTab('prizes')" class="px-3 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">
+          <i class="fa-solid fa-trophy mr-1 text-amber-600"></i> Prize Gallery
         </button>
         <button onclick="navigateTab('seerat-hub')" class="px-3 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">
           <i class="fa-solid fa-book-open mr-1 text-emerald-800"></i> Seerat Hub (500+ Words)
         </button>
         <button onclick="navigateTab('model-papers')" class="px-3 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Papers</button>
         <button onclick="navigateTab('doc-lookup')" class="px-3 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Admit Card</button>
-        <button onclick="navigateTab('feedback')" class="px-3 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Desk</button>
+        <button onclick="navigateTab('feedback')" class="px-3 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Helpdesk</button>
         <span id="nav-auth-slot" class="ml-2"></span>
       </nav>
     </div>
@@ -98,7 +96,7 @@
     <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
       <div class="flex items-center space-x-2">
         <i class="fa-solid fa-moon text-amber-400"></i>
-        <span id="hijri-date-badge" class="font-bold text-white tracking-wide">19 Rabi' al-Awwal 1448 AH (India)</span>
+        <span class="font-bold text-white tracking-wide">19 Rabi' al-Awwal 1448 AH (India)</span>
         <span class="text-emerald-400">|</span>
         <span id="banner-exam-date-str" class="text-amber-200 font-semibold"></span>
       </div>
@@ -108,7 +106,7 @@
     </div>
   </aside>
 
-  <!-- Main Viewports -->
+  <!-- Main Views Container -->
   <main class="flex-grow max-w-7xl mx-auto w-full p-4 md:p-6">
     
     <!-- Tab: Home -->
@@ -130,9 +128,6 @@
               <button onclick="navigateTab('competitions')" class="w-full text-left p-3 hover:bg-emerald-50 hover:text-emerald-950 flex items-center justify-between">
                 <span>Postgraduate Category</span> <i class="fa-solid fa-chevron-right text-[10px] text-slate-400"></i>
               </button>
-              <button onclick="navigateTab('prizes')" class="w-full text-left p-3 bg-amber-50/50 hover:bg-amber-100 text-amber-950 flex items-center justify-between">
-                <span class="font-bold">48 Winners & Awards</span> <i class="fa-solid fa-trophy text-amber-600"></i>
-              </button>
               <button onclick="navigateTab('seerat-hub')" class="w-full text-left p-3 hover:bg-emerald-50 hover:text-emerald-950 flex items-center justify-between">
                 <span>Seerat Reference Hub</span> <i class="fa-solid fa-book text-emerald-800"></i>
               </button>
@@ -146,7 +141,7 @@
             <h3 class="font-bold text-emerald-950 text-xs flex items-center gap-2 mb-3 border-b pb-2">
               <i class="fa-solid fa-kaaba text-amber-600"></i> Daily Prayer Timetable
             </h3>
-            <div id="prayer-time-table" class="space-y-1.5 text-xs"></div>
+            <div id="prayer-time-table" class="space-y-1 text-xs"></div>
             <div id="txt-juma-announcement" class="mt-3 p-2 bg-amber-50 border-l-4 border-amber-600 text-[10px] text-amber-950 font-bold rounded"></div>
           </div>
         </div>
@@ -161,26 +156,8 @@
               <p id="txt-comp-subtitle" class="text-xs md:text-sm text-emerald-200 italic mt-1 font-serif"></p>
               <p id="txt-comp-desc" class="text-xs text-slate-200 mt-3 leading-relaxed"></p>
 
-              <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-black/30 backdrop-blur-sm rounded-xl border border-white/10 text-xs">
-                <div class="flex items-center space-x-2.5">
-                  <div class="w-8 h-8 rounded-full bg-amber-500 text-emerald-950 flex items-center justify-center font-bold">
-                    <i class="fa-solid fa-user-tie"></i>
-                  </div>
-                  <div>
-                    <span class="text-[10px] text-amber-300 block font-bold">Patron & President:</span>
-                    <strong class="text-white">Molana Hafiz Dr Ahsan Bin Mohammed Al Hamoomee Sahab</strong>
-                  </div>
-                </div>
-                <div class="flex items-center space-x-2.5">
-                  <div class="w-8 h-8 rounded-full bg-amber-500 text-emerald-950 flex items-center justify-center font-bold">
-                    <i class="fa-solid fa-microphone"></i>
-                  </div>
-                  <div>
-                    <span class="text-[10px] text-amber-300 block font-bold">Guest Speaker:</span>
-                    <strong class="text-white">Janab Munavar Zama Sahab</strong>
-                  </div>
-                </div>
-              </div>
+              <!-- Dynamic Dignitaries Box -->
+              <div id="dignitaries-display-box" class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
 
               <div class="mt-6 flex flex-wrap items-center gap-3">
                 <button onclick="navigateTab('competitions')" class="bg-amber-500 hover:bg-amber-400 text-emerald-950 font-black text-xs px-5 py-2.5 rounded-lg shadow transition">
@@ -188,9 +165,6 @@
                 </button>
                 <button onclick="navigateTab('faculty-register')" class="bg-purple-900 hover:bg-purple-800 text-white font-bold text-xs px-4 py-2.5 rounded-lg border border-purple-400 transition">
                   Register as Faculty
-                </button>
-                <button onclick="navigateTab('prizes')" class="bg-white/10 hover:bg-white/20 text-white font-bold text-xs px-4 py-2.5 rounded-lg border border-white/20 transition">
-                  View 48 Prize Roster
                 </button>
               </div>
             </div>
@@ -201,19 +175,18 @@
               <h3 class="font-bold text-emerald-950 text-xs flex items-center gap-2 mb-3 border-b pb-2">
                 <i class="fa-solid fa-bullhorn text-amber-600"></i> Official Notice Board
               </h3>
-              <div id="home-notices-container" class="space-y-2.5 max-h-56 overflow-y-auto pr-1 text-xs"></div>
+              <div id="home-notices-container" class="space-y-2 max-h-56 overflow-y-auto pr-1 text-xs"></div>
             </div>
 
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
               <h3 class="font-bold text-emerald-950 text-xs flex items-center gap-2 mb-3 border-b pb-2">
-                <i class="fa-solid fa-list-check text-emerald-800"></i> Official Program Schedule
+                <i class="fa-solid fa-list-check text-emerald-800"></i> Program Operations
               </h3>
               <ul class="space-y-2 text-xs text-slate-700">
-                <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-emerald-700 mt-0.5"></i> <span>Welcome Address & Opening Recitation</span></li>
-                <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-emerald-700 mt-0.5"></i> <span>Chief Guest Address by Janab Munavar Zama Sahab</span></li>
-                <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-emerald-700 mt-0.5"></i> <span>Participants Feedback & Reading Journey Reflections</span></li>
-                <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-emerald-700 mt-0.5"></i> <span>Grand Prize Distribution (48 Major Awards)</span></li>
-                <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-emerald-700 mt-0.5"></i> <span>Launch of Online Madarsa Al Hamoomea</span></li>
+                <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-emerald-700 mt-0.5"></i> <span>Candidate Seating Orientation & Hall Gate Pass Verification</span></li>
+                <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-emerald-700 mt-0.5"></i> <span>Faculty & Invigilator Live Attendance Synchronization</span></li>
+                <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-emerald-700 mt-0.5"></i> <span>Authentic Islamic Participation Certificate Issuance</span></li>
+                <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-emerald-700 mt-0.5"></i> <span>Merit Award Determinations and Dignitary Commendations</span></li>
               </ul>
             </div>
           </div>
@@ -226,51 +199,44 @@
     <section id="tab-competitions" class="hidden space-y-6">
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 max-w-3xl mx-auto">
         <div class="border-b pb-3">
-          <span class="text-[11px] font-bold text-amber-700 uppercase tracking-wider">Registration Desk</span>
-          <h2 class="text-xl font-extrabold text-emerald-950 mt-0.5">3rd Seerat-un-Nabi Enrollment Form</h2>
-          <p class="text-xs text-slate-500">Gender selection automatically generates unique roll codes (SUN3-B-#### for Boys / SUN3-G-#### for Girls).</p>
+          <span class="text-[11px] font-bold text-amber-700 uppercase tracking-wider">Candidate Enrollment Desk</span>
+          <h2 class="text-xl font-extrabold text-emerald-950 mt-0.5">3rd Seerat-un-Nabi Enrollment Application</h2>
+          <p class="text-xs text-slate-500">Upon enrollment, unique Hall Ticket serials (Boys SUN3-B-#### / Girls SUN3-G-####) and seats are allocated.</p>
         </div>
 
         <form id="competition-form" onsubmit="handleStudentRegister(event)" class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
           <div>
             <label class="block font-bold text-slate-700 mb-1">Student Full Name *</label>
-            <input type="text" id="reg-name" required placeholder="As per official ID" class="w-full border rounded p-2.5 focus:ring-2 focus:ring-emerald-800 outline-none" />
+            <input type="text" id="reg-name" required placeholder="As per official ID" class="w-full border rounded p-2.5 outline-none focus:ring-2 focus:ring-emerald-800" />
           </div>
           <div>
             <label class="block font-bold text-slate-700 mb-1">Father's Full Name *</label>
-            <input type="text" id="reg-father" required placeholder="Father's full name" class="w-full border rounded p-2.5 focus:ring-2 focus:ring-emerald-800 outline-none" />
+            <input type="text" id="reg-father" required placeholder="Father's full name" class="w-full border rounded p-2.5 outline-none focus:ring-2 focus:ring-emerald-800" />
           </div>
           <div>
             <label class="block font-bold text-slate-700 mb-1">Date of Birth (DOB) *</label>
-            <input type="date" id="reg-dob" required class="w-full border rounded p-2.5 focus:ring-2 focus:ring-emerald-800 outline-none" />
+            <input type="date" id="reg-dob" required class="w-full border rounded p-2.5 outline-none focus:ring-2 focus:ring-emerald-800" />
           </div>
           <div>
             <label class="block font-bold text-slate-700 mb-1">Mobile / WhatsApp Number *</label>
-            <input type="tel" id="reg-phone" required placeholder="10-digit mobile number" class="w-full border rounded p-2.5 focus:ring-2 focus:ring-emerald-800 outline-none" />
+            <input type="tel" id="reg-phone" required placeholder="10-digit mobile number" class="w-full border rounded p-2.5 outline-none focus:ring-2 focus:ring-emerald-800" />
           </div>
           <div class="md:col-span-2">
             <label class="block font-bold text-slate-700 mb-1">Email Address</label>
-            <input type="email" id="reg-email" placeholder="student@example.com" class="w-full border rounded p-2.5 focus:ring-2 focus:ring-emerald-800 outline-none" />
+            <input type="email" id="reg-email" placeholder="student@example.com" class="w-full border rounded p-2.5 outline-none focus:ring-2 focus:ring-emerald-800" />
           </div>
 
           <div class="p-3 bg-amber-50/70 rounded border border-amber-200 col-span-full">
-            <span class="block font-bold text-emerald-950 mb-1.5"><i class="fa-solid fa-id-card text-amber-600 mr-1"></i> Identity Verification (Govt ID) *</span>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              <div>
-                <select id="reg-id-type" class="w-full border rounded p-2 text-xs font-semibold focus:ring-2 focus:ring-emerald-800 outline-none">
-                  <option value="Government ID">Government Identity Card</option>
-                  <option value="Student ID">College / Student ID</option>
-                </select>
-              </div>
-              <div class="sm:col-span-2">
-                <input type="text" id="reg-id-number" placeholder="Verified at Exam Gate" class="w-full border rounded p-2 text-xs focus:ring-2 focus:ring-emerald-800 outline-none uppercase font-mono" />
-              </div>
-            </div>
+            <label class="block font-bold text-emerald-950 mb-1">Government / Student Identification Type *</label>
+            <select id="reg-id-type" class="w-full border rounded p-2 text-xs font-semibold outline-none focus:ring-2 focus:ring-emerald-800">
+              <option value="Government ID">Official Government Identity Proof</option>
+              <option value="College / School ID">College / Institution ID Card</option>
+            </select>
           </div>
 
           <div>
             <label class="block font-bold text-slate-700 mb-1">Academic Category *</label>
-            <select id="reg-category" required class="w-full border rounded p-2.5 focus:ring-2 focus:ring-emerald-800 outline-none font-medium">
+            <select id="reg-category" required class="w-full border rounded p-2.5 outline-none font-medium">
               <option value="">Select Level</option>
               <option value="INT">Intermediate (11th / 12th)</option>
               <option value="GRAD">Graduate (Bachelors / Degree)</option>
@@ -279,7 +245,7 @@
           </div>
           <div>
             <label class="block font-bold text-slate-700 mb-1">Gender *</label>
-            <select id="reg-gender" required class="w-full border rounded p-2.5 focus:ring-2 focus:ring-emerald-800 outline-none font-semibold">
+            <select id="reg-gender" required class="w-full border rounded p-2.5 outline-none font-semibold">
               <option value="">Select Gender</option>
               <option value="M">Male (Boys Series: SUN3-B-####)</option>
               <option value="F">Female (Girls Series: SUN3-G-####)</option>
@@ -295,7 +261,7 @@
               </label>
               <label class="flex items-center space-x-2 text-xs bg-white p-2 rounded border cursor-pointer">
                 <input type="radio" name="reg-attempt" value="2nd Time (Previous Participant)" class="text-emerald-800" />
-                <span>2nd Time (Participated Prior)</span>
+                <span>2nd Time (Prior Participant)</span>
               </label>
               <label class="flex items-center space-x-2 text-xs bg-white p-2 rounded border cursor-pointer">
                 <input type="radio" name="reg-attempt" value="3rd Time or More (Senior)" class="text-emerald-800" />
@@ -306,16 +272,16 @@
 
           <div class="col-span-full">
             <label class="block font-bold text-slate-700 mb-1">Residential Address *</label>
-            <textarea id="reg-address" required rows="2" placeholder="House/Street/Mandal/City" class="w-full border rounded p-2.5 focus:ring-2 focus:ring-emerald-800 outline-none"></textarea>
+            <textarea id="reg-address" required rows="2" placeholder="Street / Mandal / City" class="w-full border rounded p-2.5 outline-none"></textarea>
           </div>
 
           <div class="col-span-full">
-            <label class="block font-bold text-slate-700 mb-1">Set Password *</label>
-            <input type="password" id="reg-password" required minlength="4" placeholder="Minimum 4 characters" class="w-full border rounded p-2.5 focus:ring-2 focus:ring-emerald-800 outline-none" />
+            <label class="block font-bold text-slate-700 mb-1">Create Student Portal Password *</label>
+            <input type="password" id="reg-password" required minlength="4" placeholder="Minimum 4 characters" class="w-full border rounded p-2.5 outline-none" />
           </div>
 
           <div class="col-span-full pt-2">
-            <button type="submit" class="w-full bg-emerald-950 text-amber-300 font-bold py-3.5 rounded-lg hover:bg-emerald-900 transition text-sm shadow">
+            <button type="submit" class="w-full bg-emerald-950 hover:bg-emerald-900 text-amber-300 font-bold py-3.5 rounded-lg transition text-sm shadow">
               Submit Enrollment & Generate Official Documents
             </button>
           </div>
@@ -323,31 +289,35 @@
       </div>
     </section>
 
-    <!-- Tab: Faculty Registration -->
+    <!-- Tab: Faculty Registration (With Password) -->
     <section id="tab-faculty-register" class="hidden space-y-6">
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 max-w-xl mx-auto">
         <div class="border-b pb-3">
           <span class="text-[11px] font-bold text-purple-700 uppercase tracking-wider">Faculty & Invigilator Wing</span>
           <h2 class="text-xl font-extrabold text-emerald-950 mt-0.5">Faculty Registration Portal</h2>
-          <p class="text-xs text-slate-500">All registered faculty profiles are submitted to the committee and require verification by Admin or Super Admin.</p>
+          <p class="text-xs text-slate-500">Notice: Faculty accounts require official verification & approval from Admin or Super Admin before dashboard access is granted.</p>
         </div>
 
-        <form onsubmit="handleFacultyRegister(event)" class="mt-5 space-y-3 text-xs">
+        <form id="faculty-reg-form" onsubmit="handleFacultyRegister(event)" class="mt-5 space-y-3 text-xs">
           <div>
-            <label class="block font-bold text-slate-700 mb-1">Full Name (with Title) *</label>
-            <input type="text" id="fac-reg-name" required placeholder="e.g. Moulana / Mufti / Dr." class="w-full border rounded p-2.5 focus:ring-2 focus:ring-purple-800 outline-none" />
+            <label class="block font-bold text-slate-700 mb-1">Full Name (with Honorific) *</label>
+            <input type="text" id="fac-reg-name" required placeholder="e.g. Moulana / Mufti / Dr. / Prof." class="w-full border rounded p-2.5 outline-none focus:ring-2 focus:ring-purple-800" />
           </div>
           <div>
             <label class="block font-bold text-slate-700 mb-1">Official / Personal Email *</label>
-            <input type="email" id="fac-reg-email" required placeholder="faculty@institution.org" class="w-full border rounded p-2.5 focus:ring-2 focus:ring-purple-800 outline-none" />
+            <input type="email" id="fac-reg-email" required placeholder="faculty@institution.org" class="w-full border rounded p-2.5 outline-none focus:ring-2 focus:ring-purple-800" />
           </div>
           <div>
-            <label class="block font-bold text-slate-700 mb-1">Mobile / WhatsApp Contact Number *</label>
-            <input type="tel" id="fac-reg-phone" required placeholder="10-digit mobile number" class="w-full border rounded p-2.5 focus:ring-2 focus:ring-purple-800 outline-none" />
+            <label class="block font-bold text-slate-700 mb-1">Mobile / WhatsApp Number *</label>
+            <input type="tel" id="fac-reg-phone" required placeholder="10-digit mobile number" class="w-full border rounded p-2.5 outline-none focus:ring-2 focus:ring-purple-800" />
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Set Secure Faculty Password *</label>
+            <input type="password" id="fac-reg-pwd" required minlength="4" placeholder="Minimum 4 characters" class="w-full border rounded p-2.5 outline-none focus:ring-2 focus:ring-purple-800" />
           </div>
           <div>
             <label class="block font-bold text-slate-700 mb-1">Academic Department / Specialization *</label>
-            <select id="fac-reg-dept" required class="w-full border rounded p-2.5 focus:ring-2 focus:ring-purple-800 outline-none font-medium">
+            <select id="fac-reg-dept" required class="w-full border rounded p-2.5 outline-none font-medium">
               <option value="Islamic Jurisprudence & Hadith">Islamic Jurisprudence & Hadith</option>
               <option value="Arabic Language & Grammar">Arabic Language & Grammar</option>
               <option value="Seerat & Islamic History">Seerat & Islamic History</option>
@@ -356,7 +326,7 @@
           </div>
           <div>
             <label class="block font-bold text-slate-700 mb-1">Preferred Exam Hall Assignment</label>
-            <select id="fac-reg-hall" class="w-full border rounded p-2.5 focus:ring-2 focus:ring-purple-800 outline-none font-medium">
+            <select id="fac-reg-hall" class="w-full border rounded p-2.5 outline-none font-medium">
               <option value="Hall A (Boys Wing)">Hall A (Boys Wing)</option>
               <option value="Hall B (Girls Wing)">Hall B (Girls Wing)</option>
               <option value="Central Verification Counter">Central Verification Counter</option>
@@ -369,7 +339,7 @@
       </div>
     </section>
 
-    <!-- Tab: 48 Prizes Display -->
+    <!-- Tab: Prize Gallery -->
     <section id="tab-prizes" class="hidden space-y-6">
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
         <div class="flex flex-wrap justify-between items-center border-b pb-4 gap-3">
@@ -378,18 +348,14 @@
               <span class="w-8 h-8 rounded-full bg-amber-500 text-emerald-950 flex items-center justify-center font-bold">
                 <i class="fa-solid fa-trophy"></i>
               </span>
-              <h2 class="text-xl font-bold text-emerald-950 font-cinzel">Official 48 Prize Winners Gallery</h2>
+              <h2 class="text-xl font-bold text-emerald-950 font-cinzel">Official Prize Gallery & Merits</h2>
             </div>
-            <p class="text-xs text-slate-500 mt-1">Merit standings, Hall Ticket IDs, candidate names, and allotted awards.</p>
+            <p class="text-xs text-slate-500 mt-1">Real-time candidate standings and prizes assigned dynamically by the Examination Board.</p>
           </div>
 
           <div class="flex items-center gap-2 bg-slate-100 p-1 rounded-lg border text-xs">
-            <button id="btn-prize-grid" onclick="switchPrizeLayout('grid')" class="px-3 py-1 rounded font-bold bg-white text-emerald-950 shadow-sm">
-              <i class="fa-solid fa-grip mr-1"></i> Grid
-            </button>
-            <button id="btn-prize-list" onclick="switchPrizeLayout('list')" class="px-3 py-1 rounded font-bold text-slate-600 hover:text-emerald-950">
-              <i class="fa-solid fa-list mr-1"></i> List
-            </button>
+            <button onclick="switchPrizeLayout('grid')" class="px-3 py-1 rounded font-bold bg-white text-emerald-950 shadow-sm">Grid</button>
+            <button onclick="switchPrizeLayout('list')" class="px-3 py-1 rounded font-bold text-slate-600">List</button>
           </div>
         </div>
 
@@ -402,15 +368,9 @@
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 max-w-5xl mx-auto">
         <div class="flex flex-wrap justify-between items-center border-b pb-4 gap-3">
           <div>
-            <div class="flex items-center gap-2">
-              <span class="w-8 h-8 rounded-full bg-emerald-950 text-amber-400 flex items-center justify-center font-bold">
-                <i class="fa-solid fa-book-open"></i>
-              </span>
-              <h2 class="text-xl font-bold text-emerald-950 font-cinzel">Comprehensive Seerat-un-Nabi ﷺ Knowledge Hub</h2>
-            </div>
-            <p class="text-xs text-slate-500 mt-1">Complete authentic biography (500+ words), lineage, blessed family, and exam study modules.</p>
+            <h2 class="text-xl font-bold text-emerald-950 font-cinzel">Comprehensive Seerat-un-Nabi ﷺ Knowledge Hub</h2>
+            <p class="text-xs text-slate-500 mt-1">Complete authentic biography (500+ words), lineage, and study curriculum.</p>
           </div>
-
           <div class="flex items-center gap-2">
             <label class="text-xs font-bold text-slate-700">Language:</label>
             <select id="seerat-lang-select" onchange="renderSeeratHubContent()" class="border border-amber-500 rounded px-3 py-1.5 text-xs font-bold bg-amber-50 text-emerald-950 outline-none">
@@ -420,7 +380,6 @@
             </select>
           </div>
         </div>
-
         <div id="seerat-hub-container" class="mt-6 space-y-6"></div>
       </div>
     </section>
@@ -429,9 +388,8 @@
     <section id="tab-model-papers" class="hidden space-y-6">
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 max-w-4xl mx-auto">
         <div class="border-b pb-3 mb-4">
-          <span class="text-xs font-bold text-amber-700 uppercase">Preparation Materials</span>
-          <h2 class="text-xl font-bold text-emerald-950">Previous Year Exam Papers & Question Banks</h2>
-          <p class="text-xs text-slate-500">Review past examination patterns, syllabi, and model questions for the Seerat-un-Nabi contest.</p>
+          <span class="text-xs font-bold text-amber-700 uppercase">Exam Resources</span>
+          <h2 class="text-xl font-bold text-emerald-950">Previous Examination Model Question Papers</h2>
         </div>
         <div id="model-papers-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
       </div>
@@ -441,28 +399,25 @@
     <section id="tab-doc-lookup" class="hidden space-y-6">
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 max-w-lg mx-auto">
         <div class="text-center mb-4 border-b pb-3">
-          <div class="w-12 h-12 bg-amber-50 text-emerald-950 rounded-full mx-auto flex items-center justify-center text-xl font-bold border border-amber-500 mb-2">
-            <i class="fa-solid fa-file-contract"></i>
-          </div>
-          <h2 class="text-lg font-bold text-emerald-950">Download Hall Ticket / Application Form</h2>
-          <p class="text-xs text-slate-500 mt-1">Identity confirmation required to retrieve official paperwork.</p>
+          <h2 class="text-lg font-bold text-emerald-950">Candidate Document Verification Desk</h2>
+          <p class="text-xs text-slate-500 mt-1">Retrieve your official Admit Card (Hall Ticket) or Registration Dossier.</p>
         </div>
 
         <form onsubmit="handleDocLookup(event)" class="space-y-3 text-xs">
           <div>
-            <label class="block font-bold text-slate-700 mb-1">Registered Mobile Number *</label>
+            <label class="block font-bold mb-1">Registered Mobile Number *</label>
             <input type="tel" id="lookup-phone" required class="w-full border rounded p-2.5 outline-none" />
           </div>
           <div>
-            <label class="block font-bold text-slate-700 mb-1">Candidate Full Name *</label>
+            <label class="block font-bold mb-1">Candidate Full Name *</label>
             <input type="text" id="lookup-name" required class="w-full border rounded p-2.5 outline-none" />
           </div>
           <div>
-            <label class="block font-bold text-slate-700 mb-1">Father's Full Name *</label>
+            <label class="block font-bold mb-1">Father's Full Name *</label>
             <input type="text" id="lookup-father" required class="w-full border rounded p-2.5 outline-none" />
           </div>
           <div>
-            <label class="block font-bold text-slate-700 mb-1">Select Document *</label>
+            <label class="block font-bold mb-1">Document Required *</label>
             <select id="lookup-doc-type" class="w-full border rounded p-2.5 outline-none font-semibold">
               <option value="ticket">Official Examination Hall Ticket (with Assigned Seat & Seal)</option>
               <option value="form">Formal Registration Application Dossier</option>
@@ -475,48 +430,48 @@
       </div>
     </section>
 
-    <!-- Tab: Helpdesk Feedback -->
+    <!-- Tab: Public Feedback -->
     <section id="tab-feedback" class="hidden space-y-6">
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 max-w-lg mx-auto">
         <h2 class="text-lg font-bold text-emerald-950 mb-1">Student & Public Helpdesk</h2>
-        <p class="text-xs text-slate-500 mb-4">Send inquiries directly to the Mosque Committee. We reply promptly via WhatsApp or Email.</p>
+        <p class="text-xs text-slate-500 mb-4">Send queries to the committee. We reply directly via WhatsApp or Email.</p>
         
         <form onsubmit="handleFeedbackSubmit(event)" class="space-y-3 text-xs">
           <div>
-            <label class="block font-bold text-slate-700 mb-1">Full Name *</label>
+            <label class="block font-bold mb-1">Full Name *</label>
             <input type="text" id="fb-name" required class="w-full border rounded p-2" />
           </div>
           <div>
-            <label class="block font-bold text-slate-700 mb-1">Mobile / WhatsApp Number *</label>
+            <label class="block font-bold mb-1">Mobile / WhatsApp Number *</label>
             <input type="tel" id="fb-phone" required class="w-full border rounded p-2" />
           </div>
           <div>
-            <label class="block font-bold text-slate-700 mb-1">Email Address (Optional)</label>
+            <label class="block font-bold mb-1">Email Address (Optional)</label>
             <input type="email" id="fb-email" class="w-full border rounded p-2" />
           </div>
           <div>
-            <label class="block font-bold text-slate-700 mb-1">Inquiry / Message *</label>
+            <label class="block font-bold mb-1">Inquiry / Message *</label>
             <textarea id="fb-msg" rows="3" required class="w-full border rounded p-2"></textarea>
           </div>
           <button type="submit" class="w-full bg-emerald-950 text-amber-300 font-bold py-2.5 rounded hover:bg-emerald-900 transition">
-            Dispatch Query
+            Dispatch Inquiry
           </button>
         </form>
       </div>
     </section>
 
-    <!-- Tab: Printable Area (Certificates / Hall Tickets / Dossiers) -->
+    <!-- Tab: Printable Container -->
     <section id="tab-printable" class="hidden space-y-4">
       <div class="flex justify-between items-center max-w-4xl mx-auto no-print">
         <button onclick="navigateTab('dashboard')" class="text-xs text-slate-600 hover:text-slate-900 font-bold">
           <i class="fa-solid fa-arrow-left mr-1"></i> Return to Dashboard
         </button>
         <div class="flex gap-2">
-          <button onclick="window.print()" class="bg-slate-800 text-white text-xs font-semibold px-4 py-2 rounded shadow hover:bg-slate-700">
+          <button onclick="window.print()" class="bg-slate-800 text-white text-xs font-semibold px-4 py-2 rounded shadow">
             <i class="fa-solid fa-print mr-1"></i> Print
           </button>
-          <button onclick="downloadPDFDoc()" class="bg-emerald-900 text-amber-300 text-xs font-semibold px-4 py-2 rounded shadow hover:bg-emerald-800">
-            <i class="fa-solid fa-file-pdf mr-1"></i> Download PDF
+          <button onclick="downloadPDFDoc()" class="bg-emerald-900 text-amber-300 text-xs font-semibold px-4 py-2 rounded shadow">
+            <i class="fa-solid fa-file-pdf mr-1"></i> Save PDF
           </button>
         </div>
       </div>
@@ -540,17 +495,15 @@
               <p class="text-xs text-slate-500">24-Hour Verified Security Session</p>
             </div>
           </div>
-          <div class="flex items-center gap-2">
-            <button onclick="handleSessionLogout()" class="text-xs bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded font-bold border border-red-200">
-              Logout
-            </button>
-          </div>
+          <button onclick="handleSessionLogout()" class="text-xs bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded font-bold border border-red-200">
+            Logout
+          </button>
         </div>
 
         <!-- Student Profile Dashboard: 10 Advanced Features -->
         <div id="dash-section-student" class="hidden mt-6 space-y-4">
           <h3 class="text-sm font-black text-emerald-950 flex items-center gap-2">
-            <i class="fa-solid fa-graduation-cap text-emerald-800"></i> Student Portal Services & Utilities (10 Advanced Features)
+            <i class="fa-solid fa-graduation-cap text-emerald-800"></i> Student Portal Services (10 Advanced Utilities)
           </h3>
           <div id="student-features-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
         </div>
@@ -559,8 +512,8 @@
         <div id="dash-section-faculty" class="hidden mt-6 space-y-6">
           <div class="p-4 bg-purple-50 border border-purple-200 rounded-xl flex justify-between items-center">
             <div>
-              <h3 class="text-sm font-bold text-purple-950">Faculty Invigilation Panel</h3>
-              <p class="text-xs text-slate-600">Assigned Duty Wing: <strong id="faculty-assigned-hall"></strong></p>
+              <h3 class="text-sm font-bold text-purple-950">Faculty Invigilation Center</h3>
+              <p class="text-xs text-slate-600">Assigned Exam Duty Wing: <strong id="faculty-assigned-hall"></strong></p>
             </div>
           </div>
 
@@ -588,7 +541,7 @@
           <!-- Super Admin Configuration Card -->
           <div id="super-admin-master-card" class="hidden p-5 bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-400 rounded-xl space-y-4">
             <h3 class="text-sm font-black text-amber-950 flex items-center gap-2">
-              <i class="fa-solid fa-pen-to-square text-amber-700"></i> Master Portal, Social Handles, Schedule & Prayer Time Config
+              <i class="fa-solid fa-pen-to-square text-amber-700"></i> Master Configurations & Dignitary/Guest Settings
             </h3>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
@@ -617,27 +570,17 @@
                 <input type="text" id="cfg-masjid-contact" class="w-full border rounded p-2 bg-white" />
               </div>
               <div>
-                <label class="block font-bold mb-1">YouTube Channel URL</label>
-                <input type="text" id="cfg-yt" class="w-full border rounded p-2 bg-white" />
+                <label class="block font-bold mb-1">Patron & President Name</label>
+                <input type="text" id="cfg-dignitary-patron" class="w-full border rounded p-2 bg-white" />
               </div>
-              <div>
-                <label class="block font-bold mb-1">Facebook URL</label>
-                <input type="text" id="cfg-fb" class="w-full border rounded p-2 bg-white" />
-              </div>
-              <div>
-                <label class="block font-bold mb-1">WhatsApp Channel / Group URL</label>
-                <input type="text" id="cfg-wa" class="w-full border rounded p-2 bg-white" />
+              <div class="md:col-span-2">
+                <label class="block font-bold mb-1">Chief Guest Speaker Name (Leave blank if pending)</label>
+                <input type="text" id="cfg-dignitary-guest" placeholder="Enter guest speaker when confirmed" class="w-full border rounded p-2 bg-white" />
               </div>
               <div class="col-span-full">
                 <label class="block font-bold mb-1">Exam Venue</label>
                 <input type="text" id="cfg-venue" class="w-full border rounded p-2 bg-white" />
               </div>
-
-              <div class="col-span-full p-3 bg-white border rounded-lg">
-                <span class="block font-bold text-emerald-950 mb-2">Edit Daily Namaz & Azan Timings</span>
-                <div id="cfg-prayers-grid" class="grid grid-cols-1 sm:grid-cols-5 gap-2 text-[11px]"></div>
-              </div>
-
               <div class="col-span-full">
                 <button onclick="saveSuperAdminConfig()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-black py-2.5 rounded text-xs shadow transition">
                   Save All Configurations Globally
@@ -646,14 +589,14 @@
             </div>
           </div>
 
-          <!-- Interactive Dynamic Seating Matrix Generator (2x2, 3x3, 4x4, NxN) -->
+          <!-- Dynamic Seating Matrix Generator (2x2, 3x3, 4x4, NxN) -->
           <div class="p-5 bg-emerald-50 border border-emerald-300 rounded-xl space-y-4">
             <div class="flex flex-wrap justify-between items-center gap-3">
               <div>
                 <h3 class="text-sm font-black text-emerald-950 flex items-center gap-2">
                   <i class="fa-solid fa-couch text-emerald-800"></i> Dynamic Seating Matrix Configurator
                 </h3>
-                <p class="text-[11px] text-slate-600">Select mode: 2x2 (Aeroplane), 3x3, 4x4, or Custom NxN. Includes click-to-assign & auto-distribution.</p>
+                <p class="text-[11px] text-slate-600">Select mode: 2x2 (Aeroplane), 3x3, 4x4, or Custom NxN with click-to-assign & auto-distribution.</p>
               </div>
               <div class="flex flex-wrap gap-2">
                 <button onclick="changeSeatingLayoutType('2x2')" class="px-2.5 py-1 text-xs font-bold bg-white border rounded hover:bg-slate-50">2x2 Mode</button>
@@ -677,10 +620,10 @@
             <div id="dynamic-seating-matrix-preview" class="p-3 bg-white rounded-lg border max-h-80 overflow-y-auto"></div>
           </div>
 
-          <!-- Faculty Approval Queue -->
+          <!-- Faculty Approval, Denial & Revocation Queue -->
           <div class="p-4 bg-white border rounded-xl space-y-3">
             <h4 class="text-xs font-bold text-slate-900 flex items-center gap-2">
-              <i class="fa-solid fa-user-shield text-purple-700"></i> Faculty Registration Approval Queue
+              <i class="fa-solid fa-user-shield text-purple-700"></i> Faculty Registration Approval & Access Queue
             </h4>
             <div class="overflow-x-auto border rounded bg-white">
               <table class="w-full text-xs text-left">
@@ -688,9 +631,10 @@
                   <tr>
                     <th class="p-2.5">Faculty Name</th>
                     <th class="p-2.5">Department</th>
-                    <th class="p-2.5">Phone</th>
+                    <th class="p-2.5">Phone / Username</th>
+                    <th class="p-2.5">Password</th>
                     <th class="p-2.5">Status</th>
-                    <th class="p-2.5 text-center">Action</th>
+                    <th class="p-2.5 text-center">Manage</th>
                   </tr>
                 </thead>
                 <tbody id="faculty-approval-tbody" class="divide-y"></tbody>
@@ -718,7 +662,7 @@
             </div>
           </div>
 
-          <!-- Candidate Master Directory & Prize Allotment -->
+          <!-- Candidate Master Directory & Prize Allotment Control -->
           <div class="p-4 bg-white border rounded-xl space-y-3">
             <div class="flex flex-wrap justify-between items-center gap-2">
               <div class="flex items-center gap-3">
@@ -745,7 +689,7 @@
                     <th class="p-2.5">Father</th>
                     <th class="p-2.5">Seat</th>
                     <th class="p-2.5">Prize Assigned</th>
-                    <th class="p-2.5">Attendance</th>
+                    <th class="p-2.5">Status</th>
                     <th class="p-2.5 text-center">Manage</th>
                   </tr>
                 </thead>
@@ -776,12 +720,12 @@
             <i class="fa-solid fa-mosque"></i>
           </div>
           <h3 class="font-cinzel text-base font-bold text-amber-300">Shahi Masjid Central Portal</h3>
-          <p class="text-[11px] text-emerald-200 mt-1">3rd Seerat-un-Nabi Competition & Madarsa Al Hamoomea</p>
+          <p class="text-[11px] text-emerald-200 mt-1">Online Madarsa Al Hamoomea</p>
         </div>
         <div class="text-[10px] text-emerald-300/80 space-y-1 mt-6">
           <p>• Verified candidate result tracking</p>
           <p>• Instant admit cards with madarsa seal</p>
-          <p>• Dynamic multi-layout desk seats</p>
+          <p>• Multi-layout desk seats (2x2 to NxN)</p>
         </div>
       </div>
 
@@ -804,12 +748,6 @@
             <label class="block font-bold mb-1 text-slate-700">Password</label>
             <input type="password" id="login-pwd" required class="w-full border rounded p-2 outline-none focus:ring-2 focus:ring-emerald-800" />
           </div>
-          <div class="flex items-center justify-between text-[11px]">
-            <label class="flex items-center text-slate-600">
-              <input type="checkbox" id="login-save-24h" checked class="mr-1 text-emerald-900" />
-              Remember for 24 hours
-            </label>
-          </div>
           <button type="submit" class="w-full bg-emerald-950 text-amber-300 font-bold py-2.5 rounded hover:bg-emerald-900 transition shadow">
             Sign In to Dashboard
           </button>
@@ -818,9 +756,9 @@
     </div>
   </div>
 
-  <!-- Candidate Edit & Prize Allotment Modal -->
+  <!-- Candidate Edit, Password & Prize Allotment Modal -->
   <div id="modal-edit-candidate" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl relative text-xs">
+    <div class="bg-white rounded-xl max-w-lg w-full p-6 shadow-2xl relative text-xs max-h-[90vh] overflow-y-auto">
       <button onclick="closeModal('modal-edit-candidate')" class="absolute top-4 right-4 text-gray-400">
         <i class="fa-solid fa-xmark"></i>
       </button>
@@ -830,15 +768,25 @@
         <input type="hidden" id="edit-cand-index" />
         <div>
           <label class="block font-bold mb-1">Candidate Full Name</label>
-          <input type="text" id="edit-cand-name" class="w-full border rounded p-2" />
+          <input type="text" id="edit-cand-name" required class="w-full border rounded p-2" />
         </div>
         <div>
           <label class="block font-bold mb-1">Father's Full Name</label>
-          <input type="text" id="edit-cand-father" class="w-full border rounded p-2" />
+          <input type="text" id="edit-cand-father" required class="w-full border rounded p-2" />
         </div>
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block font-bold mb-1">Assigned Seating Desk</label>
+            <label class="block font-bold mb-1">Date of Birth</label>
+            <input type="date" id="edit-cand-dob" class="w-full border rounded p-2" />
+          </div>
+          <div>
+            <label class="block font-bold mb-1">Mobile / WhatsApp</label>
+            <input type="tel" id="edit-cand-phone" class="w-full border rounded p-2" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold mb-1">Assigned Desk / Seat</label>
             <input type="text" id="edit-cand-seat" class="w-full border rounded p-2" />
           </div>
           <div>
@@ -846,8 +794,26 @@
             <input type="number" id="edit-cand-marks" min="0" max="100" class="w-full border rounded p-2" />
           </div>
         </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold mb-1">Account / Registration Status</label>
+            <select id="edit-cand-status" class="w-full border rounded p-2">
+              <option value="Enrolled">Enrolled (Approved)</option>
+              <option value="Denied">Denied</option>
+              <option value="Blocked">Blocked (Access Revoked)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold mb-1">Exam Day Attendance</label>
+            <select id="edit-cand-attendance" class="w-full border rounded p-2">
+              <option value="Present">Present</option>
+              <option value="Absent">Absent</option>
+              <option value="Not Interested">Not Interested</option>
+            </select>
+          </div>
+        </div>
         <div>
-          <label class="block font-bold mb-1 text-amber-800">Prize Item / Award Allotment</label>
+          <label class="block font-bold mb-1 text-amber-800">Prize Item / Standing Allotment</label>
           <select id="edit-cand-prize" class="w-full border rounded p-2 font-bold text-emerald-900">
             <option value="None">None (Participant)</option>
             <option value="1st Prize - HP Core i5 Laptop">1st Prize - HP Core i5 Laptop</option>
@@ -858,21 +824,12 @@
           </select>
         </div>
         <div>
-          <label class="block font-bold mb-1">Candidate Status</label>
-          <select id="edit-cand-status" class="w-full border rounded p-2">
-            <option value="Enrolled">Enrolled (Active)</option>
-            <option value="Verified">Verified (Genuine)</option>
-            <option value="Blocked">Blocked (Duplicate / Audit Issue)</option>
-            <option value="Prize Winner">Prize Winner (Top 48)</option>
-          </select>
-        </div>
-        <div>
-          <label class="block font-bold mb-1">Reset Password</label>
-          <input type="text" id="edit-cand-newpwd" placeholder="Leave empty to retain current" class="w-full border rounded p-2" />
+          <label class="block font-bold mb-1">Reset / Modify Student Password</label>
+          <input type="text" id="edit-cand-pwd" placeholder="Enter new password" class="w-full border rounded p-2 font-mono" />
         </div>
         <div class="flex gap-2 pt-2">
           <button type="submit" class="flex-1 bg-emerald-950 text-white font-bold py-2 rounded">
-            Save Modifications
+            Save Candidate Modifications
           </button>
         </div>
       </form>
