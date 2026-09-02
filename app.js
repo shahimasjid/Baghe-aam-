@@ -1,4 +1,4 @@
-// app.js - Full functional engine compatible with direct script loading
+// app.js - Aeroplane 2x2 Seating, Gender Auto-ID, Seerat Hub & Stamp Layout
 var config = window.DataStore.get('sm_config', window.INITIAL_CONFIG);
 var students = window.DataStore.get('sm_students', []);
 var notices = window.DataStore.get('sm_notices', window.INITIAL_NOTICES);
@@ -6,13 +6,12 @@ var papers = window.DataStore.get('sm_papers', window.INITIAL_PAPERS);
 var feedbacks = window.DataStore.get('sm_feedbacks', []);
 var session = getPersistentSession();
 
-// Attach handlers to window
 window.dismissGreeting = function() {
   document.getElementById('greeting-overlay').classList.add('hidden');
 };
 
 window.navigateTab = function(tabId) {
-  var tabs = ['home', 'competitions', 'model-papers', 'doc-lookup', 'results-public', 'feedback', 'printable', 'dashboard'];
+  var tabs = ['home', 'competitions', 'seerat-hub', 'model-papers', 'doc-lookup', 'results-public', 'feedback', 'printable', 'dashboard'];
   tabs.forEach(function(id) {
     var el = document.getElementById('tab-' + id);
     if (el) el.classList.add('hidden');
@@ -20,27 +19,24 @@ window.navigateTab = function(tabId) {
   var target = document.getElementById('tab-' + tabId);
   if (target) target.classList.remove('hidden');
   window.scrollTo(0, 0);
+
+  if (tabId === 'seerat-hub') renderSeeratHubContent();
 };
 
 window.openModal = function(id) {
   var el = document.getElementById(id);
-  if (el) {
-    el.classList.remove('hidden');
-    el.classList.add('flex');
-  }
+  if (el) { el.classList.remove('hidden'); el.classList.add('flex'); }
 };
 
 window.closeModal = function(id) {
   var el = document.getElementById(id);
-  if (el) {
-    el.classList.add('hidden');
-    el.classList.remove('flex');
-  }
+  if (el) { el.classList.add('hidden'); el.classList.remove('flex'); }
 };
 
 window.addEventListener('DOMContentLoaded', function() {
   startLiveClock();
   renderPrayerTimes();
+  renderSocialRibbon();
   renderNotices();
   renderModelPapers();
   syncConfigUI();
@@ -58,6 +54,15 @@ function startLiveClock() {
   };
   update();
   setInterval(update, 1000);
+}
+
+function renderSocialRibbon() {
+  var container = document.getElementById('social-links-ribbon');
+  if (!container) return;
+  container.innerHTML = '<a href="' + (config.youtube || '#') + '" target="_blank" class="hover:text-amber-400" title="YouTube"><i class="fa-brands fa-youtube"></i></a>' +
+    '<a href="' + (config.facebook || '#') + '" target="_blank" class="hover:text-amber-400" title="Facebook"><i class="fa-brands fa-facebook"></i></a>' +
+    '<a href="' + (config.instagram || '#') + '" target="_blank" class="hover:text-amber-400" title="Instagram"><i class="fa-brands fa-instagram"></i></a>' +
+    '<a href="' + (config.whatsappChannel || '#') + '" target="_blank" class="hover:text-amber-400 text-emerald-300" title="WhatsApp Channel"><i class="fa-brands fa-whatsapp"></i></a>';
 }
 
 function syncConfigUI() {
@@ -87,6 +92,9 @@ function syncConfigUI() {
   setVal('cfg-poc', config.pocContact);
   setVal('cfg-masjid-contact', config.masjidContact);
   setVal('cfg-venue', config.examVenue);
+  setVal('cfg-yt', config.youtube);
+  setVal('cfg-fb', config.facebook);
+  setVal('cfg-wa', config.whatsappChannel);
   renderPrayerConfigGrid();
 }
 
@@ -157,9 +165,323 @@ window.addNewModelPaper = function() {
   papers.unshift({ id: Date.now(), title: title, year: year || '2026', url: url });
   window.DataStore.set('sm_papers', papers);
   renderModelPapers();
-  alert('Model paper uploaded.');
+  alert('Model paper published.');
 };
 
+// TRILINGUAL SEERAT HUB RENDERER
+window.renderSeeratHubContent = function() {
+  var lang = document.getElementById('seerat-lang-select').value || 'en';
+  var data = window.SEERAT_KNOWLEDGE_BASE[lang] || window.SEERAT_KNOWLEDGE_BASE['en'];
+  var container = document.getElementById('seerat-hub-container');
+  if (!container) return;
+
+  var isRtl = lang === 'ar' ? 'dir="rtl" text-right font-arabic' : '';
+
+  var faqsHtml = data.faqs.map(function(f) {
+    return '<div class="p-3 bg-slate-50 border rounded-lg">' +
+      '<p class="font-bold text-emerald-950 text-xs">' + f.q + '</p>' +
+      '<p class="text-xs text-slate-700 mt-1 leading-relaxed">' + f.a + '</p>' +
+    '</div>';
+  }).join('');
+
+  container.innerHTML = '<div class="' + isRtl + ' space-y-6">' +
+    '<div class="p-5 bg-gradient-to-br from-amber-50 to-emerald-50 rounded-xl border border-amber-300 space-y-3">' +
+      '<h3 class="text-base font-bold text-emerald-950 flex items-center gap-2">' +
+        '<i class="fa-solid fa-tree text-amber-600"></i> ' + data.lineageTitle +
+      '</h3>' +
+      '<div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">' +
+        '<p><strong>Father:</strong> ' + data.father + '</p>' +
+        '<p><strong>Mother:</strong> ' + data.mother + '</p>' +
+        '<p><strong>Grandfather:</strong> ' + data.grandfather + '</p>' +
+        '<p><strong>Protector Uncle:</strong> ' + data.uncle + '</p>' +
+        '<p class="md:col-span-2"><strong>Blessed Birth:</strong> ' + data.birth + '</p>' +
+        '<p class="md:col-span-2"><strong>Ummahat-ul-Momineen (Wives):</strong> ' + data.wives + '</p>' +
+        '<p class="md:col-span-2"><strong>Blessed Sons:</strong> ' + data.sons + '</p>' +
+        '<p class="md:col-span-2"><strong>Blessed Daughters:</strong> ' + data.daughters + '</p>' +
+      '</div>' +
+    '</div>' +
+
+    '<div>' +
+      '<h3 class="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">' +
+        '<i class="fa-solid fa-clipboard-question text-emerald-800"></i> Exam Syllabus & Frequently Asked Questions' +
+      '</h3>' +
+      '<div class="space-y-2.5">' + faqsHtml + '</div>' +
+    '</div>' +
+  '</div>';
+};
+
+// MULTI-FIELD DUPLICATE DETECTION & GENDER ROLL GENERATION
+function generateUniqueHallTicket(gender, category) {
+  var prefix = (gender === 'M') ? 'SUN3-B-' : 'SUN3-G-';
+  var categoryCode = category.toUpperCase();
+  var startNumber = (gender === 'M') ? 1000 : 2000;
+
+  var candidateList = students.filter(function(s) {
+    return s.gender === gender && s.category === category;
+  });
+
+  var nextSeq = startNumber + candidateList.length + 1;
+  var candidateHT = prefix + categoryCode + '-' + nextSeq;
+
+  // Collision Verification Loop
+  while (students.some(function(s) { return s.ticketNo === candidateHT; })) {
+    nextSeq++;
+    candidateHT = prefix + categoryCode + '-' + nextSeq;
+  }
+
+  return candidateHT;
+}
+
+window.handleStudentRegister = function(e) {
+  e.preventDefault();
+  var name = document.getElementById('reg-name').value.trim();
+  var father = document.getElementById('reg-father').value.trim();
+  var dob = document.getElementById('reg-dob').value;
+  var phone = document.getElementById('reg-phone').value.trim();
+  var idNumber = document.getElementById('reg-id-number').value.trim().toUpperCase();
+  var category = document.getElementById('reg-category').value;
+  var gender = document.getElementById('reg-gender').value;
+
+  // Duplicate Check 1: DOB + Govt ID
+  var duplicateId = students.some(function(s) {
+    return s.dob === dob && s.idNumber === idNumber;
+  });
+
+  // Duplicate Check 2: Same Name + Father Name + Phone
+  var duplicateBio = students.some(function(s) {
+    return s.phone === phone && s.name.toLowerCase() === name.toLowerCase() && s.father.toLowerCase() === father.toLowerCase();
+  });
+
+  if (duplicateId || duplicateBio) {
+    alert('Duplicate Registration Error: A candidate with this ID number, Date of Birth, or matching Guardian contact already exists in our records.');
+    return;
+  }
+
+  var attemptEl = document.querySelector('input[name="reg-attempt"]:checked');
+  var attempt = attemptEl ? attemptEl.value : '1st Time (New Applicant)';
+  
+  var ticketNo = generateUniqueHallTicket(gender, category);
+  var appId = 'APP-HAMOOMEA-2026-' + (students.length + 1001);
+
+  var hall = (gender === 'M') ? 'Hall A (Boys Wing)' : 'Hall B (Girls Wing)';
+  var seat = hall + ' - Row ' + (Math.floor(students.length / 4) + 1) + ' (Desk #' + ((students.length % 50) + 1) + ')';
+
+  var cand = {
+    appId: appId,
+    ticketNo: ticketNo,
+    name: name,
+    father: father,
+    dob: dob,
+    phone: phone,
+    email: document.getElementById('reg-email').value.trim() || 'N/A',
+    idType: document.getElementById('reg-id-type').value,
+    idNumber: idNumber,
+    category: category,
+    gender: gender,
+    attempt: attempt,
+    seat: seat,
+    address: document.getElementById('reg-address').value.trim(),
+    password: document.getElementById('reg-password').value,
+    marks: 0,
+    status: 'Enrolled',
+    registeredDate: new Date().toLocaleDateString('en-IN')
+  };
+
+  students.push(cand);
+  window.DataStore.set('sm_students', students);
+
+  saveSession({ id: cand.ticketNo, name: cand.name, role: 'student', data: cand }, true);
+  alert('Registration Successful!\nAssigned Hall Ticket: ' + ticketNo + '\nAllocated Desk: ' + seat);
+  displayHallTicket(cand);
+};
+
+// AEROPLANE-STYLE 2x2 SEATING MATRIX
+window.renderSeatingMatrixPreview = function() {
+  var container = document.getElementById('seating-matrix-preview');
+  if (!container) return;
+
+  var rowsInput = document.getElementById('cfg-seating-rows');
+  var totalRows = rowsInput ? parseInt(rowsInput.value) || 25 : 25;
+
+  var matrixHTML = '<div class="space-y-2">';
+  
+  for (var r = 1; r <= totalRows; r++) {
+    matrixHTML += '<div class="flex items-center justify-between gap-2 p-1.5 bg-slate-50 border rounded text-xs">' +
+      '<span class="w-12 font-bold font-mono text-slate-500">Row ' + r + '</span>' +
+      '<div class="flex items-center gap-1.5">' +
+        renderSingleSeat(r, 'A') +
+        renderSingleSeat(r, 'B') +
+      '</div>' +
+      '<div class="w-8 text-center text-[10px] font-bold text-amber-700 bg-amber-100 rounded">AISLE</div>' +
+      '<div class="flex items-center gap-1.5">' +
+        renderSingleSeat(r, 'C') +
+        renderSingleSeat(r, 'D') +
+      '</div>' +
+    '</div>';
+  }
+
+  matrixHTML += '</div>';
+  container.innerHTML = matrixHTML;
+};
+
+function renderSingleSeat(row, col) {
+  var seatCode = 'R' + row + '-' + col;
+  var occupied = students.find(function(s) {
+    return s.seat && s.seat.indexOf(seatCode) !== -1;
+  });
+
+  if (occupied) {
+    var isBoy = occupied.gender === 'M';
+    var colorClass = isBoy ? 'bg-blue-100 border-blue-400 text-blue-900' : 'bg-pink-100 border-pink-400 text-pink-900';
+    return '<button onclick="alert(\'Assigned to: ' + occupied.name + ' (' + occupied.ticketNo + ')\')" class="w-20 sm:w-24 p-1 rounded border text-[10px] truncate text-center font-semibold ' + colorClass + '" title="' + occupied.name + '">' +
+      seatCode + ' (' + (isBoy ? 'B' : 'G') + ')' +
+    '</button>';
+  }
+
+  return '<button onclick="manualAssignSeatPrompt(\'' + seatCode + '\')" class="w-20 sm:w-24 p-1 rounded border border-dashed border-slate-300 bg-white text-slate-400 text-[10px] text-center hover:border-emerald-700 hover:text-emerald-700">' +
+    seatCode + ' (Open)' +
+  '</button>';
+}
+
+window.manualAssignSeatPrompt = function(seatCode) {
+  var roll = prompt('Enter Hall Ticket Number to manually allocate to Seat ' + seatCode + ':');
+  if (!roll) return;
+  var cand = students.find(function(s) { return s.ticketNo === roll.trim().toUpperCase(); });
+  if (!cand) return alert('Candidate not found.');
+
+  var hall = (cand.gender === 'M') ? 'Hall A (Boys Wing)' : 'Hall B (Girls Wing)';
+  cand.seat = hall + ' - ' + seatCode;
+  window.DataStore.set('sm_students', students);
+  renderSeatingMatrixPreview();
+  renderManagementRoster();
+  alert('Candidate ' + cand.name + ' successfully mapped to seat ' + seatCode);
+};
+
+window.autoGenerateSeatingPlan = function() {
+  if (students.length === 0) return alert('No registered candidates to arrange.');
+  var rowsInput = document.getElementById('cfg-seating-rows');
+  var totalRows = rowsInput ? parseInt(rowsInput.value) || 25 : 25;
+  var cols = ['A', 'B', 'C', 'D'];
+
+  var mIdx = 0, fIdx = 0;
+  students.forEach(function(s) {
+    if (s.gender === 'M') {
+      var rM = Math.floor(mIdx / 4) + 1;
+      var cM = cols[mIdx % 4];
+      s.seat = 'Hall A (Boys Wing) - R' + rM + '-' + cM;
+      mIdx++;
+    } else {
+      var rF = Math.floor(fIdx / 4) + 1;
+      var cF = cols[fIdx % 4];
+      s.seat = 'Hall B (Girls Wing) - R' + rF + '-' + cF;
+      fIdx++;
+    }
+  });
+
+  window.DataStore.set('sm_students', students);
+  renderSeatingMatrixPreview();
+  renderManagementRoster();
+  alert('Automated 2x2 Aeroplane Seating Plan generated for all candidates.');
+};
+
+window.clearSeatingPlan = function() {
+  if (confirm('Reset seating plan for all students?')) {
+    students.forEach(function(s) { s.seat = 'Unassigned'; });
+    window.DataStore.set('sm_students', students);
+    renderSeatingMatrixPreview();
+    renderManagementRoster();
+  }
+};
+
+// OFFICIAL DOCUMENT GENERATOR WITH MADARSA STAMP SEAL
+window.displayHallTicket = function(cand) {
+  var area = document.getElementById('printable-document');
+  area.innerHTML = '<div class="border-b-2 border-emerald-900 pb-3 mb-4 flex justify-between items-center">' +
+    '<div>' +
+      '<h2 class="text-lg font-black text-emerald-950 font-cinzel">' + config.compTitle + '</h2>' +
+      '<p class="text-[11px] text-gray-600 font-bold uppercase">' + config.masjidTitle + '</p>' +
+      '<p class="text-[10px] text-emerald-800 font-semibold">' + config.masjidSub + '</p>' +
+    '</div>' +
+    '<div class="text-right">' +
+      '<span class="text-[10px] text-gray-500 font-bold uppercase block">Official Hall Ticket Number</span>' +
+      '<span class="text-lg font-mono font-black text-red-600">' + cand.ticketNo + '</span>' +
+    '</div>' +
+  '</div>' +
+
+  '<div class="grid grid-cols-12 gap-4">' +
+    '<div class="col-span-8 space-y-2 text-xs">' +
+      '<p><strong>Candidate Name:</strong> <span class="uppercase font-bold text-slate-900">' + cand.name + '</span></p>' +
+      '<p><strong>Father\'s Name:</strong> <span class="uppercase font-semibold">' + cand.father + '</span></p>' +
+      '<p><strong>Date of Birth:</strong> ' + (cand.dob || 'Verified') + ' | <strong>Gender:</strong> ' + (cand.gender === 'M' ? 'Male Candidate' : 'Female Candidate') + '</p>' +
+      '<p><strong>Academic Category:</strong> <span class="font-bold text-emerald-900">' + cand.category + '</span></p>' +
+      '<div class="p-2.5 bg-amber-50 border border-amber-300 rounded space-y-0.5">' +
+        '<p class="text-xs"><strong>Allocated Aeroplane Desk:</strong> <span class="font-mono text-sm font-black text-red-700">' + (cand.seat || 'Allocated at Gate') + '</span></p>' +
+        '<p class="text-[11px] text-emerald-900"><strong>Reporting & Prep:</strong> ' + config.prepTime + '</p>' +
+        '<p class="text-[11px] text-red-700"><strong>Exam Timing:</strong> ' + config.examTime + '</p>' +
+      '</div>' +
+      '<p><strong>Exam Date:</strong> ' + config.examDate + '</p>' +
+      '<p><strong>Venue:</strong> ' + config.examVenue + '</p>' +
+    '</div>' +
+
+    '<div class="col-span-4 flex flex-col items-center justify-between border-l pl-4 space-y-3">' +
+      '<div class="w-28 h-32 border-2 border-dashed border-slate-400 bg-slate-50 flex flex-col items-center justify-center text-center p-1 rounded text-[10px] text-slate-500">' +
+        '<i class="fa-regular fa-user text-xl mb-1 text-slate-400"></i>' +
+        '<span>Affix Passport Photo</span>' +
+      '</div>' +
+
+      '<div class="w-28 h-28 rounded-full border-2 border-emerald-900 flex flex-col items-center justify-center text-center p-1.5 bg-emerald-50/50 shadow-inner">' +
+        '<i class="fa-solid fa-certificate text-amber-600 text-sm mb-0.5"></i>' +
+        '<span class="text-[8px] font-black uppercase text-emerald-950 leading-tight">MADARSA AL HAMOOMEA</span>' +
+        '<span class="text-[7px] text-amber-800 font-bold">OFFICIAL SEAL</span>' +
+        '<span class="text-[7px] text-slate-500 font-mono mt-0.5">Verified & Valid</span>' +
+      '</div>' +
+    '</div>' +
+  '</div>' +
+
+  '<div class="mt-6 border-t pt-3 flex justify-between items-center text-[10px] text-slate-600">' +
+    '<span>* Present this Admit Card with your Government ID (' + cand.idType + ') at the entry hall.</span>' +
+    '<span class="font-bold text-emerald-950">Authorized Registrar Stamp & Signature</span>' +
+  '</div>';
+
+  window.navigateTab('printable');
+};
+
+window.displayApplicationForm = function(cand) {
+  var area = document.getElementById('printable-document');
+  area.innerHTML = '<div class="text-center border-b-2 border-amber-600 pb-3 mb-4">' +
+    '<p class="font-arabic text-xl font-bold text-emerald-950 leading-none">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ</p>' +
+    '<h2 class="text-base font-extrabold text-emerald-950 uppercase font-cinzel mt-1">' + config.masjidTitle + '</h2>' +
+    '<p class="text-[11px] font-semibold text-amber-700">' + config.masjidSub + '</p>' +
+    '<p class="text-[10px] text-slate-600 font-bold">' + config.compTitle + '</p>' +
+  '</div>' +
+  '<div class="grid grid-cols-2 gap-2 text-xs bg-slate-50 p-3 rounded border">' +
+    '<p><strong>Application ID:</strong> ' + cand.appId + '</p>' +
+    '<p><strong>Hall Ticket No:</strong> <span class="text-red-600 font-bold">' + cand.ticketNo + '</span></p>' +
+    '<p><strong>Candidate:</strong> ' + cand.name + '</p>' +
+    '<p><strong>Father:</strong> ' + cand.father + '</p>' +
+    '<p><strong>DOB:</strong> ' + cand.dob + '</p>' +
+    '<p><strong>Identity Proof:</strong> ' + cand.idType + ' (' + cand.idNumber + ')</p>' +
+    '<p><strong>Assigned Seat:</strong> ' + cand.seat + '</p>' +
+    '<p><strong>Status:</strong> ' + cand.status + '</p>' +
+  '</div>';
+  window.navigateTab('printable');
+};
+
+window.pullAllApplicationForms = function() {
+  if (students.length === 0) return alert('No applications registered.');
+  var area = document.getElementById('printable-document');
+  area.innerHTML = students.map(function(cand, idx) {
+    var pb = idx < students.length - 1 ? 'page-break' : '';
+    return '<div class="' + pb + ' p-4 mb-4 border-b">' +
+      '<h3 class="font-bold text-sm text-emerald-950">' + cand.name + ' (' + cand.ticketNo + ')</h3>' +
+      '<p class="text-xs">Father: ' + cand.father + ' | DOB: ' + cand.dob + ' | Govt ID: ' + cand.idNumber + '</p>' +
+      '<p class="text-xs font-bold text-amber-800">Seat Desk: ' + cand.seat + ' | Status: ' + cand.status + '</p>' +
+    '</div>';
+  }).join('');
+  window.navigateTab('printable');
+};
+
+// AUTH & SESSIONS
 function saveSession(user, remember24h) {
   var now = new Date().getTime();
   var expiry = remember24h ? now + (24 * 3600 * 1000) : now + (2 * 3600 * 1000);
@@ -230,7 +552,7 @@ window.handleUniversalLogin = function(e) {
   });
 
   if (found) {
-    if (found.status === 'Blocked') return alert('Your profile is blocked due to duplicate verification conflict. Contact committee.');
+    if (found.status === 'Blocked') return alert('Profile blocked due to verification audit. Contact mosque office.');
     saveSession({ id: found.ticketNo, name: found.name, role: 'student', data: found }, remember);
     window.closeModal('modal-auth');
     openDashboard();
@@ -239,99 +561,6 @@ window.handleUniversalLogin = function(e) {
 
   alert('Invalid credentials.');
 };
-
-window.handleStudentRegister = function(e) {
-  e.preventDefault();
-  var dob = document.getElementById('reg-dob').value;
-  var idNumber = document.getElementById('reg-id-number').value.trim().toUpperCase();
-
-  var isDuplicate = students.some(function(s) {
-    return s.dob === dob && s.idNumber === idNumber;
-  });
-
-  if (isDuplicate) {
-    alert('Duplicate Registration Error: A candidate with this Date of Birth and Government ID Number already exists.');
-    return;
-  }
-
-  var category = document.getElementById('reg-category').value;
-  var gender = document.getElementById('reg-gender').value;
-  var attemptEl = document.querySelector('input[name="reg-attempt"]:checked');
-  var attempt = attemptEl ? attemptEl.value : '1st Time (New Applicant)';
-  var seq = 1000 + students.length + 1;
-  var ticketNo = 'SUN-' + category + '-' + gender + '-' + seq;
-  var appId = 'APP-HAMOOMEA-2026-' + seq;
-
-  var hall = gender === 'M' ? 'Hall A (Boys)' : 'Hall B (Girls)';
-  var seat = hall + ' - Desk #' + ((students.length % 50) + 1);
-
-  var cand = {
-    appId: appId,
-    ticketNo: ticketNo,
-    name: document.getElementById('reg-name').value.trim(),
-    father: document.getElementById('reg-father').value.trim(),
-    dob: dob,
-    phone: document.getElementById('reg-phone').value.trim(),
-    email: document.getElementById('reg-email').value.trim() || 'N/A',
-    idType: document.getElementById('reg-id-type').value,
-    idNumber: idNumber,
-    category: category,
-    gender: gender,
-    attempt: attempt,
-    seat: seat,
-    address: document.getElementById('reg-address').value.trim(),
-    password: document.getElementById('reg-password').value,
-    marks: 0,
-    status: 'Enrolled',
-    registeredDate: new Date().toLocaleDateString('en-IN')
-  };
-
-  students.push(cand);
-  window.DataStore.set('sm_students', students);
-
-  saveSession({ id: cand.ticketNo, name: cand.name, role: 'student', data: cand }, true);
-  alert('Registration Complete!\nHall Ticket: ' + ticketNo + '\nAssigned Desk: ' + seat);
-  displayHallTicket(cand);
-};
-
-window.autoGenerateSeatingPlan = function() {
-  if (students.length === 0) return alert('No registered students to seat.');
-  var m = 1, f = 1;
-  students.forEach(function(s) {
-    if (s.gender === 'M') s.seat = 'Hall A (Boys) - Desk #' + (m++);
-    else s.seat = 'Hall B (Girls) - Desk #' + (f++);
-  });
-  window.DataStore.set('sm_students', students);
-  renderSeatingMatrixPreview();
-  renderManagementRoster();
-  alert('Seating plan matrix automatically created.');
-};
-
-window.clearSeatingPlan = function() {
-  if (confirm('Reset seating plan for all students?')) {
-    students.forEach(function(s) { s.seat = 'Unassigned'; });
-    window.DataStore.set('sm_students', students);
-    renderSeatingMatrixPreview();
-    renderManagementRoster();
-  }
-};
-
-function renderSeatingMatrixPreview() {
-  var container = document.getElementById('seating-matrix-preview');
-  if (!container) return;
-  if (students.length === 0) {
-    container.innerHTML = '<span class="text-gray-400 p-2 col-span-full">No candidates enrolled yet.</span>';
-    return;
-  }
-  container.innerHTML = students.map(function(s) {
-    var bg = s.gender === 'M' ? 'bg-blue-50 border-blue-200' : 'bg-pink-50 border-pink-200';
-    return '<div class="p-2 border rounded ' + bg + '">' +
-      '<span class="font-mono font-bold text-red-700 block">' + s.ticketNo + '</span>' +
-      '<span class="font-semibold text-slate-800 truncate block">' + s.name + '</span>' +
-      '<span class="text-[10px] font-bold text-emerald-800 block mt-1"><i class="fa-solid fa-chair mr-0.5"></i> ' + (s.seat || 'Unassigned') + '</span>' +
-    '</div>';
-  }).join('');
-}
 
 function openDashboard() {
   if (!session || !session.user) return window.openModal('modal-auth');
@@ -421,7 +650,7 @@ window.saveCandidateModifications = function(e) {
   window.closeModal('modal-edit-candidate');
   renderManagementRoster();
   renderSeatingMatrixPreview();
-  alert('Candidate modifications saved.');
+  alert('Candidate record updated.');
 };
 
 window.deleteCandidate = function(idx) {
@@ -441,6 +670,9 @@ window.saveSuperAdminConfig = function() {
   config.pocContact = document.getElementById('cfg-poc').value.trim();
   config.masjidContact = document.getElementById('cfg-masjid-contact').value.trim();
   config.examVenue = document.getElementById('cfg-venue').value.trim();
+  config.youtube = document.getElementById('cfg-yt').value.trim();
+  config.facebook = document.getElementById('cfg-fb').value.trim();
+  config.whatsappChannel = document.getElementById('cfg-wa').value.trim();
 
   config.prayers.forEach(function(p, idx) {
     p.adhan = document.getElementById('cfg-p-adhan-' + idx).value;
@@ -450,7 +682,8 @@ window.saveSuperAdminConfig = function() {
   window.DataStore.set('sm_config', config);
   syncConfigUI();
   renderPrayerTimes();
-  alert('Global timings, POC details, and prayer times updated successfully.');
+  renderSocialRibbon();
+  alert('Global settings, prayer times, and social links saved.');
 };
 
 window.showCurrentStudentDoc = function(type) {
@@ -470,93 +703,10 @@ window.handleDocLookup = function(e) {
     return s.phone === phone && s.name.trim().toLowerCase() === name && s.father.trim().toLowerCase() === father;
   });
 
-  if (!cand) return alert('Verification failed: Mobile, name, and father name did not match any record.');
+  if (!cand) return alert('Verification failed: Mobile, name, and father name did not match.');
 
   if (type === 'ticket') displayHallTicket(cand);
   else displayApplicationForm(cand);
-};
-
-window.displayHallTicket = function(cand) {
-  var area = document.getElementById('printable-document');
-  area.innerHTML = '<div class="border-b-2 border-emerald-900 pb-3 mb-4 flex justify-between items-center">' +
-    '<div>' +
-      '<h2 class="text-lg font-black text-emerald-950 font-cinzel">' + config.compTitle + '</h2>' +
-      '<p class="text-[11px] text-gray-600 font-bold uppercase">' + config.masjidTitle + '</p>' +
-      '<p class="text-[10px] text-emerald-800 font-semibold">' + config.masjidSub + '</p>' +
-    '</div>' +
-    '<div class="text-right">' +
-      '<span class="text-[10px] text-gray-500 font-bold uppercase block">Hall Ticket Number</span>' +
-      '<span class="text-lg font-mono font-black text-red-600">' + cand.ticketNo + '</span>' +
-    '</div>' +
-  '</div>' +
-  '<div class="grid grid-cols-12 gap-4">' +
-    '<div class="col-span-8 space-y-2 text-xs">' +
-      '<p><strong>Candidate Name:</strong> <span class="uppercase font-bold">' + cand.name + '</span></p>' +
-      '<p><strong>Father\'s Name:</strong> <span class="uppercase">' + cand.father + '</span></p>' +
-      '<p><strong>Date of Birth:</strong> ' + (cand.dob || 'Verified') + '</p>' +
-      '<p><strong>Category:</strong> <span class="font-bold text-emerald-900">' + cand.category + '</span> (' + (cand.gender === 'M' ? 'Male Candidate' : 'Female Candidate') + ')</p>' +
-      '<div class="p-2 bg-amber-50 border border-amber-300 rounded">' +
-        '<p><strong>Assigned Seating Desk:</strong> <span class="text-sm font-black text-red-700">' + (cand.seat || 'Allocated at Gate') + '</span></p>' +
-        '<p class="text-[11px] text-emerald-900"><strong>Reporting & Prep:</strong> ' + config.prepTime + '</p>' +
-        '<p class="text-[11px] text-red-700"><strong>Exam Timing:</strong> ' + config.examTime + '</p>' +
-      '</div>' +
-      '<p><strong>Exam Date:</strong> ' + config.examDate + '</p>' +
-      '<p><strong>Venue:</strong> ' + config.examVenue + '</p>' +
-    '</div>' +
-    '<div class="col-span-4 flex flex-col items-center justify-between border-l pl-4">' +
-      '<div class="w-28 h-32 border-2 border-dashed border-slate-400 bg-slate-50 flex flex-col items-center justify-center text-center p-1 rounded text-[10px] text-slate-500">' +
-        '<i class="fa-regular fa-user text-xl mb-1 text-slate-400"></i>' +
-        '<span>Affix Recent Passport Photo</span>' +
-      '</div>' +
-      '<div class="mt-2 text-center">' +
-        '<div id="ticket-qr" class="p-1 border bg-white inline-block"></div>' +
-        '<span class="block text-[8px] text-slate-400 uppercase mt-0.5">Invigilator Scan QR</span>' +
-      '</div>' +
-    '</div>' +
-  '</div>';
-
-  new QRCode(document.getElementById('ticket-qr'), {
-    text: 'VERIFY|HT:' + cand.ticketNo + '|NAME:' + cand.name + '|SEAT:' + cand.seat + '|DOB:' + cand.dob,
-    width: 80,
-    height: 80
-  });
-
-  window.navigateTab('printable');
-};
-
-window.displayApplicationForm = function(cand) {
-  var area = document.getElementById('printable-document');
-  area.innerHTML = '<div class="text-center border-b-2 border-amber-600 pb-3 mb-4">' +
-    '<p class="font-arabic text-xl font-bold text-emerald-950 leading-none">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ</p>' +
-    '<h2 class="text-base font-extrabold text-emerald-950 uppercase font-cinzel mt-1">' + config.masjidTitle + '</h2>' +
-    '<p class="text-[11px] font-semibold text-amber-700">' + config.masjidSub + '</p>' +
-    '<p class="text-[10px] text-slate-600 font-bold">' + config.compTitle + '</p>' +
-  '</div>' +
-  '<div class="grid grid-cols-2 gap-2 text-xs bg-slate-50 p-3 rounded border">' +
-    '<p><strong>Application ID:</strong> ' + cand.appId + '</p>' +
-    '<p><strong>Hall Ticket No:</strong> <span class="text-red-600 font-bold">' + cand.ticketNo + '</span></p>' +
-    '<p><strong>Candidate:</strong> ' + cand.name + '</p>' +
-    '<p><strong>Father:</strong> ' + cand.father + '</p>' +
-    '<p><strong>DOB:</strong> ' + cand.dob + '</p>' +
-    '<p><strong>Identity Proof:</strong> ' + cand.idType + ' (' + cand.idNumber + ')</p>' +
-    '<p><strong>Assigned Seat:</strong> ' + cand.seat + '</p>' +
-    '<p><strong>Status:</strong> ' + cand.status + '</p>' +
-  '</div>';
-  window.navigateTab('printable');
-};
-
-window.pullAllApplicationForms = function() {
-  if (students.length === 0) return alert('No applications registered.');
-  var area = document.getElementById('printable-document');
-  area.innerHTML = students.map(function(cand, idx) {
-    var pb = idx < students.length - 1 ? 'page-break' : '';
-    return '<div class="' + pb + ' p-4 mb-4 border-b">' +
-      '<h3 class="font-bold text-sm text-emerald-950">' + cand.name + ' (' + cand.ticketNo + ')</h3>' +
-      '<p class="text-xs">Father: ' + cand.father + ' | DOB: ' + cand.dob + ' | Govt ID: ' + cand.idNumber + '</p>' +
-      '<p class="text-xs font-bold text-amber-800">Seat Desk: ' + cand.seat + ' | Status: ' + cand.status + '</p>' +
-    '</div>';
-  }).join('');
-  window.navigateTab('printable');
 };
 
 window.handlePublicResultLookup = function() {
