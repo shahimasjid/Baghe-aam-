@@ -1,10 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --madarsa-deep: #042f24;
+  --madarsa-deep: #032b21;
   --madarsa-emerald: #064e3b;
   --madarsa-gold: #c59b27;
-  --madarsa-parchment: #fbfaf5;
+  --madarsa-parchment: #fcfbf7;
 }
 
 body {
@@ -18,14 +18,14 @@ body {
 .islamic-border {
   border: 3px double var(--madarsa-gold);
   outline: 1px solid var(--madarsa-emerald);
-  outline-offset: -5px;
+  outline-offset: -6px;
 }
 
 .arabic-pattern {
-  background-color: #042f24;
-  background-image: radial-gradient(#c59b27 0.75px, transparent 0.75px), radial-gradient(#064e3b 0.75px, #042f24 0.75px);
-  background-size: 30px 30px;
-  background-position: 0 0, 15px 15px;
+  background-color: #032b21;
+  background-image: radial-gradient(#c59b27 0.75px, transparent 0.75px), radial-gradient(#064e3b 0.75px, #032b21 0.75px);
+  background-size: 28px 28px;
+  background-position: 0 0, 14px 14px;
 }
 
 .page-break {
