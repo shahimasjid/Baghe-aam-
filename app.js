@@ -1,4 +1,4 @@
-// app.js - Full Interactive Logic: Right Header Login, Relocated Faculty Register, Excel Export, OMR & Seating
+// app.js - Full Interactive Logic: Theater Seating, Direct Faculty Approval, KPI Sync & Modal Fixes
 var config = window.DataStore.get('sm_config', window.INITIAL_CONFIG);
 var students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
 var prizes = window.DataStore.get('sm_prizes', window.INITIAL_PRIZES);
@@ -160,7 +160,7 @@ function renderModelPapers() {
 }
 
 // ----------------------------------------------------
-// 48 PRIZES GALLERY DISPLAY
+// PRIZES GALLERY DISPLAY
 // ----------------------------------------------------
 window.switchPrizeLayout = function(mode) {
   prizeLayoutMode = mode;
@@ -300,7 +300,7 @@ window.handleSessionLogout = function() {
   session = null;
   updateAuthUI();
   refreshDashboardState();
-  window.navigateTab('dashboard');
+  window.navigateTab('home');
 };
 
 function updateAuthUI() {
@@ -317,7 +317,6 @@ function updateAuthUI() {
   }
 }
 
-// Modal Role Selector
 window.setModalRoleHint = function(role) {
   document.getElementById('modal-login-role-hint').value = role;
   ['student', 'faculty', 'admin', 'super'].forEach(function(r) {
@@ -340,9 +339,9 @@ window.setModalRoleHint = function(role) {
   var lbl = document.getElementById('modal-login-label-id');
   if (lbl) {
     if (role === 'student') lbl.innerText = 'Mobile Number / Hall Ticket ID';
-    else if (role === 'faculty') lbl.innerText = 'Faculty Mobile Number / Email';
-    else if (role === 'admin') lbl.innerText = 'Admin Username (e.g. Admin1)';
-    else lbl.innerText = 'Super Admin Username (e.g. Admin)';
+    else if (role === 'faculty') lbl.innerText = 'Faculty Username (e.g. Faculty1) or Phone';
+    else if (role === 'admin') lbl.innerText = 'Admin Username (Default: Admin1)';
+    else lbl.innerText = 'Super Admin Username (Default: Admin)';
   }
 };
 
@@ -372,7 +371,7 @@ function executeAuthentication(id, pwd, roleHint) {
   if (id === 'Admin' && pwd === '9290') {
     saveSession({ id: 'Admin', name: 'Super Admin Maintenance', role: 'super_admin' }, true);
     window.closeModal('modal-auth');
-    refreshDashboardState();
+    window.navigateTab('dashboard');
     return;
   }
 
@@ -380,15 +379,18 @@ function executeAuthentication(id, pwd, roleHint) {
   if (id === 'Admin1' && pwd === '2580') {
     saveSession({ id: 'Admin1', name: 'Admin Exam Coordinator', role: 'admin' }, true);
     window.closeModal('modal-auth');
-    refreshDashboardState();
+    window.navigateTab('dashboard');
     return;
   }
 
-  // Faculty Account Check
-  var fac = faculties.find(function(f) { return f.phone === id || f.email === id || f.id === id; });
+  // Faculty Check
+  var fac = faculties.find(function(f) { 
+    return f.phone === id || f.email === id || f.id === id || (f.username && f.username.toLowerCase() === id.toLowerCase()); 
+  });
+
   if (fac) {
-    if (fac.status === 'Denied' || fac.status === 'Revoked') {
-      alert('Access Denied: Your faculty registration request has been rejected or revoked by the Admin.');
+    if (fac.status === 'Denied' || fac.status === 'Blocked') {
+      alert('Access Denied: Your faculty account access has been revoked or denied.');
       return;
     }
     if (fac.status === 'Pending') {
@@ -398,7 +400,7 @@ function executeAuthentication(id, pwd, roleHint) {
     if (fac.password === pwd) {
       saveSession({ id: fac.id, name: fac.name, role: 'faculty', data: fac }, true);
       window.closeModal('modal-auth');
-      refreshDashboardState();
+      window.navigateTab('dashboard');
       return;
     } else {
       alert('Invalid Faculty Password.');
@@ -406,22 +408,22 @@ function executeAuthentication(id, pwd, roleHint) {
     }
   }
 
-  // Student Account Check
+  // Student Check
   var std = students.find(function(s) { return s.ticketNo === id || s.phone === id || s.email === id; });
   if (std) {
     if (std.status === 'Denied' || std.status === 'Blocked') {
-      alert('Access Denied: Your registration has been blocked or denied by Admin.');
+      alert('Access Denied: Your registration has been blocked or denied.');
       return;
     }
     if (std.password === pwd || pwd === '1234') {
       saveSession({ id: std.ticketNo, name: std.name, role: 'student', data: std }, true);
       window.closeModal('modal-auth');
-      refreshDashboardState();
+      window.navigateTab('dashboard');
       return;
     }
   }
 
-  alert('Authentication Failed: Check credentials or complete your enrollment registration.');
+  alert('Authentication Failed: Check credentials or register if you are a new applicant.');
 }
 
 // ----------------------------------------------------
@@ -449,7 +451,7 @@ function refreshDashboardState() {
   pill.className = 'text-[10px] font-black uppercase px-3 py-1 rounded-full ' +
     (role === 'super_admin' ? 'bg-red-100 text-red-700 border border-red-200' : role === 'admin' ? 'bg-amber-100 text-amber-800 border border-amber-200' : role === 'faculty' ? 'bg-purple-100 text-purple-800 border border-purple-200' : 'bg-emerald-100 text-emerald-800 border border-emerald-200');
 
-  // Update KPI Statistics
+  // KPI Statistics
   document.getElementById('stat-total-students').innerText = students.length;
   document.getElementById('stat-present-count').innerText = students.filter(function(s) { return s.attendance === 'Present'; }).length;
   document.getElementById('stat-faculty-count').innerText = faculties.filter(function(f) { return f.status === 'Approved'; }).length;
@@ -633,6 +635,7 @@ window.handleFacultyRegister = function(e) {
     name: name,
     email: email,
     phone: phone,
+    username: phone,
     password: pwd,
     dept: dept,
     assignedHall: hall,
@@ -701,7 +704,7 @@ window.facultyVerifyResult = function(idx) {
 };
 
 // ----------------------------------------------------
-// 15 ADVANCED MANAGEMENT FEATURES (DATA SYNC, EXCEL, OMR & RELEASES)
+// 15 ADVANCED MANAGEMENT FEATURES (DATA SYNC, EXCEL, OMR & SEATING)
 // ----------------------------------------------------
 function renderManagementDashboard() {
   renderManagementRoster();
@@ -751,10 +754,10 @@ window.exportStudentsToExcel = function() {
   document.body.removeChild(link);
 };
 
-// 2. 1-CLICK FULL DATABASE BACKUP & RESTORE (MOBILE TO BROWSER SYNC)
+// 2. 1-CLICK DATABASE BACKUP & RESTORE
 window.backupDatabaseToJSON = function() {
   var backupData = {
-    version: '4.0',
+    version: '4.5',
     exportDate: new Date().toISOString(),
     config: config,
     students: students,
@@ -820,7 +823,7 @@ window.toggleResultsRelease = function() {
   config.resultsPublished = !config.resultsPublished;
   window.DataStore.set('sm_config', config);
   refreshDashboardState();
-  alert(config.resultsPublished ? 'Results Published Globally! Students can now view their marks and ranks on dashboards and public search.' : 'Results Locked! Results hidden from public view.');
+  alert(config.resultsPublished ? 'Results Published Globally! Students can now view their marks and ranks.' : 'Results Locked! Results hidden from public view.');
 };
 
 // 4. PROFESSIONAL EXAMINATION OMR SHEET GENERATOR
@@ -958,10 +961,11 @@ window.pullAllAdmitCards = function() {
   window.navigateTab('printable');
 };
 
-// 6. DYNAMIC SEATING ENGINE (2x2, 3x3, 4x4, NxN)
+// 6. DYNAMIC THEATER & MATRIX SEATING ENGINE
 window.changeSeatingLayoutType = function(type) {
   config.seatingConfig.layoutType = type;
-  if (type === '2x2') { config.seatingConfig.colsPerRow = 4; }
+  if (type === 'theater') { config.seatingConfig.colsPerRow = 14; }
+  else if (type === '2x2') { config.seatingConfig.colsPerRow = 4; }
   else if (type === '3x3') { config.seatingConfig.colsPerRow = 6; }
   else if (type === '4x4') { config.seatingConfig.colsPerRow = 8; }
   else if (type === 'nxn') {
@@ -976,34 +980,50 @@ window.renderDynamicSeatingMatrix = function() {
   var container = document.getElementById('dynamic-seating-matrix-preview');
   if (!container) return;
 
-  var layout = config.seatingConfig.layoutType || '2x2';
-  var cols = config.seatingConfig.colsPerRow || 4;
+  var layout = config.seatingConfig.layoutType || 'theater';
+  var cols = config.seatingConfig.colsPerRow || 14;
   var rowsInput = document.getElementById('cfg-seating-rows');
-  var rows = rowsInput ? parseInt(rowsInput.value) || 25 : 25;
+  var rows = rowsInput ? parseInt(rowsInput.value) || 20 : 20;
 
   var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  var html = '<div class="space-y-2">';
+  var html = '';
+
+  if (layout === 'theater') {
+    html += `
+      <div class="mb-3 text-center">
+        <div class="w-3/4 mx-auto bg-slate-800 text-amber-300 py-1 rounded-t-xl text-[10px] font-black uppercase tracking-widest shadow">
+          <i class="fa-solid fa-chalkboard mr-1.5"></i> STAGE & SCREEN AREA
+        </div>
+      </div>
+    `;
+  }
+
+  html += '<div class="space-y-2">';
 
   for (var r = 1; r <= rows; r++) {
-    html += '<div class="flex items-center gap-1.5 p-1.5 bg-slate-50 border rounded text-xs overflow-x-auto">' +
-      '<span class="w-14 font-mono font-bold text-slate-500">Row ' + r + '</span>';
+    html += '<div class="flex items-center gap-1.5 p-1.5 bg-slate-50 border rounded text-xs overflow-x-auto justify-center">' +
+      '<span class="w-12 font-mono font-bold text-slate-500 text-center">R' + r + '</span>';
 
     for (var c = 0; c < cols; c++) {
       var seatLabel = 'R' + r + '-' + alphabet[c];
-      
-      if ((layout === '2x2' && c === 2) || (layout === '3x3' && c === 3) || (layout === '4x4' && c === 4) || (layout === 'nxn' && c === Math.floor(cols / 2))) {
-        html += '<span class="px-1.5 py-0.5 text-[9px] bg-amber-100 text-amber-800 font-bold rounded">AISLE</span>';
+
+      // Aisle separation markers
+      if (layout === 'theater') {
+        if (c === 4) html += '<span class="px-1.5 py-0.5 text-[8px] bg-amber-100 text-amber-800 font-bold rounded">AISLE</span>';
+        if (c === 10) html += '<span class="px-1.5 py-0.5 text-[8px] bg-amber-100 text-amber-800 font-bold rounded">AISLE</span>';
+      } else if ((layout === '2x2' && c === 2) || (layout === '3x3' && c === 3) || (layout === '4x4' && c === 4) || (layout === 'nxn' && c === Math.floor(cols / 2))) {
+        html += '<span class="px-1.5 py-0.5 text-[8px] bg-amber-100 text-amber-800 font-bold rounded">AISLE</span>';
       }
 
       var occ = students.find(function(s) { return s.seat && s.seat.indexOf(seatLabel) !== -1; });
       if (occ) {
         var isBoy = occ.gender === 'M';
-        html += '<button onclick="alert(\'Seat ' + seatLabel + ' allocated to: ' + occ.name + ' (' + occ.ticketNo + ')\')" class="px-2 py-1 rounded text-[10px] font-bold border truncate w-20 text-center ' + (isBoy ? 'bg-blue-100 text-blue-900 border-blue-400' : 'bg-pink-100 text-pink-900 border-pink-400') + '">' +
+        html += '<button onclick="alert(\'Seat ' + seatLabel + ' allocated to: ' + occ.name + ' (' + occ.ticketNo + ')\')" class="px-1.5 py-1 rounded text-[10px] font-bold border truncate w-14 text-center ' + (isBoy ? 'bg-blue-100 text-blue-900 border-blue-400' : 'bg-pink-100 text-pink-900 border-pink-400') + '">' +
           seatLabel + ' (' + (isBoy ? 'B' : 'G') + ')' +
         '</button>';
       } else {
-        html += '<button onclick="manualAssignSeatPrompt(\'' + seatLabel + '\')" class="px-2 py-1 rounded text-[10px] border border-dashed border-slate-300 bg-white hover:border-emerald-700 text-slate-400 w-20 text-center">' +
-          seatLabel + ' (Open)' +
+        html += '<button onclick="manualAssignSeatPrompt(\'' + seatLabel + '\')" class="px-1.5 py-1 rounded text-[10px] border border-dashed border-slate-300 bg-white hover:border-emerald-700 text-slate-400 w-14 text-center">' +
+          seatLabel +
         '</button>';
       }
     }
@@ -1029,7 +1049,7 @@ window.manualAssignSeatPrompt = function(seatCode) {
 
 window.autoGenerateDynamicSeating = function() {
   if (students.length === 0) return alert('No registered candidates to arrange.');
-  var cols = config.seatingConfig.colsPerRow || 4;
+  var cols = config.seatingConfig.colsPerRow || 14;
   var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
   var mIdx = 0, fIdx = 0;
@@ -1062,7 +1082,7 @@ window.clearSeatingPlan = function() {
   }
 };
 
-// 7. FACULTY APPROVAL & VETTING
+// 7. FACULTY APPROVAL & VETTING WORKFLOW
 function renderFacultyApprovalQueue() {
   var tbody = document.getElementById('faculty-approval-tbody');
   if (!tbody) return;
@@ -1073,17 +1093,18 @@ function renderFacultyApprovalQueue() {
   }
 
   tbody.innerHTML = faculties.map(function(f, idx) {
-    var statusClass = f.status === 'Approved' ? 'bg-emerald-100 text-emerald-800' : f.status === 'Denied' ? 'bg-red-100 text-red-800' : 'bg-amber-100 text-amber-800';
+    var statusClass = f.status === 'Approved' ? 'bg-emerald-100 text-emerald-800' : f.status === 'Denied' || f.status === 'Blocked' ? 'bg-red-100 text-red-800' : 'bg-amber-100 text-amber-800';
 
     return '<tr class="hover:bg-slate-50 text-xs">' +
       '<td class="p-2.5 font-bold text-slate-900">' + f.name + '</td>' +
       '<td class="p-2.5">' + f.dept + '</td>' +
-      '<td class="p-2.5 font-mono">' + f.phone + '</td>' +
+      '<td class="p-2.5 font-mono">' + (f.username || f.phone) + '</td>' +
       '<td class="p-2.5 font-mono">' + f.password + '</td>' +
       '<td class="p-2.5"><span class="px-2 py-0.5 rounded text-[10px] font-bold ' + statusClass + '">' + f.status + '</span></td>' +
       '<td class="p-2.5 space-x-1 text-center">' +
         (f.status !== 'Approved' ? '<button onclick="setFacultyStatus(' + idx + ', \'Approved\')" class="bg-emerald-800 hover:bg-emerald-900 text-white px-2 py-0.5 rounded text-[10px] font-bold">Approve</button>' : '') +
-        (f.status !== 'Denied' ? '<button onclick="setFacultyStatus(' + idx + ', \'Denied\')" class="bg-red-600 hover:bg-red-700 text-white px-2 py-0.5 rounded text-[10px] font-bold">Deny</button>' : '') +
+        (f.status !== 'Denied' && f.status !== 'Blocked' ? '<button onclick="setFacultyStatus(' + idx + ', \'Denied\')" class="bg-red-600 hover:bg-red-700 text-white px-2 py-0.5 rounded text-[10px] font-bold">Deny</button>' : '') +
+        '<button onclick="openEditFacultyModal(' + idx + ')" class="text-blue-600 font-bold hover:underline ml-1">Edit</button>' +
         (session.user.role === 'super_admin' ? '<button onclick="removeFaculty(' + idx + ')" class="text-slate-500 hover:text-red-700 text-[11px] font-bold ml-1">Del</button>' : '') +
       '</td>' +
     '</tr>';
@@ -1096,6 +1117,42 @@ window.setFacultyStatus = function(idx, newStatus) {
   renderFacultyApprovalQueue();
   refreshDashboardState();
   alert('Faculty ' + faculties[idx].name + ' status updated to ' + newStatus);
+};
+
+window.openEditFacultyModal = function(idx) {
+  var f = faculties[idx];
+  document.getElementById('edit-fac-index').value = idx;
+  document.getElementById('edit-fac-name').value = f.name;
+  document.getElementById('edit-fac-email').value = f.email;
+  document.getElementById('edit-fac-phone').value = f.phone;
+  document.getElementById('edit-fac-username').value = f.username || f.phone;
+  document.getElementById('edit-fac-dept').value = f.dept;
+  document.getElementById('edit-fac-hall').value = f.assignedHall;
+  document.getElementById('edit-fac-status').value = f.status;
+  document.getElementById('edit-fac-pwd').value = f.password;
+  window.openModal('modal-edit-faculty');
+};
+
+window.saveFacultyModifications = function(e) {
+  e.preventDefault();
+  var idx = document.getElementById('edit-fac-index').value;
+  var f = faculties[idx];
+  f.name = document.getElementById('edit-fac-name').value.trim();
+  f.email = document.getElementById('edit-fac-email').value.trim();
+  f.phone = document.getElementById('edit-fac-phone').value.trim();
+  f.username = document.getElementById('edit-fac-username').value.trim();
+  f.dept = document.getElementById('edit-fac-dept').value;
+  f.assignedHall = document.getElementById('edit-fac-hall').value;
+  f.status = document.getElementById('edit-fac-status').value;
+  var newPwd = document.getElementById('edit-fac-pwd').value.trim();
+  if (newPwd) f.password = newPwd;
+
+  faculties[idx] = f;
+  window.DataStore.set('sm_faculties', faculties);
+  window.closeModal('modal-edit-faculty');
+  renderFacultyApprovalQueue();
+  refreshDashboardState();
+  alert('Faculty profile updated successfully.');
 };
 
 window.removeFaculty = function(idx) {
