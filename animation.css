@@ -5,16 +5,16 @@
 
 @keyframes floatGentle {
   0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-6px); }
+  50% { transform: translateY(-5px); }
 }
 
 @keyframes pulseGlow {
   0%, 100% { box-shadow: 0 0 15px rgba(197, 155, 39, 0.2); }
-  50% { box-shadow: 0 0 25px rgba(197, 155, 39, 0.5); }
+  50% { box-shadow: 0 0 25px rgba(197, 155, 39, 0.45); }
 }
 
 .animate-fade-scale {
-  animation: fadeInScale 0.4s ease-out forwards;
+  animation: fadeInScale 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .animate-float {
@@ -26,5 +26,5 @@
 }
 
 .splash-screen-bg {
-  background: radial-gradient(circle at center, #064e3b 0%, #042f24 100%);
+  background: radial-gradient(circle at center, #064e3b 0%, #032b21 100%);
 }
