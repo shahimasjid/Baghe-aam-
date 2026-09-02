@@ -55,7 +55,7 @@
     </div>
   </div>
 
-  <!-- Header & Navigation (Clean navigation with Central Portal Sign In on the right) -->
+  <!-- Header & Navigation -->
   <header class="bg-white border-b-2 border-amber-500 shadow-sm sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
       <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTab('home')">
@@ -85,7 +85,7 @@
         <button onclick="navigateTab('results-public')" class="px-2.5 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Results</button>
         <button onclick="navigateTab('feedback')" class="px-2.5 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Helpdesk</button>
         
-        <!-- Right-side Authentication Slot -->
+        <!-- Right Header Authentication Slot -->
         <span id="nav-auth-slot" class="ml-2"></span>
       </nav>
     </div>
@@ -191,9 +191,9 @@
                 <i class="fa-solid fa-list-check text-emerald-800"></i> Program Operations
               </h3>
               <ul class="space-y-2 text-xs text-slate-700">
-                <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-emerald-700 mt-0.5"></i> <span>Candidate Seating Orientation & Gate Pass Verification</span></li>
+                <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-emerald-700 mt-0.5"></i> <span>Cinema Theater Style Seating Matrix Layout Management</span></li>
                 <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-emerald-700 mt-0.5"></i> <span>Standard OMR Answer Response Sheet Evaluation</span></li>
-                <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-emerald-700 mt-0.5"></i> <span>Authentic Islamic Participation Certificate Issuance</span></li>
+                <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-emerald-700 mt-0.5"></i> <span>Faculty Profile Approval, Access Revocation & Attendance</span></li>
                 <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-emerald-700 mt-0.5"></i> <span>Faculty-Verified 1-Click Administrative Result Releases</span></li>
               </ul>
             </div>
@@ -209,7 +209,7 @@
         <div class="border-b pb-3">
           <span class="text-[11px] font-bold text-amber-700 uppercase tracking-wider">Candidate Enrollment Desk</span>
           <h2 class="text-xl font-extrabold text-emerald-950 mt-0.5">3rd Seerat-un-Nabi Enrollment Application</h2>
-          <p class="text-xs text-slate-500">Upon enrollment, unique Hall Ticket serials (Boys SUN3-B-#### / Girls SUN3-G-####), OMR sheets, and seats are allocated.</p>
+          <p class="text-xs text-slate-500">Upon enrollment, unique Hall Ticket serials (Boys SUN3-B-#### / Girls SUN3-G-####), OMR sheets, and theater seats are allocated.</p>
         </div>
 
         <form id="competition-form" onsubmit="handleStudentRegister(event)" class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
@@ -510,7 +510,7 @@
           </div>
         </div>
 
-        <!-- KPI Statistic Cards -->
+        <!-- KPI Statistic Cards (Visible across Admin, Super Admin & Faculty) -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div class="p-4 bg-white rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
             <div>
@@ -684,20 +684,21 @@
             </div>
           </div>
 
-          <!-- Dynamic Seating Matrix Generator (2x2, 3x3, 4x4, NxN) -->
+          <!-- Dynamic Seating Matrix Generator (Theater, 2x2, 3x3, 4x4, NxN) -->
           <div class="p-5 bg-emerald-50 border border-emerald-300 rounded-xl space-y-4">
             <div class="flex flex-wrap justify-between items-center gap-3">
               <div>
                 <h3 class="text-sm font-black text-emerald-950 flex items-center gap-2">
-                  <i class="fa-solid fa-couch text-emerald-800"></i> Dynamic Seating Matrix Configurator
+                  <i class="fa-solid fa-couch text-emerald-800"></i> Seating Matrix Configurator
                 </h3>
-                <p class="text-[11px] text-slate-600">Select mode: 2x2 (Aeroplane), 3x3, 4x4, or Custom NxN with click-to-assign & auto-distribution.</p>
+                <p class="text-[11px] text-slate-600">Select mode: Cinema Theater Style (Left/Center/Right aisles), 2x2, 3x3, 4x4, or Custom NxN.</p>
               </div>
               <div class="flex flex-wrap gap-2">
+                <button onclick="changeSeatingLayoutType('theater')" class="px-2.5 py-1 text-xs font-bold bg-amber-500 text-emerald-950 rounded shadow">Theater Mode</button>
                 <button onclick="changeSeatingLayoutType('2x2')" class="px-2.5 py-1 text-xs font-bold bg-white border rounded hover:bg-slate-50">2x2 Mode</button>
                 <button onclick="changeSeatingLayoutType('3x3')" class="px-2.5 py-1 text-xs font-bold bg-white border rounded hover:bg-slate-50">3x3 Mode</button>
                 <button onclick="changeSeatingLayoutType('4x4')" class="px-2.5 py-1 text-xs font-bold bg-white border rounded hover:bg-slate-50">4x4 Mode</button>
-                <button onclick="changeSeatingLayoutType('nxn')" class="px-2.5 py-1 text-xs font-bold bg-amber-500 text-emerald-950 rounded shadow">NxN Mode</button>
+                <button onclick="changeSeatingLayoutType('nxn')" class="px-2.5 py-1 text-xs font-bold bg-white border rounded hover:bg-slate-50">NxN Mode</button>
                 <button onclick="autoGenerateDynamicSeating()" class="bg-emerald-950 text-amber-300 font-bold px-3 py-1 rounded text-xs hover:bg-emerald-900 shadow">
                   <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Auto-Assign
                 </button>
@@ -709,16 +710,16 @@
 
             <div class="flex items-center gap-3 text-xs bg-white p-2.5 rounded border">
               <label class="font-bold">Total Rows per Hall:</label>
-              <input type="number" id="cfg-seating-rows" min="5" max="100" value="25" class="border rounded p-1 w-16 text-center" onchange="renderDynamicSeatingMatrix()" />
+              <input type="number" id="cfg-seating-rows" min="5" max="100" value="20" class="border rounded p-1 w-16 text-center" onchange="renderDynamicSeatingMatrix()" />
             </div>
 
-            <div id="dynamic-seating-matrix-preview" class="p-3 bg-white rounded-lg border max-h-80 overflow-y-auto"></div>
+            <div id="dynamic-seating-matrix-preview" class="p-3 bg-white rounded-lg border max-h-96 overflow-y-auto"></div>
           </div>
 
-          <!-- Faculty Approval & Vetting Queue -->
+          <!-- Faculty Approval, Denial & Profile Modification Queue -->
           <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 space-y-3">
             <h4 class="text-xs font-bold text-slate-900 flex items-center gap-2 uppercase tracking-wide">
-              <i class="fa-solid fa-user-shield text-purple-700"></i> Faculty Registration Approval & Access Queue
+              <i class="fa-solid fa-user-shield text-purple-700"></i> Faculty Registration Approval & Profile Management Queue
             </h4>
             <div class="overflow-x-auto border rounded-lg">
               <table class="w-full text-xs text-left">
@@ -726,7 +727,7 @@
                   <tr>
                     <th class="p-2.5">Faculty Name</th>
                     <th class="p-2.5">Department</th>
-                    <th class="p-2.5">Phone / Username</th>
+                    <th class="p-2.5">Username / Phone</th>
                     <th class="p-2.5">Password</th>
                     <th class="p-2.5">Status</th>
                     <th class="p-2.5 text-center">Manage</th>
@@ -817,7 +818,7 @@
         <div class="text-[10px] text-emerald-300/80 space-y-1 mt-6">
           <p>• Verified candidate result tracking</p>
           <p>• Standard OMR sheets and admit cards</p>
-          <p>• Multi-layout desk seats (2x2 to NxN)</p>
+          <p>• Cinema theater style seat matrices</p>
         </div>
       </div>
 
@@ -988,6 +989,73 @@
         <div class="flex gap-2 pt-2">
           <button type="submit" class="flex-1 bg-emerald-950 text-white font-bold py-2 rounded">
             Save Candidate Modifications
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Faculty Edit Profile Modal -->
+  <div id="modal-edit-faculty" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl relative text-xs max-h-[90vh] overflow-y-auto">
+      <button onclick="closeModal('modal-edit-faculty')" class="absolute top-4 right-4 text-gray-400">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <h3 class="text-sm font-bold text-slate-900 mb-3">Edit Faculty Profile & Access Credentials</h3>
+
+      <form onsubmit="saveFacultyModifications(event)" class="space-y-3">
+        <input type="hidden" id="edit-fac-index" />
+        <div>
+          <label class="block font-bold mb-1">Faculty Full Name</label>
+          <input type="text" id="edit-fac-name" required class="w-full border rounded p-2" />
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold mb-1">Username</label>
+            <input type="text" id="edit-fac-username" required class="w-full border rounded p-2 font-mono" />
+          </div>
+          <div>
+            <label class="block font-bold mb-1">Mobile Number</label>
+            <input type="tel" id="edit-fac-phone" required class="w-full border rounded p-2" />
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold mb-1">Email Address</label>
+          <input type="email" id="edit-fac-email" required class="w-full border rounded p-2" />
+        </div>
+        <div>
+          <label class="block font-bold mb-1">Department</label>
+          <select id="edit-fac-dept" class="w-full border rounded p-2">
+            <option value="Islamic Jurisprudence & Hadith">Islamic Jurisprudence & Hadith</option>
+            <option value="Arabic Language & Grammar">Arabic Language & Grammar</option>
+            <option value="Seerat & Islamic History">Seerat & Islamic History</option>
+            <option value="Exam Controller & Invigilation Wing">Exam Controller & Invigilation Wing</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-bold mb-1">Assigned Hall</label>
+          <select id="edit-fac-hall" class="w-full border rounded p-2">
+            <option value="Hall A (Boys Wing)">Hall A (Boys Wing)</option>
+            <option value="Hall B (Girls Wing)">Hall B (Girls Wing)</option>
+            <option value="Central Counter">Central Counter</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-bold mb-1">Access Status</label>
+          <select id="edit-fac-status" class="w-full border rounded p-2">
+            <option value="Approved">Approved (Full Active Access)</option>
+            <option value="Pending">Pending Approval</option>
+            <option value="Denied">Denied</option>
+            <option value="Blocked">Blocked (Access Revoked)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-bold mb-1">Reset Faculty Password</label>
+          <input type="text" id="edit-fac-pwd" placeholder="Enter new password" class="w-full border rounded p-2 font-mono" />
+        </div>
+        <div class="flex gap-2 pt-2">
+          <button type="submit" class="flex-1 bg-purple-900 text-white font-bold py-2 rounded">
+            Save Faculty Modifications
           </button>
         </div>
       </form>
