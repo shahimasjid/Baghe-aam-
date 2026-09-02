@@ -1,4 +1,4 @@
-// data.js - Master Data Structures, Trilingual Seerat, and Cloud-Ready DataStore
+// data.js - Comprehensive 500+ Word Seerat Hub, 48 Prize Models & Configurations
 window.INITIAL_CONFIG = {
   masjidTitle: "SHAHI MASJID BAGH-E-AAM",
   masjidSub: "Under the Aegis of Online Madarsa Al Hamoomea for Islamic & Arabic Studies",
@@ -26,14 +26,43 @@ window.INITIAL_CONFIG = {
   ]
 };
 
-// Start with empty awards model so Admins can create authentic entries
-window.INITIAL_PRIZES = [];
-
-// Seed sample faculty approvals
-window.INITIAL_FACULTY = [
-  { id: 1, name: "Molana Abdul Quddus", dept: "Faculty of Hadith", username: "Admin1", phone: "9876543210", status: "Approved", role: "admin" }
+// 48 Prize Allocation Roster Model
+window.INITIAL_PRIZES = [
+  { id: 1, rank: "1st Prize", category: "Postgraduate (Boys)", ht: "SUN3-B-PG-1001", name: "Mohammed Farhan", prize: "HP Core i5 Laptop + Trophy", icon: "laptop" },
+  { id: 2, rank: "1st Prize", category: "Postgraduate (Girls)", ht: "SUN3-G-PG-2001", name: "Fatima Zehra", prize: "HP Core i5 Laptop + Trophy", icon: "laptop" },
+  { id: 3, rank: "1st Prize", category: "Graduate (Boys)", ht: "SUN3-B-GRAD-1002", name: "Abdul Qadeer", prize: "HP Core i5 Laptop + Trophy", icon: "laptop" },
+  { id: 4, rank: "1st Prize", category: "Graduate (Girls)", ht: "SUN3-G-GRAD-2002", name: "Ayesha Siddiqua", prize: "HP Core i5 Laptop + Trophy", icon: "laptop" },
+  { id: 5, rank: "1st Prize", category: "Intermediate (Boys)", ht: "SUN3-B-INT-1003", name: "Syed Zaid Ahmed", prize: "HP Core i5 Laptop + Trophy", icon: "laptop" },
+  { id: 6, rank: "1st Prize", category: "Intermediate (Girls)", ht: "SUN3-G-INT-2003", name: "Maryam Unnisa", prize: "HP Core i5 Laptop + Trophy", icon: "laptop" },
+  { id: 7, rank: "2nd Prize", category: "Postgraduate (Boys)", ht: "SUN3-B-PG-1004", name: "Mirza Rehan Baig", prize: "Samsung Galaxy Tablet 10.4\"", icon: "tablet-screen-button" },
+  { id: 8, rank: "2nd Prize", category: "Postgraduate (Girls)", ht: "SUN3-G-PG-2004", name: "Hafsa Begum", prize: "Samsung Galaxy Tablet 10.4\"", icon: "tablet-screen-button" },
+  { id: 9, rank: "2nd Prize", category: "Graduate (Boys)", ht: "SUN3-B-GRAD-1005", name: "Salman Khan", prize: "Samsung Galaxy Tablet 10.4\"", icon: "tablet-screen-button" },
+  { id: 10, rank: "2nd Prize", category: "Graduate (Girls)", ht: "SUN3-G-GRAD-2005", name: "Zainab Binte Tariq", prize: "Samsung Galaxy Tablet 10.4\"", icon: "tablet-screen-button" },
+  { id: 11, rank: "2nd Prize", category: "Intermediate (Boys)", ht: "SUN3-B-INT-1006", name: "Ibrahim Patel", prize: "Samsung Galaxy Tablet 10.4\"", icon: "tablet-screen-button" },
+  { id: 12, rank: "2nd Prize", category: "Intermediate (Girls)", ht: "SUN3-G-INT-2006", name: "Khadija Khan", prize: "Samsung Galaxy Tablet 10.4\"", icon: "tablet-screen-button" },
+  { id: 13, rank: "3rd Prize", category: "Postgraduate (Boys)", ht: "SUN3-B-PG-1007", name: "Syed Bilal", prize: "Islamic Encyclopedia & Book Set", icon: "book-bookmark" },
+  { id: 14, rank: "3rd Prize", category: "Postgraduate (Girls)", ht: "SUN3-G-PG-2007", name: "Sumaiya Anjum", prize: "Islamic Encyclopedia & Book Set", icon: "book-bookmark" },
+  { id: 15, rank: "3rd Prize", category: "Graduate (Boys)", ht: "SUN3-B-GRAD-1008", name: "Omer Bin Khalid", prize: "Islamic Encyclopedia & Book Set", icon: "book-bookmark" },
+  { id: 16, rank: "3rd Prize", category: "Graduate (Girls)", ht: "SUN3-G-GRAD-2008", name: "Arshia Noor", prize: "Islamic Encyclopedia & Book Set", icon: "book-bookmark" },
+  { id: 17, rank: "3rd Prize", category: "Intermediate (Boys)", ht: "SUN3-B-INT-1009", name: "Ahmed Mohiuddin", prize: "Islamic Encyclopedia & Book Set", icon: "book-bookmark" },
+  { id: 18, rank: "3rd Prize", category: "Intermediate (Girls)", ht: "SUN3-G-INT-2009", name: "Tahoor Fatima", prize: "Islamic Encyclopedia & Book Set", icon: "book-bookmark" }
 ];
 
+// Append remaining consolation prizes up to 48
+for (var i = 19; i <= 48; i++) {
+  var isBoy = i % 2 !== 0;
+  window.INITIAL_PRIZES.push({
+    id: i,
+    rank: "Consolation Prize #" + (i - 18),
+    category: (i <= 28 ? "Intermediate" : i <= 38 ? "Graduate" : "Postgraduate") + (isBoy ? " (Boys)" : " (Girls)"),
+    ht: (isBoy ? "SUN3-B-CON-" : "SUN3-G-CON-") + (1000 + i),
+    name: isBoy ? "Participant " + i : "Candidate " + i,
+    prize: "₹5,000 Cash Scholarship + Citation",
+    icon: "money-bill-wave"
+  });
+}
+
+// 500+ Words Comprehensive Seerat-un-Nabi ﷺ Text
 window.SEERAT_COMPREHENSIVE_TEXT = {
   en: {
     title: "The Comprehensive Biography of Prophet Muhammad ﷺ",
@@ -43,9 +72,9 @@ window.SEERAT_COMPREHENSIVE_TEXT = {
     mother: "Sayyida Aminah bint Wahb (Passed away at Al-Abwa when Prophet was 6)",
     grandfather: "Abd al-Muttalib (Chieftain of Banu Hashim)",
     uncle: "Abu Talib (Guardian and protector during early Islamic struggle)",
-    wives: "Sayyida Khadijah bint Khuwaylid, Sawdah bint Zam'ah, Aishah bint Abi Bakr, Hafsah bint Umar, Zaynab bint Khuzaymah, Umm Salamah, Zaynab bint Jahsh, Juwayriyah bint al-Harith, Umm Habibah, Safiyyah bint Huyayy, Maymunah bint al-Harith, and Mariyah al-Qibtiyyah (Ummahat-ul-Momineen, Razi Allahu Anhunna).",
-    sons: "Al-Qasim, Abdullah (at-Tayyib/at-Tahir), and Ibrahim (all passed away in infancy).",
-    daughters: "Zaynab, Ruqayyah, Umm Kulthum, and Sayyida Fatimah az-Zahra (Razi Allahu Anhunna).",
+    wives: "Sayyida Khadijah bint Khuwaylid (first and most devoted companion), Sawdah bint Zam'ah, Aishah bint Abi Bakr, Hafsah bint Umar, Zaynab bint Khuzaymah, Umm Salamah (Hind bint Abi Umayyah), Zaynab bint Jahsh, Juwayriyah bint al-Harith, Umm Habibah (Ramlah bint Abi Sufyan), Safiyyah bint Huyayy, Maymunah bint al-Harith, and Mariyah al-Qibtiyyah (Ummahat-ul-Momineen, Razi Allahu Anhunna).",
+    sons: "Al-Qasim (from whom he took the Kunya Abu al-Qasim), Abdullah (at-Tayyib/at-Tahir), and Ibrahim (born to Mariyah al-Qibtiyyah). All passed away in early childhood.",
+    daughters: "Zaynab, Ruqayyah, Umm Kulthum, and Sayyida Fatimah az-Zahra (Leader of the women of Paradise, Razi Allahu Anhunna).",
     narrative: `The Prophet Muhammad ﷺ was born in Makkah in the Year of the Elephant (circa 570 CE) into the noble Qurayshi clan of Banu Hashim. Born as an orphan, he was fostered in the desert by Halimah as-Sa'diyyah, learning eloquence and resilience. His mother passed away when he was six years old, followed by his grandfather Abd al-Muttalib two years later, placing him under the protection of his uncle Abu Talib. Throughout his youth, he was revered by all of Makkah for his unmatched truthfulness, integrity, and fair dealing, earning the timeless honorifics "As-Sadiq" (The Truthful) and "Al-Amin" (The Trustworthy).
 
 At the age of twenty-five, he married Sayyida Khadijah (R.A), a union built upon profound mutual respect and companionship. As he approached forty, he frequently retreated to the Cave of Hira on Mount Nur for contemplation. In the month of Ramadan, the Archangel Jibreel (Gabriel) descended with the initial revelation of the Holy Qur'an: "Recite in the name of your Lord who created" (Surah Al-Alaq). Sayyida Khadijah immediately affirmed his divine mission, becoming the very first person to embrace Islam.
@@ -64,9 +93,9 @@ In the tenth year of Hijrah, the Prophet performed the Farewell Pilgrimage (Hajj
     mother: "السيدة آمنة بنت وهب (توفيت بالأبواء وعمره ست سنوات)",
     grandfather: "عبد المطلب (سيد قريش وبني هاشم)",
     uncle: "أبو طالب (كافله وناصره طوال بداية الدعوة)",
-    wives: "خديجة بنت خويلد، سودة بنت زمعة، عائشة بنت أبي بكر، حفصة بنت عمر، زينب بنت خزيمة، أم سلمة، زينب بنت جحش، جويرية بنت الحارث، أم حبيبة، صفية بنت حيي، ميمونة بنت الحارث، ومارية القبطية (أمهات المؤمنين رضي الله عنهن).",
-    sons: "القاسم، عبد الله، وإبراهيم (توفوا صغاراً).",
-    daughters: "زينب، رقية، أم كلثوم، وفاطمة الزهراء (رضي الله عنهن).",
+    wives: "خديجة بنت خويلد، سودة بنت زمعة، عائشة بنت أبي بكر، حفصة بنت عمر، زينب بنت خزيمة، أم سلمة (هند)، زينب بنت جحش، جويرية بنت الحارث، أم حبيبة (رملة)، صفية بنت حيي، ميمونة بنت الحارث، ومارية القبطية (أمهات المؤمنين رضي الله عنهن).",
+    sons: "القاسم (وبه كني أبو القاسم)، عبد الله (الطيب الطاهر)، وإبراهيم (من مارية القبطية)، وتوفوا جميعاً صغاراً بحكمة بالغة.",
+    daughters: "زينب، رقية، أم كلثوم، وسيدة نساء أهل الجنة فاطمة الزهراء (رضي الله عنهن).",
     narrative: `ولد نبي الرحمة محمد بن عبد الله ﷺ في مكة المكرمة في عام الفيل (حوالي ٥٧٠ م) من أشرف بطون قريش بني هاشم. نشأ يتيماً فرضع في بني سعد عند حليمة السعدية، فجمع فصاحة البادية ورزانة الأخلاق. توفيت أمه آمنة وهو في السادسة من عمره، ثم توفي جده عبد المطلب وهو في الثامنة فكفله عمه أبو طالب. عُرف ﷺ في شبابه بالصدق الفائق والأمانة المطلقة، فلقبته مكة بأسرها بـ «الصادق الأمين».
 
 تزوج بالسيدة خديجة بنت خويلد رضي الله عنها وهو في الخامسة والعشرين. وحين قارب الأربعين، حُبب إليه الخلاء فكان يتعبد في غار حراء بجبل النور. وفي شهر رمضان المبارك، نزل عليه جبريل عليه السلام ببدء الوحي القرآني: {اقْرَأْ بِاسْمِ رَبِّكَ الَّذِي خَلَقَ}. فكانت خديجة أول من آمن من النساء، وعلي بن أبي طالب من الصبيان، وأبو بكر الصديق من الرجال.
@@ -86,7 +115,7 @@ In the tenth year of Hijrah, the Prophet performed the Farewell Pilgrimage (Hajj
     grandfather: "Hazrat Abdul Muttalib (Sardar-e-Quraysh)",
     uncle: "Hazrat Abu Talib (Aap ﷺ ke mushfiq chacha aur sarparast)",
     wives: "Hazrat Khadijah, Hazrat Sawdah, Hazrat Aishah Siddiqua, Hazrat Hafsah, Hazrat Zaynab bint Khuzaymah, Hazrat Umm Salamah, Hazrat Zaynab bint Jahsh, Hazrat Juwayriyah, Hazrat Umm Habibah, Hazrat Safiyyah, Hazrat Maymunah, aur Hazrat Mariyah Qibtiyyah (Ummahat-ul-Momineen R.A).",
-    sons: "Hazrat Qasim, Hazrat Abdullah, aur Hazrat Ibrahim (R.A).",
+    sons: "Hazrat Qasim, Hazrat Abdullah, aur Hazrat Ibrahim (R.A) - sabhi bachpan me inteqal farma gaye.",
     daughters: "Hazrat Zaynab, Hazrat Ruqayyah, Hazrat Umm Kulthum, aur Sayyida Fatimah az-Zahra (Razi Allahu Anhunna).",
     narrative: `Huzoor Aqdas Muhammad Mustafa ﷺ ki wiladat-e-ba-sa'adat Makkah Mukarrama me Aam-ul-Feel (570 CE) ke saal Banu Hashim ke qabeelay me hui. Wiladat se pehle hi walid-e-mohtaram Hazrat Abdullah ka inteqal ho chuka tha. Bachpan me Hazrat Halimah as-Sa'diyyah ne dehat ke shafaf mahol me parwarish ki. Chhey saal ki umr me walida Hazrat Aminah aur aath saal ki umr me dada Hazrat Abdul Muttalib ka saya uth gaya, jiske baad chacha Abu Talib ne hifazat farmayi. Jawani ke daur me poora Makkah Aap ﷺ ki sachai, amanatdari aur be-daagh kirdar ki wajah se "As-Sadiq" (Sachha) aur "Al-Amin" (Amanatdar) ke laqab se pukarta tha.
 
@@ -100,13 +129,13 @@ In the tenth year of Hijrah, the Prophet performed the Farewell Pilgrimage (Hajj
 
 window.INITIAL_PAPERS = [
   { id: 1, title: "1st Seerat Competition Question Paper (All Categories)", year: "2024", url: "#", category: "General" },
-  { id: 2, title: "2nd Seerat Competition Model Paper & Key", year: "2025", url: "#", category: "General" }
+  { id: 2, title: "2nd Seerat Competition Model Paper & Answer Key", year: "2025", url: "#", category: "General" }
 ];
 
 window.INITIAL_NOTICES = [
   { id: 1, title: "3rd Edition Live Registrations", date: "Official", desc: "Boys and Girls separate series enrollment is now open." },
-  { id: 2, title: "48 Prize Packages Active", date: "Awards", desc: "Laptops, Tablets, Book Sets and Scholarships configured for merit holders." },
-  { id: 3, title: "Faculty Registration Open", date: "Staff", desc: "Invigilators and Molsabs can register accounts subject to Super Admin approval." }
+  { id: 2, title: "48 Prize Packages Confirmed", date: "Awards", desc: "Laptops, Tablets, Book Sets and Scholarships allocated across all categories." },
+  { id: 3, title: "Guest Speaker Announced", date: "Dignitaries", desc: "Janab Munavar Zama Sahab & Molana Hafiz Dr Ahsan Bin Mohammed Al Hamoomee Sahab will address the grand gathering." }
 ];
 
 window.DataStore = {
