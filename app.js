@@ -1,4 +1,4 @@
-// app.js - Full Interactive Logic: Excel Export, Sync, OMR Generation, Multi-Stage Results & Seating
+// app.js - Full Interactive Logic: In-Dashboard Multi-Role Login, Excel Export, Data Sync, OMR & Seating
 var config = window.DataStore.get('sm_config', window.INITIAL_CONFIG);
 var students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
 var prizes = window.DataStore.get('sm_prizes', window.INITIAL_PRIZES);
@@ -17,7 +17,7 @@ window.dismissGreeting = function() {
 };
 
 window.navigateTab = function(tabId) {
-  var tabs = ['home', 'competitions', 'faculty-register', 'prizes', 'seerat-hub', 'model-papers', 'doc-lookup', 'results-public', 'feedback', 'printable', 'dashboard'];
+  var tabs = ['home', 'competitions', 'prizes', 'seerat-hub', 'model-papers', 'doc-lookup', 'results-public', 'feedback', 'faculty-register', 'printable', 'dashboard'];
   tabs.forEach(function(id) {
     var el = document.getElementById('tab-' + id);
     if (el) el.classList.add('hidden');
@@ -28,6 +28,7 @@ window.navigateTab = function(tabId) {
 
   if (tabId === 'prizes') renderPrizesDisplay();
   if (tabId === 'seerat-hub') renderSeeratHubContent();
+  if (tabId === 'dashboard') refreshDashboardState();
 };
 
 window.openModal = function(id) {
@@ -86,7 +87,7 @@ function syncConfigUI() {
   var dignitaryBox = document.getElementById('dignitaries-display-box');
   if (dignitaryBox) {
     var chiefHtml = config.dignitaries.chiefGuest ? 
-      `<div class="flex items-center space-x-2.5 p-2 bg-black/20 rounded border border-white/10">
+      `<div class="flex items-center space-x-2.5 p-2.5 bg-black/25 rounded-lg border border-white/10">
         <div class="w-8 h-8 rounded-full bg-amber-500 text-emerald-950 flex items-center justify-center font-bold text-xs"><i class="fa-solid fa-microphone"></i></div>
         <div>
           <span class="text-[9px] text-amber-300 block font-bold uppercase">${config.dignitaries.chiefGuestTitle}</span>
@@ -95,7 +96,7 @@ function syncConfigUI() {
       </div>` : '';
 
     dignitaryBox.innerHTML = `
-      <div class="flex items-center space-x-2.5 p-2 bg-black/20 rounded border border-white/10">
+      <div class="flex items-center space-x-2.5 p-2.5 bg-black/25 rounded-lg border border-white/10">
         <div class="w-8 h-8 rounded-full bg-amber-500 text-emerald-950 flex items-center justify-center font-bold text-xs"><i class="fa-solid fa-user-tie"></i></div>
         <div>
           <span class="text-[9px] text-amber-300 block font-bold uppercase">${config.dignitaries.patronTitle}</span>
@@ -159,7 +160,7 @@ function renderModelPapers() {
 }
 
 // ----------------------------------------------------
-// 48 PRIZE GALLERY DISPLAY
+// 48 PRIZES GALLERY DISPLAY
 // ----------------------------------------------------
 window.switchPrizeLayout = function(mode) {
   prizeLayoutMode = mode;
@@ -270,7 +271,7 @@ window.renderSeeratHubContent = function() {
 };
 
 // ----------------------------------------------------
-// AUTHENTICATION & SESSION PERSISTENCE
+// AUTHENTICATION & MULTI-ROLE HANDLING
 // ----------------------------------------------------
 function saveSession(user, remember24h) {
   var expiry = new Date().getTime() + (remember24h ? 24 * 3600 * 1000 : 2 * 3600 * 1000);
@@ -278,6 +279,7 @@ function saveSession(user, remember24h) {
   localStorage.setItem('sm_session', JSON.stringify(sessionObj));
   session = sessionObj;
   updateAuthUI();
+  refreshDashboardState();
 }
 
 function getPersistentSession() {
@@ -297,55 +299,74 @@ window.handleSessionLogout = function() {
   localStorage.removeItem('sm_session');
   session = null;
   updateAuthUI();
-  window.navigateTab('home');
+  refreshDashboardState();
+  window.navigateTab('dashboard');
 };
 
 function updateAuthUI() {
   var slot = document.getElementById('nav-auth-slot');
   if (!slot) return;
   if (session && session.user) {
-    slot.innerHTML = '<button onclick="navigateTab(\'dashboard\'); openDashboard();" class="bg-amber-500 hover:bg-amber-400 text-emerald-950 px-3 py-1.5 rounded-lg font-bold shadow">' +
+    slot.innerHTML = '<button onclick="navigateTab(\'dashboard\')" class="bg-amber-500 hover:bg-amber-400 text-emerald-950 px-3 py-1.5 rounded-lg font-bold shadow">' +
       'Dashboard (' + session.user.name + ')' +
     '</button>';
   } else {
     slot.innerHTML = '<button onclick="openModal(\'modal-auth\')" class="bg-emerald-950 text-amber-300 px-4 py-1.5 rounded-lg font-bold border border-amber-500/50 hover:bg-emerald-900 shadow">' +
-      'Login' +
+      '<i class="fa-solid fa-arrow-right-to-bracket mr-1"></i> Login' +
     '</button>';
   }
 }
 
-window.setLoginRoleHint = function(role) {
-  var btnS = document.getElementById('role-hint-student');
-  var btnF = document.getElementById('role-hint-faculty');
-  var btnA = document.getElementById('role-hint-super');
-  var lbl = document.getElementById('login-label-id');
+// In-Dashboard Role Tab Switcher
+window.selectDashboardLoginRole = function(role) {
+  ['student', 'faculty', 'admin', 'super'].forEach(function(r) {
+    var tabBtn = document.getElementById('tab-btn-' + r);
+    if (tabBtn) {
+      tabBtn.className = (r === role) ? 
+        'py-2 px-3 rounded-lg font-bold text-xs bg-emerald-950 text-amber-300 shadow' : 
+        'py-2 px-3 rounded-lg font-bold text-xs bg-slate-100 text-slate-600 hover:bg-slate-200';
+    }
+  });
 
-  btnS.className = 'flex-1 py-1 rounded text-slate-600';
-  btnF.className = 'flex-1 py-1 rounded text-slate-600';
-  btnA.className = 'flex-1 py-1 rounded text-slate-600';
+  var lbl = document.getElementById('dash-login-label-id');
+  var roleInput = document.getElementById('dash-login-role-type');
+  if (roleInput) roleInput.value = role;
 
   if (role === 'student') {
-    btnS.className = 'flex-1 py-1 rounded bg-white text-emerald-950 shadow-sm';
-    lbl.innerText = 'Mobile Number / Hall Ticket ID';
+    if (lbl) lbl.innerText = 'Mobile Number / Hall Ticket Number';
   } else if (role === 'faculty') {
-    btnF.className = 'flex-1 py-1 rounded bg-white text-emerald-950 shadow-sm';
-    lbl.innerText = 'Faculty Mobile Number / Email';
+    if (lbl) lbl.innerText = 'Registered Mobile Number / Faculty Email';
+  } else if (role === 'admin') {
+    if (lbl) lbl.innerText = 'Admin Username (Default: Admin1)';
   } else {
-    btnA.className = 'flex-1 py-1 rounded bg-white text-emerald-950 shadow-sm';
-    lbl.innerText = 'Administrator Username';
+    if (lbl) lbl.innerText = 'Super Admin Username (Default: Admin)';
   }
+};
+
+window.handleDashboardDirectLogin = function(e) {
+  e.preventDefault();
+  var role = document.getElementById('dash-login-role-type').value;
+  var id = document.getElementById('dash-login-id').value.trim();
+  var pwd = document.getElementById('dash-login-pwd').value.trim();
+
+  executeAuthentication(id, pwd, role);
 };
 
 window.handleUniversalLogin = function(e) {
   e.preventDefault();
-  var id = document.getElementById('login-id').value.trim();
-  var pwd = document.getElementById('login-pwd').value.trim();
+  var id = document.getElementById('modal-login-id').value.trim();
+  var pwd = document.getElementById('modal-login-pwd').value.trim();
+  var role = document.getElementById('modal-login-role-hint').value;
 
+  executeAuthentication(id, pwd, role);
+};
+
+function executeAuthentication(id, pwd, roleHint) {
   // Super Admin Check
   if (id === 'Admin' && pwd === '9290') {
-    saveSession({ id: 'Admin', name: 'Super Admin (Maintenance)', role: 'super_admin' }, true);
+    saveSession({ id: 'Admin', name: 'Super Admin Maintenance', role: 'super_admin' }, true);
     window.closeModal('modal-auth');
-    openDashboard();
+    refreshDashboardState();
     return;
   }
 
@@ -353,7 +374,7 @@ window.handleUniversalLogin = function(e) {
   if (id === 'Admin1' && pwd === '2580') {
     saveSession({ id: 'Admin1', name: 'Admin Exam Coordinator', role: 'admin' }, true);
     window.closeModal('modal-auth');
-    openDashboard();
+    refreshDashboardState();
     return;
   }
 
@@ -365,13 +386,13 @@ window.handleUniversalLogin = function(e) {
       return;
     }
     if (fac.status === 'Pending') {
-      alert('Account Pending: Your faculty registration is awaiting official verification from Admin or Super Admin.');
+      alert('Account Pending: Your faculty registration is awaiting official approval from Admin or Super Admin.');
       return;
     }
     if (fac.password === pwd) {
       saveSession({ id: fac.id, name: fac.name, role: 'faculty', data: fac }, true);
       window.closeModal('modal-auth');
-      openDashboard();
+      refreshDashboardState();
       return;
     } else {
       alert('Invalid Faculty Password.');
@@ -389,23 +410,53 @@ window.handleUniversalLogin = function(e) {
     if (std.password === pwd || pwd === '1234') {
       saveSession({ id: std.ticketNo, name: std.name, role: 'student', data: std }, true);
       window.closeModal('modal-auth');
-      openDashboard();
+      refreshDashboardState();
       return;
     }
   }
 
-  alert('Authentication Failed: Check credentials or register if new.');
+  alert('Authentication Failed: Check credentials or register if you are a new applicant.');
+}
+
+window.setModalRoleHint = function(role) {
+  document.getElementById('modal-login-role-hint').value = role;
+  ['student', 'faculty', 'super'].forEach(function(r) {
+    var btn = document.getElementById('role-hint-' + r);
+    if (btn) btn.className = (r === role) ? 'flex-1 py-1 rounded bg-white text-emerald-950 shadow-sm' : 'flex-1 py-1 rounded text-slate-600';
+  });
 };
 
-function openDashboard() {
-  if (!session || !session.user) return window.openModal('modal-auth');
+// ----------------------------------------------------
+// EXECUTIVE DASHBOARD REFRESHER & METRICS
+// ----------------------------------------------------
+function refreshDashboardState() {
+  var isAuth = session && session.user;
+  var unauthCard = document.getElementById('dashboard-unauthenticated-card');
+  var authContent = document.getElementById('dashboard-authenticated-content');
+
+  if (!isAuth) {
+    if (unauthCard) unauthCard.classList.remove('hidden');
+    if (authContent) authContent.classList.add('hidden');
+    selectDashboardLoginRole('student');
+    return;
+  }
+
+  if (unauthCard) unauthCard.classList.add('hidden');
+  if (authContent) authContent.classList.remove('hidden');
+
   var role = session.user.role;
   document.getElementById('dash-user-name').innerText = 'Welcome, ' + session.user.name;
 
   var pill = document.getElementById('dash-role-pill');
   pill.innerText = role.replace('_', ' ');
-  pill.className = 'text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full ' +
-    (role === 'super_admin' ? 'bg-red-100 text-red-700' : role === 'admin' ? 'bg-amber-100 text-amber-800' : role === 'faculty' ? 'bg-purple-100 text-purple-800' : 'bg-emerald-100 text-emerald-800');
+  pill.className = 'text-[10px] font-black uppercase px-3 py-1 rounded-full ' +
+    (role === 'super_admin' ? 'bg-red-100 text-red-700 border border-red-200' : role === 'admin' ? 'bg-amber-100 text-amber-800 border border-amber-200' : role === 'faculty' ? 'bg-purple-100 text-purple-800 border border-purple-200' : 'bg-emerald-100 text-emerald-800 border border-emerald-200');
+
+  // Update Executive KPI Statistics
+  document.getElementById('stat-total-students').innerText = students.length;
+  document.getElementById('stat-present-count').innerText = students.filter(function(s) { return s.attendance === 'Present'; }).length;
+  document.getElementById('stat-faculty-count').innerText = faculties.filter(function(f) { return f.status === 'Approved'; }).length;
+  document.getElementById('stat-release-state').innerText = config.resultsPublished ? 'Published' : 'Under Lock';
 
   document.getElementById('dash-section-student').classList.toggle('hidden', role !== 'student');
   document.getElementById('dash-section-faculty').classList.toggle('hidden', role !== 'faculty');
@@ -419,8 +470,6 @@ function openDashboard() {
   } else {
     renderManagementDashboard();
   }
-
-  window.navigateTab('dashboard');
 }
 
 // ----------------------------------------------------
@@ -436,9 +485,8 @@ function renderStudentProfileFeatures() {
       <div>
         <i class="fa-solid fa-square-poll-vertical text-emerald-700 text-2xl mb-2"></i>
         <h4 class="font-bold text-slate-900 text-sm">7. Official Examination Result</h4>
-        <p class="text-xs text-slate-600 mt-1">Status: <strong class="text-emerald-950 font-bold">${cand.resultStatus || 'Declared'}</strong></p>
-        <p class="text-xs text-emerald-900 font-bold font-mono mt-0.5">Marks Obtained: ${cand.marks || 0}/100</p>
-        <p class="text-xs text-amber-800 font-semibold">Award: ${cand.prize || 'Participant'}</p>
+        <p class="text-xs text-slate-600 mt-1">Score: <strong class="text-emerald-950 font-bold font-mono">${cand.marks || 0}/100</strong></p>
+        <p class="text-xs text-amber-800 font-semibold mt-0.5">Award: ${cand.prize || 'Participant'}</p>
       </div>
       <span class="text-[10px] text-emerald-800 font-bold mt-2">Released by Central Board</span>
     </div>
@@ -519,7 +567,7 @@ function renderStudentProfileFeatures() {
     <div class="p-4 bg-slate-50 border rounded-xl flex flex-col justify-between">
       <div>
         <i class="fa-solid fa-file-pdf text-red-600 text-2xl mb-2"></i>
-        <h4 class="font-bold text-slate-900 text-sm">6. Model Papers & Exam Pattern</h4>
+        <h4 class="font-bold text-slate-900 text-sm">6. Model Papers & Pattern</h4>
         <p class="text-xs text-slate-600 mt-1">Download official model question papers & past syllabi.</p>
       </div>
       <button onclick="navigateTab('model-papers')" class="mt-3 bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 rounded text-xs">
@@ -527,7 +575,7 @@ function renderStudentProfileFeatures() {
       </button>
     </div>
 
-    <!-- 7. Dynamic Result Status (Conditional) -->
+    <!-- 7. Dynamic Result Status -->
     ${resultsCardHTML}
 
     <!-- 8. Live Attendance Status -->
@@ -645,6 +693,7 @@ function renderFacultyAttendanceTable() {
 window.updateAttendance = function(idx, val) {
   students[idx].attendance = val;
   window.DataStore.set('sm_students', students);
+  refreshDashboardState();
 };
 
 window.facultyVerifyResult = function(idx) {
@@ -666,7 +715,7 @@ function renderManagementDashboard() {
 
   var resBtn = document.getElementById('btn-toggle-results-release');
   if (resBtn) {
-    resBtn.innerText = config.resultsPublished ? 'Results Released to Public & Students (Click to Lock)' : '1-Click: Release Results Globally';
+    resBtn.innerText = config.resultsPublished ? 'Results Released Globally (Click to Lock)' : '1-Click: Release Results Globally';
     resBtn.className = config.resultsPublished ? 'bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded text-xs shadow' : 'bg-amber-600 hover:bg-amber-700 text-white font-bold px-3 py-1.5 rounded text-xs shadow';
   }
 }
@@ -708,7 +757,7 @@ window.exportStudentsToExcel = function() {
 // 2. 1-CLICK FULL DATABASE BACKUP & RESTORE (MOBILE TO BROWSER SYNC)
 window.backupDatabaseToJSON = function() {
   var backupData = {
-    version: '3.0',
+    version: '3.5',
     exportDate: new Date().toISOString(),
     config: config,
     students: students,
@@ -756,7 +805,7 @@ window.handleDatabaseRestoreFile = function(e) {
 
         syncConfigUI();
         renderPrayerTimes();
-        renderManagementDashboard();
+        refreshDashboardState();
         renderPrizesDisplay();
         alert('Data Synchronized Successfully! Portal database restored completely.');
       } else {
@@ -773,7 +822,7 @@ window.handleDatabaseRestoreFile = function(e) {
 window.toggleResultsRelease = function() {
   config.resultsPublished = !config.resultsPublished;
   window.DataStore.set('sm_config', config);
-  renderManagementDashboard();
+  refreshDashboardState();
   alert(config.resultsPublished ? 'Results Published Globally! Students can now view their marks and ranks on dashboards and public search.' : 'Results Locked! Results hidden from public view.');
 };
 
@@ -801,7 +850,6 @@ function buildProfessionalOMRHTML(cand) {
   var digits = cand.ticketNo.replace(/[^0-9]/g, '');
   while (digits.length < 6) digits = '0' + digits;
 
-  // Build 100 question response bubble matrix (4 columns x 25 rows)
   var qColumns = '';
   for (var col = 0; col < 4; col++) {
     var startQ = (col * 25) + 1;
@@ -824,7 +872,6 @@ function buildProfessionalOMRHTML(cand) {
     qColumns += `<div class="p-2 border border-slate-300 rounded bg-white">${rows}</div>`;
   }
 
-  // Roll Number bubbling grid
   var rollHeader = '';
   var rollBubbles = '';
   for (var d = 0; d < digits.length; d++) {
@@ -841,7 +888,6 @@ function buildProfessionalOMRHTML(cand) {
 
   return `
     <div class="border-4 border-slate-800 p-6 bg-white text-slate-900 rounded shadow-lg max-w-4xl mx-auto space-y-4 font-sans text-xs">
-      <!-- OMR Header -->
       <div class="border-b-2 border-slate-900 pb-2 flex justify-between items-center">
         <div>
           <h2 class="text-base font-black uppercase text-emerald-950 font-cinzel">${config.compTitle}</h2>
@@ -854,7 +900,6 @@ function buildProfessionalOMRHTML(cand) {
         </div>
       </div>
 
-      <!-- Instructions & Candidate Bio Grid -->
       <div class="grid grid-cols-12 gap-3 text-xs">
         <div class="col-span-7 p-2.5 bg-slate-50 border rounded space-y-1">
           <p><strong>Candidate Full Name:</strong> <span class="font-bold uppercase text-slate-900">${cand.name}</span></p>
@@ -873,7 +918,6 @@ function buildProfessionalOMRHTML(cand) {
         </div>
       </div>
 
-      <!-- 100 Question Bubble Response Area -->
       <div>
         <div class="flex justify-between items-center mb-1">
           <span class="text-[10px] font-bold text-slate-800 uppercase tracking-wide">Candidate Answers Section (Questions 01 to 100)</span>
@@ -884,7 +928,6 @@ function buildProfessionalOMRHTML(cand) {
         </div>
       </div>
 
-      <!-- Signatures & Authentication Stamp -->
       <div class="border-t-2 border-slate-900 pt-3 flex justify-between items-end text-[10px]">
         <div class="text-center w-40">
           <div class="h-8 border-b border-dashed border-slate-400"></div>
@@ -1054,6 +1097,7 @@ window.setFacultyStatus = function(idx, newStatus) {
   faculties[idx].status = newStatus;
   window.DataStore.set('sm_faculties', faculties);
   renderFacultyApprovalQueue();
+  refreshDashboardState();
   alert('Faculty ' + faculties[idx].name + ' status updated to ' + newStatus);
 };
 
@@ -1062,6 +1106,7 @@ window.removeFaculty = function(idx) {
     faculties.splice(idx, 1);
     window.DataStore.set('sm_faculties', faculties);
     renderFacultyApprovalQueue();
+    refreshDashboardState();
   }
 };
 
@@ -1186,6 +1231,7 @@ window.saveCandidateModifications = function(e) {
   window.closeModal('modal-edit-candidate');
   renderManagementRoster();
   renderDynamicSeatingMatrix();
+  refreshDashboardState();
   alert('Candidate modifications, password, attendance, and prize updated successfully.');
 };
 
@@ -1195,6 +1241,7 @@ window.deleteCandidate = function(idx) {
     window.DataStore.set('sm_students', students);
     renderManagementRoster();
     renderDynamicSeatingMatrix();
+    refreshDashboardState();
   }
 };
 
@@ -1558,7 +1605,7 @@ window.handlePublicResultLookup = function() {
     resBox.classList.remove('hidden');
     resBox.innerHTML = `
       <div class="p-4 bg-amber-50 border border-amber-300 rounded-lg text-xs text-amber-900 font-medium">
-        <i class="fa-solid fa-lock mr-1.5 text-amber-600"></i> The official results have not been publicly released by the Examination Board yet. Please check back shortly.
+        <i class="fa-solid fa-lock mr-1.5 text-amber-600"></i> The official results have not been released publicly by the Board yet.
       </div>
     `;
     return;
@@ -1591,7 +1638,7 @@ window.handlePublicResultLookup = function() {
         <span>Score: <strong class="font-mono text-emerald-950 font-bold text-sm">${cand.marks || 0}/100</strong></span>
         <span>Award: <strong class="text-amber-800 font-bold">${cand.prize || 'Participant'}</strong></span>
       </div>
-      <p class="text-[10px] text-slate-500">Board Status: Verified & Approved</p>
+      <p class="text-[10px] text-slate-500">Board Status: Verified & Released</p>
     </div>
   `;
 };
