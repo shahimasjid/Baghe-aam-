@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Madarsa Al Hamoomea & Shahi Masjid | Seerat Competition Portal</title>
+  <title>Madarsa Al Hamoomea & Shahi Masjid | Central Portal</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -79,10 +79,10 @@
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <h1 class="font-cinzel font-extrabold text-base md:text-lg tracking-wide text-amber-300">SHAHI MASJID BAGH-E-AAM</h1>
+            <h1 id="txt-header-masjid" class="font-cinzel font-extrabold text-base md:text-lg tracking-wide text-amber-300">SHAHI MASJID BAGH-E-AAM</h1>
             <span class="font-arabic text-sm text-emerald-300">جامع شاهى</span>
           </div>
-          <p class="text-[11px] text-emerald-200 tracking-tight font-medium">Under the Aegis of Online Madarsa Al Hamoomea for Islamic & Arabic Studies</p>
+          <p id="txt-header-sub" class="text-[11px] text-emerald-200 tracking-tight font-medium">Under the Aegis of Online Madarsa Al Hamoomea for Islamic & Arabic Studies</p>
         </div>
       </div>
 
@@ -132,7 +132,7 @@
             </div>
             <div id="prayer-time-table" class="space-y-2 text-xs"></div>
           </div>
-          <div class="mt-4 p-3 bg-madarsa-cream border-l-4 border-madarsa-gold text-[11px] text-amber-950 font-medium rounded">
+          <div id="txt-juma-announcement" class="mt-4 p-3 bg-madarsa-cream border-l-4 border-madarsa-gold text-[11px] text-amber-950 font-medium rounded">
             Juma Khutbah: 1:00 PM | Juma Ba-Jamat: 1:30 PM (Shahi Masjid)
           </div>
         </div>
@@ -150,13 +150,13 @@
         <div class="arabic-pattern text-white rounded-xl shadow-md p-6 flex flex-col justify-between border-2 border-madarsa-gold relative overflow-hidden">
           <div class="absolute -right-6 -bottom-6 text-emerald-900/30 text-9xl pointer-events-none font-arabic">ﷺ</div>
           <div>
-            <div class="inline-block bg-madarsa-gold text-madarsa-deep text-[10px] font-black px-2.5 py-1 rounded tracking-wider uppercase shadow">
+            <div id="txt-badge-comp" class="inline-block bg-madarsa-gold text-madarsa-deep text-[10px] font-black px-2.5 py-1 rounded tracking-wider uppercase shadow">
               Annual Knowledge Contest
             </div>
-            <h3 class="text-2xl font-black text-amber-300 mt-2 font-cinzel">2nd Seerat-un-Nabi Competition</h3>
-            <p class="text-xs text-emerald-200 italic mt-1 font-serif">"Bench to Exam Hall: Lessons of Discipline & Success from Seerat-un-Nabi ﷺ"</p>
-            <p class="text-xs text-slate-200 mt-3 leading-relaxed">
-              Inter, Graduate & Postgraduate brackets for Boys & Girls. Automated seating plans and instant hall tickets generated upon registration.
+            <h3 id="txt-comp-title" class="text-2xl font-black text-amber-300 mt-2 font-cinzel">3rd Seerat-un-Nabi Competition</h3>
+            <p id="txt-comp-subtitle" class="text-xs text-emerald-200 italic mt-1 font-serif">"Bench to Exam Hall: Lessons of Discipline & Success from Seerat-un-Nabi ﷺ"</p>
+            <p id="txt-comp-desc" class="text-xs text-slate-200 mt-3 leading-relaxed">
+              Open for Intermediate, Graduate, and Postgraduate levels with separate divisions for Boys & Girls. 48 Distinguished Prizes will be distributed InshaAllah.
             </p>
           </div>
           <div class="mt-6 pt-4 border-t border-emerald-800 flex justify-between items-center relative z-10">
@@ -211,7 +211,7 @@
                 <input type="text" id="reg-id-number" required placeholder="Enter ID Number for Verification" class="w-full border rounded p-2 text-xs focus:ring-2 focus:ring-madarsa-emerald outline-none uppercase font-mono" />
               </div>
             </div>
-            <span class="block text-[10px] text-slate-500 mt-1">This ID will be verified against your physical card at the examination entry gate.</span>
+            <span class="block text-[10px] text-slate-500 mt-1">This ID will be verified against your physical card at the examination gate.</span>
           </div>
 
           <div>
@@ -401,7 +401,6 @@
 
         <div id="dash-section-student" class="hidden mt-6 space-y-6">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            
             <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-lg flex flex-col justify-between">
               <div>
                 <h3 class="text-sm font-bold text-madarsa-emerald">Hall Ticket & Seating Desk</h3>
@@ -438,34 +437,66 @@
 
         <div id="dash-section-management" class="hidden mt-6 space-y-6">
           
-          <div id="super-admin-master-card" class="hidden p-5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-300 rounded-xl space-y-4">
-            <h3 class="text-sm font-black text-amber-900 flex items-center gap-2">
-              <i class="fa-solid fa-shield-halved text-amber-700"></i> Maintenance Super Admin Master Control
-            </h3>
+          <div id="super-admin-master-card" class="hidden p-5 bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-400 rounded-xl space-y-4">
+            <div class="flex justify-between items-center border-b border-amber-300 pb-3">
+              <h3 class="text-sm font-black text-amber-900 flex items-center gap-2">
+                <i class="fa-solid fa-pen-to-square text-amber-700"></i> Master Website & Content Editor (Super Admin Full Control)
+              </h3>
+              <span class="text-[10px] bg-amber-200 text-amber-900 font-bold px-2 py-0.5 rounded">Real-Time Text Sync</span>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
               <div>
-                <label class="block font-bold mb-1">Exam Date & Time</label>
+                <label class="block font-bold mb-1 text-slate-700">Main Mosque Header Text</label>
+                <input type="text" id="cfg-masjid-title" class="w-full border rounded p-2 bg-white" />
+              </div>
+              <div>
+                <label class="block font-bold mb-1 text-slate-700">Header Subtitle Text</label>
+                <input type="text" id="cfg-masjid-sub" class="w-full border rounded p-2 bg-white" />
+              </div>
+              <div>
+                <label class="block font-bold mb-1 text-slate-700">Competition Edition Title</label>
+                <input type="text" id="cfg-comp-title" class="w-full border rounded p-2 bg-white" />
+              </div>
+              <div class="md:col-span-2">
+                <label class="block font-bold mb-1 text-slate-700">Competition Subtitle / Theme Quote</label>
+                <input type="text" id="cfg-comp-subtitle" class="w-full border rounded p-2 bg-white" />
+              </div>
+              <div>
+                <label class="block font-bold mb-1 text-slate-700">Badge Label Text</label>
+                <input type="text" id="cfg-badge-comp" class="w-full border rounded p-2 bg-white" />
+              </div>
+              <div class="col-span-full">
+                <label class="block font-bold mb-1 text-slate-700">Competition Long Description / Paragraph</label>
+                <textarea id="cfg-comp-desc" rows="2" class="w-full border rounded p-2 bg-white"></textarea>
+              </div>
+              <div>
+                <label class="block font-bold mb-1 text-slate-700">Exam Date & Time</label>
                 <input type="text" id="cfg-date-time" class="w-full border rounded p-2 bg-white" />
               </div>
               <div>
-                <label class="block font-bold mb-1">Exam Venue</label>
+                <label class="block font-bold mb-1 text-slate-700">Exam Venue Location</label>
                 <input type="text" id="cfg-venue" class="w-full border rounded p-2 bg-white" />
               </div>
               <div>
-                <label class="block font-bold mb-1">Masjid YouTube URL</label>
+                <label class="block font-bold mb-1 text-slate-700">Juma Announcement Line</label>
+                <input type="text" id="cfg-juma" class="w-full border rounded p-2 bg-white" />
+              </div>
+              <div>
+                <label class="block font-bold mb-1 text-slate-700">Masjid YouTube URL</label>
                 <input type="text" id="cfg-yt" class="w-full border rounded p-2 bg-white" />
               </div>
               <div>
-                <label class="block font-bold mb-1">Masjid Facebook URL</label>
+                <label class="block font-bold mb-1 text-slate-700">Masjid Facebook URL</label>
                 <input type="text" id="cfg-fb" class="w-full border rounded p-2 bg-white" />
               </div>
               <div>
-                <label class="block font-bold mb-1">WhatsApp Channel URL</label>
+                <label class="block font-bold mb-1 text-slate-700">Masjid WhatsApp URL</label>
                 <input type="text" id="cfg-wa" class="w-full border rounded p-2 bg-white" />
               </div>
-              <div class="flex items-end">
-                <button onclick="saveSuperAdminConfig()" class="w-full bg-amber-600 text-white font-black py-2 rounded text-xs hover:bg-amber-700">
-                  Update System Settings
+              <div class="col-span-full pt-2">
+                <button onclick="saveSuperAdminConfig()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-black py-2.5 rounded text-xs shadow transition">
+                  <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Save & Apply All Text Modifications Globally
                 </button>
               </div>
             </div>
@@ -552,37 +583,33 @@
 
       <div id="auth-sub-login">
         <h3 class="text-base font-bold text-madarsa-deep">Portal Sign In</h3>
-        <p class="text-xs text-slate-500 mb-4">Students, Madarsa Admin, & Maintenance Super Admin</p>
+        <p class="text-xs text-slate-500 mb-4">Authorized Access for Students & Administrative Faculty</p>
 
         <form onsubmit="handleUniversalLogin(event)" class="space-y-3 text-xs">
           <div>
-            <label class="block font-bold mb-1">Username / Phone / Hall Ticket</label>
-            <input type="text" id="login-id" required class="w-full border rounded p-2 outline-none focus:ring-2 focus:ring-madarsa-emerald" placeholder="e.g. Admin or Mobile" />
+            <label class="block font-bold mb-1 text-slate-700">Username / Phone / Hall Ticket</label>
+            <input type="text" id="login-id" required class="w-full border rounded p-2 outline-none focus:ring-2 focus:ring-madarsa-emerald" placeholder="Enter credentials" />
           </div>
           <div>
-            <label class="block font-bold mb-1">Password</label>
+            <label class="block font-bold mb-1 text-slate-700">Password</label>
             <input type="password" id="login-pwd" required class="w-full border rounded p-2 outline-none focus:ring-2 focus:ring-madarsa-emerald" />
           </div>
           <div class="flex items-center justify-between text-[11px]">
-            <label class="flex items-center">
+            <label class="flex items-center text-slate-600">
               <input type="checkbox" id="login-save-24h" checked class="mr-1 text-madarsa-emerald" />
               Save session for 24 hours
             </label>
             <button type="button" onclick="switchAuthSub('forgot')" class="text-madarsa-emerald hover:underline font-semibold">Forgot?</button>
           </div>
-          <button type="submit" class="w-full bg-madarsa-deep text-amber-300 font-bold py-2.5 rounded hover:bg-madarsa-emerald transition">
+          <button type="submit" class="w-full bg-madarsa-deep text-amber-300 font-bold py-2.5 rounded hover:bg-madarsa-emerald transition shadow">
             Sign In
           </button>
         </form>
-
-        <div class="mt-4 pt-3 border-t text-center text-[11px] text-slate-500">
-          Super Admin Credentials: <code class="bg-slate-100 px-1 py-0.5 rounded font-mono">Admin</code> / <code class="bg-slate-100 px-1 py-0.5 rounded font-mono">9290</code>
-        </div>
       </div>
 
       <div id="auth-sub-forgot" class="hidden">
         <h3 class="text-base font-bold text-slate-900">Password Recovery</h3>
-        <p class="text-xs text-slate-500 mb-4">Enter registered mobile or email to recover credentials.</p>
+        <p class="text-xs text-slate-500 mb-4">Enter your registered mobile or email to recover credentials.</p>
 
         <form onsubmit="handleForgotPassword(event)" class="space-y-3 text-xs">
           <div>
@@ -674,8 +701,15 @@
 
   <script>
     const INITIAL_CONFIG = {
+      masjidTitle: "SHAHI MASJID BAGH-E-AAM",
+      masjidSub: "Under the Aegis of Online Madarsa Al Hamoomea for Islamic & Arabic Studies",
+      compTitle: "3rd Seerat-un-Nabi Competition",
+      compSubtitle: '"Bench to Exam Hall: Lessons of Discipline & Success from Seerat-un-Nabi ﷺ"',
+      compBadge: "Annual Knowledge Contest",
+      compDesc: "Open for Intermediate, Graduate, and Postgraduate levels with separate divisions for Boys & Girls. 48 Distinguished Prizes will be distributed InshaAllah.",
       examDate: "Saturday, January 31, 2026 | 10:30 AM to 1:00 PM",
       examVenue: "Shahi Masjid Bagh-e-Aam, Nampally, Hyderabad, TS",
+      jumaLine: "Juma Khutbah: 1:00 PM | Juma Ba-Jamat: 1:30 PM (Shahi Masjid)",
       youtube: "https://youtube.com",
       facebook: "https://facebook.com",
       whatsappChannel: "https://whatsapp.com",
@@ -692,8 +726,9 @@
     let students = JSON.parse(localStorage.getItem('sm_students')) || [];
     let feedbacks = JSON.parse(localStorage.getItem('sm_feedbacks')) || [];
     let notices = JSON.parse(localStorage.getItem('sm_notices')) || [
-      { id: 1, title: "Automated Seating Matrix Active", date: "Official", desc: "Seating desks have been assigned according to hall ticket categories." },
-      { id: 2, title: "ID Verification Alert", date: "Mandatory", desc: "Bring physical original of the submitted ID card (Aadhaar or PAN) on examination day." }
+      { id: 1, title: "3rd Edition Announced", date: "Official", desc: "Registrations for the 3rd Seerat-un-Nabi Competition are now open for Intermediate, Graduate, and PG brackets." },
+      { id: 2, title: "Automated Seating Matrix Active", date: "Official", desc: "Seating desks have been assigned according to hall ticket categories." },
+      { id: 3, title: "ID Verification Alert", date: "Mandatory", desc: "Bring physical original of the submitted ID card (Aadhaar or PAN) on examination day." }
     ];
 
     let session = getPersistentSession();
@@ -742,10 +777,27 @@
     }
 
     function syncConfigUI() {
+      // Sync Text on Public Pages
+      document.getElementById('txt-header-masjid').innerText = config.masjidTitle || INITIAL_CONFIG.masjidTitle;
+      document.getElementById('txt-header-sub').innerText = config.masjidSub || INITIAL_CONFIG.masjidSub;
+      document.getElementById('txt-comp-title').innerText = config.compTitle || INITIAL_CONFIG.compTitle;
+      document.getElementById('txt-comp-subtitle').innerText = config.compSubtitle || INITIAL_CONFIG.compSubtitle;
+      document.getElementById('txt-badge-comp').innerText = config.compBadge || INITIAL_CONFIG.compBadge;
+      document.getElementById('txt-comp-desc').innerText = config.compDesc || INITIAL_CONFIG.compDesc;
       document.getElementById('banner-exam-date-str').innerText = config.examDate;
-      if (document.getElementById('cfg-date-time')) {
+      document.getElementById('txt-juma-announcement').innerText = config.jumaLine || INITIAL_CONFIG.jumaLine;
+
+      // Sync Admin Inputs
+      if (document.getElementById('cfg-masjid-title')) {
+        document.getElementById('cfg-masjid-title').value = config.masjidTitle || INITIAL_CONFIG.masjidTitle;
+        document.getElementById('cfg-masjid-sub').value = config.masjidSub || INITIAL_CONFIG.masjidSub;
+        document.getElementById('cfg-comp-title').value = config.compTitle || INITIAL_CONFIG.compTitle;
+        document.getElementById('cfg-comp-subtitle').value = config.compSubtitle || INITIAL_CONFIG.compSubtitle;
+        document.getElementById('cfg-badge-comp').value = config.compBadge || INITIAL_CONFIG.compBadge;
+        document.getElementById('cfg-comp-desc').value = config.compDesc || INITIAL_CONFIG.compDesc;
         document.getElementById('cfg-date-time').value = config.examDate;
         document.getElementById('cfg-venue').value = config.examVenue;
+        document.getElementById('cfg-juma').value = config.jumaLine || INITIAL_CONFIG.jumaLine;
         document.getElementById('cfg-yt').value = config.youtube;
         document.getElementById('cfg-fb').value = config.facebook;
         document.getElementById('cfg-wa').value = config.whatsappChannel;
@@ -830,12 +882,14 @@
       document.getElementById('auth-sub-forgot').classList.toggle('hidden', sub !== 'forgot');
     }
 
+    // UNIVERSAL AUTHENTICATION WITH NEW REQUESTED CREDENTIALS
     function handleUniversalLogin(e) {
       e.preventDefault();
       const id = document.getElementById('login-id').value.trim();
       const pwd = document.getElementById('login-pwd').value.trim();
       const remember = document.getElementById('login-save-24h').checked;
 
+      // 1. Super Admin Check: Admin / 9290
       if (id === 'Admin' && pwd === '9290') {
         saveSession({ id: 'Admin', name: 'Super Admin (Maintenance)', role: 'super_admin' }, remember);
         closeModal('modal-auth');
@@ -843,13 +897,15 @@
         return;
       }
 
-      if (id === 'madarsa_admin' && pwd === 'madarsa123') {
-        saveSession({ id: 'madarsa_admin', name: 'Madarsa Coordinator', role: 'admin' }, remember);
+      // 2. Normal Admin / Invigilator / Molsab Check: Admin1 / 2580
+      if (id === 'Admin1' && pwd === '2580') {
+        saveSession({ id: 'Admin1', name: 'Invigilator & Faculty Admin', role: 'admin' }, remember);
         closeModal('modal-auth');
         openDashboard();
         return;
       }
 
+      // 3. Student Check
       const found = students.find(s => (s.phone === id || s.email === id || s.ticketNo === id) && s.password === pwd);
       if (found) {
         saveSession({ id: found.ticketNo, name: found.name, role: 'student', data: found }, remember);
@@ -1010,7 +1066,6 @@
 
       area.innerHTML = combinedHTML;
 
-      // Render QRs for each form
       students.forEach((cand, idx) => {
         const qrEl = document.getElementById(`bulk-qr-${idx}`);
         if (qrEl) {
@@ -1025,7 +1080,7 @@
       navigateTab('printable');
     }
 
-    // APPLICATION FORM HTML TEMPLATE
+    // APPLICATION FORM TEMPLATE (UPDATED TO 3RD EDITION)
     function generateApplicationFormHTML(cand, qrElementId) {
       return `
         <div class="text-center border-b-2 border-madarsa-gold pb-3 mb-4">
@@ -1036,9 +1091,9 @@
             </div>
             <div class="text-center">
               <p class="font-arabic text-xl font-bold text-madarsa-deep leading-none">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ</p>
-              <h2 class="text-base font-extrabold text-madarsa-deep uppercase tracking-wide font-cinzel mt-1">SHAHI MASJID BAGH-E-AAM</h2>
-              <p class="text-[11px] font-semibold text-madarsa-darkgold">Madarsa Al Hamoomea for Islamic & Arabic Studies</p>
-              <p class="text-[10px] text-slate-600 font-bold">2nd Annual Seerat-un-Nabi ﷺ Knowledge Competition</p>
+              <h2 class="text-base font-extrabold text-madarsa-deep uppercase tracking-wide font-cinzel mt-1">${config.masjidTitle}</h2>
+              <p class="text-[11px] font-semibold text-madarsa-darkgold">${config.masjidSub}</p>
+              <p class="text-[10px] text-slate-600 font-bold">${config.compTitle} ﷺ</p>
             </div>
             <div class="text-right text-[10px] text-slate-500">
               <p><strong>Roll/HT No:</strong></p>
@@ -1147,9 +1202,9 @@
               <i class="fa-solid fa-award"></i>
             </div>
             <div>
-              <h2 class="text-lg font-black text-madarsa-deep font-cinzel">2nd SEERAT-UN-NABI COMPETITION</h2>
-              <p class="text-[11px] text-gray-600 font-bold uppercase">Shahi Masjid Bagh-e-Aam, Hyderabad</p>
-              <p class="text-[10px] text-madarsa-emerald font-semibold">Online Madarsa Al Hamoomea for Islamic & Arabic Studies</p>
+              <h2 class="text-lg font-black text-madarsa-deep font-cinzel">${config.compTitle}</h2>
+              <p class="text-[11px] text-gray-600 font-bold uppercase">${config.masjidTitle}</p>
+              <p class="text-[10px] text-madarsa-emerald font-semibold">${config.masjidSub}</p>
             </div>
           </div>
           <div class="text-right">
@@ -1269,6 +1324,7 @@
         renderManagementRoster();
         renderFeedbackList();
         renderSeatingMatrixPreview();
+        syncConfigUI();
       }
 
       navigateTab('dashboard');
@@ -1355,17 +1411,25 @@
       }
     }
 
+    // SUPER ADMIN COMPLETE MASTER CONFIGURATION SAVE
     function saveSuperAdminConfig() {
-      config.examDate = document.getElementById('cfg-date-time').value;
-      config.examVenue = document.getElementById('cfg-venue').value;
-      config.youtube = document.getElementById('cfg-yt').value;
-      config.facebook = document.getElementById('cfg-fb').value;
-      config.whatsappChannel = document.getElementById('cfg-wa').value;
+      config.masjidTitle = document.getElementById('cfg-masjid-title').value.trim();
+      config.masjidSub = document.getElementById('cfg-masjid-sub').value.trim();
+      config.compTitle = document.getElementById('cfg-comp-title').value.trim();
+      config.compSubtitle = document.getElementById('cfg-comp-subtitle').value.trim();
+      config.compBadge = document.getElementById('cfg-badge-comp').value.trim();
+      config.compDesc = document.getElementById('cfg-comp-desc').value.trim();
+      config.examDate = document.getElementById('cfg-date-time').value.trim();
+      config.examVenue = document.getElementById('cfg-venue').value.trim();
+      config.jumaLine = document.getElementById('cfg-juma').value.trim();
+      config.youtube = document.getElementById('cfg-yt').value.trim();
+      config.facebook = document.getElementById('cfg-fb').value.trim();
+      config.whatsappChannel = document.getElementById('cfg-wa').value.trim();
 
       localStorage.setItem('sm_config', JSON.stringify(config));
       syncConfigUI();
       renderSocialRibbon();
-      alert('Master configuration updated.');
+      alert('All text, headlines, and schedules updated globally!');
     }
 
     function exportStudentsToCSV() {
