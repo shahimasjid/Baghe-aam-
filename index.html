@@ -9,7 +9,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <script>
     tailwind.config = {
@@ -48,6 +48,10 @@
       background-size: 30px 30px;
       background-position: 0 0, 15px 15px;
     }
+    .page-break {
+      page-break-after: always;
+      break-after: page;
+    }
     @media print {
       body * { visibility: hidden; }
       #printable-document, #printable-document * { visibility: visible; }
@@ -57,10 +61,11 @@
         top: 0;
         width: 100%;
         margin: 0;
-        padding: 15px;
+        padding: 10px;
         box-shadow: none !important;
-        border: 2px solid #042f24 !important;
+        border: none !important;
       }
+      .no-print { display: none !important; }
     }
   </style>
 </head>
@@ -69,8 +74,8 @@
   <header class="arabic-pattern text-white border-b-4 border-madarsa-gold shadow-lg sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
       <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTab('home')">
-        <div class="w-13 h-13 rounded-full bg-gradient-to-br from-madarsa-gold to-madarsa-darkgold p-1 flex items-center justify-center text-madarsa-deep text-2xl font-black shadow-md border-2 border-white">
-          <i class="fa-solid fa-mosque p-2"></i>
+        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-madarsa-gold to-madarsa-darkgold flex items-center justify-center text-madarsa-deep text-2xl font-black shadow border-2 border-white">
+          <i class="fa-solid fa-mosque"></i>
         </div>
         <div>
           <div class="flex items-center gap-2">
@@ -117,7 +122,6 @@
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
         <div class="bg-white rounded-xl shadow-sm border border-madarsa-border p-5 flex flex-col justify-between">
           <div>
             <div class="flex justify-between items-center mb-3 border-b border-madarsa-border pb-2">
@@ -138,15 +142,13 @@
             <h2 class="font-bold text-madarsa-deep text-sm flex items-center gap-2">
               <i class="fa-solid fa-scroll text-madarsa-gold"></i> Madarsa Notice Board
             </h2>
-            <span class="text-[10px] text-slate-400 font-semibold">Latest Updates</span>
+            <span class="text-[10px] text-slate-400 font-semibold">Official Updates</span>
           </div>
           <div id="home-notices-container" class="space-y-3 max-h-72 overflow-y-auto pr-1 text-xs"></div>
         </div>
 
         <div class="arabic-pattern text-white rounded-xl shadow-md p-6 flex flex-col justify-between border-2 border-madarsa-gold relative overflow-hidden">
-          <div class="absolute -right-6 -bottom-6 text-emerald-900/30 text-9xl pointer-events-none font-arabic">
-            ﷺ
-          </div>
+          <div class="absolute -right-6 -bottom-6 text-emerald-900/30 text-9xl pointer-events-none font-arabic">ﷺ</div>
           <div>
             <div class="inline-block bg-madarsa-gold text-madarsa-deep text-[10px] font-black px-2.5 py-1 rounded tracking-wider uppercase shadow">
               Annual Knowledge Contest
@@ -154,7 +156,7 @@
             <h3 class="text-2xl font-black text-amber-300 mt-2 font-cinzel">2nd Seerat-un-Nabi Competition</h3>
             <p class="text-xs text-emerald-200 italic mt-1 font-serif">"Bench to Exam Hall: Lessons of Discipline & Success from Seerat-un-Nabi ﷺ"</p>
             <p class="text-xs text-slate-200 mt-3 leading-relaxed">
-              Open for Intermediate, Graduate, and Postgraduate levels with separate divisions for Boys & Girls. 48 Distinguished Prizes will be distributed InshaAllah.
+              Inter, Graduate & Postgraduate brackets for Boys & Girls. Automated seating plans and instant hall tickets generated upon registration.
             </p>
           </div>
           <div class="mt-6 pt-4 border-t border-emerald-800 flex justify-between items-center relative z-10">
@@ -167,7 +169,6 @@
             </button>
           </div>
         </div>
-
       </div>
     </section>
 
@@ -175,42 +176,59 @@
       <div class="bg-white rounded-xl shadow-sm border border-madarsa-border p-6 max-w-3xl mx-auto">
         <div class="border-b border-madarsa-border pb-3">
           <span class="text-[11px] font-bold text-madarsa-gold uppercase tracking-wider">Academic Wing</span>
-          <h2 class="text-xl font-extrabold text-madarsa-deep mt-0.5">Seerat-un-Nabi Participant Enrollment Form</h2>
-          <p class="text-xs text-slate-500">Please provide precise details. A permanent Hall Ticket & Official Application Form will be generated.</p>
+          <h2 class="text-xl font-extrabold text-madarsa-deep mt-0.5">Seerat-un-Nabi Candidate Enrolment</h2>
+          <p class="text-xs text-slate-500">Government identity verification is mandatory. Please provide genuine details.</p>
         </div>
 
         <form id="competition-form" onsubmit="handleStudentRegister(event)" class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
           <div>
             <label class="block font-bold text-slate-700 mb-1">Student Full Name *</label>
-            <input type="text" id="reg-name" required placeholder="As per official ID" class="w-full border border-slate-300 rounded p-2.5 focus:ring-2 focus:ring-madarsa-emerald outline-none" />
+            <input type="text" id="reg-name" required placeholder="As per official ID" class="w-full border rounded p-2.5 focus:ring-2 focus:ring-madarsa-emerald outline-none" />
           </div>
           <div>
             <label class="block font-bold text-slate-700 mb-1">Father's Full Name *</label>
-            <input type="text" id="reg-father" required placeholder="Father's full name" class="w-full border border-slate-300 rounded p-2.5 focus:ring-2 focus:ring-madarsa-emerald outline-none" />
+            <input type="text" id="reg-father" required placeholder="Father's name" class="w-full border rounded p-2.5 focus:ring-2 focus:ring-madarsa-emerald outline-none" />
           </div>
           <div>
             <label class="block font-bold text-slate-700 mb-1">Mobile / WhatsApp Number *</label>
-            <input type="tel" id="reg-phone" required placeholder="10-digit phone number" class="w-full border border-slate-300 rounded p-2.5 focus:ring-2 focus:ring-madarsa-emerald outline-none" />
+            <input type="tel" id="reg-phone" required placeholder="10-digit phone number" class="w-full border rounded p-2.5 focus:ring-2 focus:ring-madarsa-emerald outline-none" />
           </div>
           <div>
-            <label class="block font-bold text-slate-700 mb-1">Email ID</label>
-            <input type="email" id="reg-email" placeholder="student@example.com" class="w-full border border-slate-300 rounded p-2.5 focus:ring-2 focus:ring-madarsa-emerald outline-none" />
+            <label class="block font-bold text-slate-700 mb-1">Email Address</label>
+            <input type="email" id="reg-email" placeholder="student@domain.com" class="w-full border rounded p-2.5 focus:ring-2 focus:ring-madarsa-emerald outline-none" />
           </div>
+
+          <div class="p-3 bg-madarsa-cream rounded border border-madarsa-border col-span-full">
+            <span class="block font-bold text-madarsa-deep mb-1.5"><i class="fa-solid fa-id-card text-madarsa-gold mr-1"></i> Identity Verification (Govt ID) *</span>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <div>
+                <select id="reg-id-type" class="w-full border rounded p-2 text-xs font-semibold focus:ring-2 focus:ring-madarsa-emerald outline-none">
+                  <option value="Aadhaar Card">Aadhaar Card</option>
+                  <option value="PAN Card">PAN Card</option>
+                </select>
+              </div>
+              <div class="sm:col-span-2">
+                <input type="text" id="reg-id-number" required placeholder="Enter ID Number for Verification" class="w-full border rounded p-2 text-xs focus:ring-2 focus:ring-madarsa-emerald outline-none uppercase font-mono" />
+              </div>
+            </div>
+            <span class="block text-[10px] text-slate-500 mt-1">This ID will be verified against your physical card at the examination entry gate.</span>
+          </div>
+
           <div>
             <label class="block font-bold text-slate-700 mb-1">Academic Category *</label>
-            <select id="reg-category" required class="w-full border border-slate-300 rounded p-2.5 focus:ring-2 focus:ring-madarsa-emerald outline-none">
-              <option value="">Select Category</option>
-              <option value="INT">Intermediate (11th / 12th / PUC)</option>
-              <option value="GRAD">Graduate (Bachelors / Degree / Equivalent)</option>
-              <option value="PG">Postgraduate (Masters / Research / PhD)</option>
+            <select id="reg-category" required class="w-full border rounded p-2.5 focus:ring-2 focus:ring-madarsa-emerald outline-none">
+              <option value="">Select Level</option>
+              <option value="INT">Intermediate (11th / 12th)</option>
+              <option value="GRAD">Graduate (Bachelors / Degree)</option>
+              <option value="PG">Postgraduate (Masters / PhD)</option>
             </select>
           </div>
           <div>
             <label class="block font-bold text-slate-700 mb-1">Gender *</label>
-            <select id="reg-gender" required class="w-full border border-slate-300 rounded p-2.5 focus:ring-2 focus:ring-madarsa-emerald outline-none">
+            <select id="reg-gender" required class="w-full border rounded p-2.5 focus:ring-2 focus:ring-madarsa-emerald outline-none">
               <option value="">Select Gender</option>
-              <option value="M">Male (Separate Hall)</option>
-              <option value="F">Female (Separate Hall)</option>
+              <option value="M">Male (Section A)</option>
+              <option value="F">Female (Section B)</option>
             </select>
           </div>
 
@@ -223,7 +241,7 @@
               </label>
               <label class="flex items-center space-x-2 text-xs bg-white p-2 rounded border border-slate-200 cursor-pointer">
                 <input type="radio" name="reg-attempt" value="2nd Time (Previous Participant)" class="text-madarsa-emerald" />
-                <span>2nd Time (Participated Last Year)</span>
+                <span>2nd Time (Previous Participant)</span>
               </label>
               <label class="flex items-center space-x-2 text-xs bg-white p-2 rounded border border-slate-200 cursor-pointer">
                 <input type="radio" name="reg-attempt" value="3rd Time or More (Senior)" class="text-madarsa-emerald" />
@@ -234,17 +252,17 @@
 
           <div class="col-span-full">
             <label class="block font-bold text-slate-700 mb-1">Full Residential Address *</label>
-            <textarea id="reg-address" required rows="2" placeholder="Door No, Street Name, Landmark, Area, City" class="w-full border border-slate-300 rounded p-2.5 focus:ring-2 focus:ring-madarsa-emerald outline-none"></textarea>
+            <textarea id="reg-address" required rows="2" placeholder="Complete address with landmark and city" class="w-full border rounded p-2.5 focus:ring-2 focus:ring-madarsa-emerald outline-none"></textarea>
           </div>
 
           <div class="col-span-full">
-            <label class="block font-bold text-slate-700 mb-1">Set Account Password * (To log in and view results/hall ticket)</label>
-            <input type="password" id="reg-password" required minlength="4" placeholder="Minimum 4 characters" class="w-full border border-slate-300 rounded p-2.5 focus:ring-2 focus:ring-madarsa-emerald outline-none" />
+            <label class="block font-bold text-slate-700 mb-1">Set Account Password * (To check marks and seating plan)</label>
+            <input type="password" id="reg-password" required minlength="4" placeholder="Minimum 4 characters" class="w-full border rounded p-2.5 focus:ring-2 focus:ring-madarsa-emerald outline-none" />
           </div>
 
-          <div class="col-span-full pt-3">
+          <div class="col-span-full pt-2">
             <button type="submit" class="w-full bg-madarsa-deep text-amber-300 font-bold py-3 rounded-lg hover:bg-madarsa-emerald transition text-sm shadow">
-              Submit Enrollment & Generate Documents
+              Submit Registration & Issue Hall Ticket
             </button>
           </div>
         </form>
@@ -258,7 +276,7 @@
             <i class="fa-solid fa-file-contract"></i>
           </div>
           <h2 class="text-lg font-bold text-madarsa-deep">Download Hall Ticket / Application Form</h2>
-          <p class="text-xs text-slate-500 mt-1">Verify your identity using your phone number, candidate name, and father's name.</p>
+          <p class="text-xs text-slate-500 mt-1">Identity confirmation required to print candidate paperwork.</p>
         </div>
 
         <form onsubmit="handleDocLookup(event)" class="space-y-3 text-xs">
@@ -275,15 +293,15 @@
             <input type="text" id="lookup-father" required class="w-full border rounded p-2.5 focus:ring-2 focus:ring-madarsa-emerald outline-none" placeholder="Exact father's name" />
           </div>
           <div>
-            <label class="block font-bold text-slate-700 mb-1">Select Document to Download *</label>
+            <label class="block font-bold text-slate-700 mb-1">Select Document to Retrieve *</label>
             <select id="lookup-doc-type" class="w-full border rounded p-2.5 focus:ring-2 focus:ring-madarsa-emerald outline-none font-semibold">
-              <option value="ticket">Official Examination Hall Ticket (Admit Card)</option>
-              <option value="form">Formal Registration Application Form</option>
+              <option value="ticket">Official Examination Hall Ticket (with Assigned Seat)</option>
+              <option value="form">Formal Registration Application Dossier</option>
             </select>
           </div>
 
           <button type="submit" class="w-full bg-madarsa-gold hover:bg-madarsa-darkgold text-madarsa-deep font-black py-3 rounded transition text-xs shadow mt-2">
-            Verify Details & Generate Document
+            Verify & Fetch Document
           </button>
         </form>
       </div>
@@ -292,7 +310,7 @@
     <section id="tab-results-public" class="hidden space-y-6">
       <div class="bg-white rounded-xl shadow-sm border border-madarsa-border p-6 max-w-lg mx-auto text-center">
         <h2 class="text-xl font-black text-madarsa-deep font-cinzel">Seerat Competition Results</h2>
-        <p class="text-xs text-slate-500 mt-1 mb-4">Enter your allotted Hall Ticket number to verify scores, standing, and prize ranking.</p>
+        <p class="text-xs text-slate-500 mt-1 mb-4">Enter Hall Ticket number to verify score, standing, and prize ranking.</p>
         
         <div class="flex gap-2">
           <input type="text" id="public-ht-input" placeholder="e.g. SUN-INT-M-1001" class="border rounded p-2.5 w-full text-xs font-mono uppercase outline-none focus:ring-2 focus:ring-madarsa-emerald" />
@@ -342,13 +360,13 @@
     </section>
 
     <section id="tab-printable" class="hidden space-y-4">
-      <div class="flex justify-between items-center max-w-3xl mx-auto no-print">
+      <div class="flex justify-between items-center max-w-4xl mx-auto no-print">
         <button onclick="navigateTab('home')" class="text-xs text-slate-600 hover:text-slate-900 font-semibold">
           <i class="fa-solid fa-arrow-left mr-1"></i> Return Home
         </button>
         <div class="flex gap-2">
           <button onclick="window.print()" class="bg-slate-800 text-white text-xs font-semibold px-4 py-2 rounded shadow hover:bg-slate-700">
-            <i class="fa-solid fa-print mr-1"></i> Print
+            <i class="fa-solid fa-print mr-1"></i> Print Document
           </button>
           <button onclick="downloadPDFDoc()" class="bg-madarsa-emerald text-amber-300 text-xs font-semibold px-4 py-2 rounded shadow hover:bg-madarsa-light">
             <i class="fa-solid fa-file-pdf mr-1"></i> Download PDF
@@ -356,7 +374,7 @@
         </div>
       </div>
 
-      <div id="printable-document" class="bg-white p-6 md:p-8 max-w-3xl mx-auto shadow-md text-slate-900 islamic-border"></div>
+      <div id="printable-document" class="bg-white p-6 md:p-8 max-w-4xl mx-auto shadow-md text-slate-900 islamic-border"></div>
     </section>
 
     <section id="tab-dashboard" class="hidden space-y-6">
@@ -368,7 +386,7 @@
               <h2 class="text-xl font-black text-madarsa-deep" id="dash-user-name">Welcome</h2>
               <span id="dash-role-pill" class="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full"></span>
             </div>
-            <p class="text-xs text-slate-500">Madarsa Secure Session (24-Hour Persistence)</p>
+            <p class="text-xs text-slate-500">Madarsa Secure Session (24-Hour Active Security)</p>
           </div>
 
           <div class="flex items-center gap-2">
@@ -383,20 +401,22 @@
 
         <div id="dash-section-student" class="hidden mt-6 space-y-6">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            
             <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-lg flex flex-col justify-between">
               <div>
-                <h3 class="text-sm font-bold text-madarsa-emerald">Hall Ticket (Admit Card)</h3>
-                <p class="text-xs text-slate-600 mt-1">Print hall ticket with QR verification code and photo box.</p>
+                <h3 class="text-sm font-bold text-madarsa-emerald">Hall Ticket & Seating Desk</h3>
+                <p class="text-xs text-slate-600 mt-1">Check your examination hall, room allocation, and desk number.</p>
+                <div id="student-dash-seat-badge" class="mt-3 p-2 bg-white rounded border border-emerald-300 text-xs font-bold text-slate-800"></div>
               </div>
               <button onclick="showCurrentStudentDoc('ticket')" class="mt-4 bg-madarsa-emerald text-amber-300 font-bold py-2 rounded text-xs hover:bg-madarsa-light">
-                View Hall Ticket
+                View & Print Hall Ticket
               </button>
             </div>
 
             <div class="p-4 bg-amber-50 border border-amber-200 rounded-lg flex flex-col justify-between">
               <div>
                 <h3 class="text-sm font-bold text-amber-900">Application Form</h3>
-                <p class="text-xs text-slate-600 mt-1">Official formal application record with your attempt details.</p>
+                <p class="text-xs text-slate-600 mt-1">Official formal registration application record with verification ID status.</p>
               </div>
               <button onclick="showCurrentStudentDoc('form')" class="mt-4 bg-amber-600 text-white font-bold py-2 rounded text-xs hover:bg-amber-700">
                 View Application Form
@@ -405,8 +425,8 @@
 
             <div class="p-4 bg-slate-50 border border-slate-200 rounded-lg flex flex-col justify-between">
               <div>
-                <h3 class="text-sm font-bold text-slate-800">Exam Results & Score</h3>
-                <p class="text-xs text-slate-600 mt-1">Evaluation marks and award status.</p>
+                <h3 class="text-sm font-bold text-slate-800">Score & Award Status</h3>
+                <p class="text-xs text-slate-600 mt-1">Evaluation status and merit leaderboard standing.</p>
                 <div id="student-dash-result-box" class="mt-2 text-xs font-semibold"></div>
               </div>
               <button onclick="navigateTab('results-public')" class="mt-4 bg-slate-800 text-white font-bold py-2 rounded text-xs hover:bg-slate-700">
@@ -420,7 +440,7 @@
           
           <div id="super-admin-master-card" class="hidden p-5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-300 rounded-xl space-y-4">
             <h3 class="text-sm font-black text-amber-900 flex items-center gap-2">
-              <i class="fa-solid fa-shield-halved text-amber-700"></i> Maintenance Admin Master Control (Full Access)
+              <i class="fa-solid fa-shield-halved text-amber-700"></i> Maintenance Super Admin Master Control
             </h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
               <div>
@@ -440,7 +460,7 @@
                 <input type="text" id="cfg-fb" class="w-full border rounded p-2 bg-white" />
               </div>
               <div>
-                <label class="block font-bold mb-1">Masjid WhatsApp Channel URL</label>
+                <label class="block font-bold mb-1">WhatsApp Channel URL</label>
                 <input type="text" id="cfg-wa" class="w-full border rounded p-2 bg-white" />
               </div>
               <div class="flex items-end">
@@ -451,24 +471,47 @@
             </div>
           </div>
 
-          <div class="p-4 bg-slate-50 border border-slate-200 rounded-lg">
-            <h3 class="text-xs font-bold text-slate-800 mb-2">Publish Announcement to Notice Board</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs">
-              <input type="text" id="notice-new-title" placeholder="Notice Title" class="border rounded p-2" />
-              <input type="text" id="notice-new-desc" placeholder="Notice Body" class="border rounded p-2 md:col-span-2" />
-              <button onclick="publishNoticeItem()" class="bg-madarsa-emerald text-amber-300 font-bold py-2 rounded text-xs col-span-full hover:bg-madarsa-light">
-                Post Notice
+          <div class="p-5 bg-emerald-50 border border-emerald-300 rounded-xl space-y-4">
+            <div class="flex flex-wrap justify-between items-center gap-2">
+              <div>
+                <h3 class="text-sm font-black text-madarsa-deep flex items-center gap-2">
+                  <i class="fa-solid fa-chair text-madarsa-emerald"></i> Automated Seating Plan Generator
+                </h3>
+                <p class="text-[11px] text-slate-600">Arrange halls and auto-allocate desk numbers to candidates based on Hall Ticket sequence.</p>
+              </div>
+              <div class="flex gap-2">
+                <button onclick="autoGenerateSeatingPlan()" class="bg-madarsa-emerald text-amber-300 font-bold px-4 py-2 rounded text-xs hover:bg-madarsa-light shadow">
+                  <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Auto-Generate Seating Matrix
+                </button>
+                <button onclick="clearSeatingPlan()" class="bg-red-100 text-red-700 font-semibold px-3 py-2 rounded text-xs hover:bg-red-200">
+                  Reset Seating
+                </button>
+              </div>
+            </div>
+
+            <div id="seating-matrix-preview" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2 max-h-56 overflow-y-auto p-2 bg-white rounded border border-emerald-200 text-[11px]">
+              </div>
+          </div>
+
+          <div class="p-4 bg-slate-50 border border-slate-200 rounded-lg flex flex-wrap justify-between items-center gap-3">
+            <div>
+              <h3 class="text-sm font-bold text-slate-800">Bulk Administrative Operations</h3>
+              <p class="text-[11px] text-slate-500">Pull every registered candidate's formal application form for official office records.</p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <button onclick="pullAllApplicationForms()" class="bg-madarsa-deep text-amber-300 font-bold px-4 py-2 rounded text-xs hover:bg-madarsa-emerald shadow">
+                <i class="fa-solid fa-copy mr-1"></i> 1-Click: Bulk Print All Forms
+              </button>
+              <button onclick="exportStudentsToCSV()" class="bg-slate-700 text-white text-xs px-3 py-2 rounded hover:bg-slate-800">
+                <i class="fa-solid fa-file-csv mr-1"></i> Export Full CSV
               </button>
             </div>
           </div>
 
           <div>
             <div class="flex flex-wrap justify-between items-center mb-3 gap-2">
-              <h3 class="text-sm font-bold text-slate-900">Enrolled Candidates Directory</h3>
-              <div class="flex gap-2">
-                <input type="text" id="roster-search" onkeyup="filterRosterTable()" placeholder="Search Name/HT..." class="border text-xs rounded px-3 py-1 outline-none" />
-                <button onclick="exportStudentsToCSV()" class="bg-slate-700 text-white text-xs px-3 py-1 rounded hover:bg-slate-800">Export CSV</button>
-              </div>
+              <h3 class="text-sm font-bold text-slate-900">Registered Candidates Directory</h3>
+              <input type="text" id="roster-search" onkeyup="filterRosterTable()" placeholder="Search Name/HT/Phone..." class="border text-xs rounded px-3 py-1.5 outline-none w-64" />
             </div>
 
             <div class="overflow-x-auto border rounded-lg">
@@ -479,10 +522,9 @@
                     <th class="p-2.5">Candidate</th>
                     <th class="p-2.5">Father</th>
                     <th class="p-2.5">Category</th>
-                    <th class="p-2.5">Attempt</th>
-                    <th class="p-2.5">Phone</th>
+                    <th class="p-2.5">Assigned Seat</th>
                     <th class="p-2.5">Marks / Status</th>
-                    <th class="p-2.5 text-center">Manage</th>
+                    <th class="p-2.5 text-center">Actions</th>
                   </tr>
                 </thead>
                 <tbody id="admin-roster-tbody" class="divide-y"></tbody>
@@ -491,7 +533,7 @@
           </div>
 
           <div>
-            <h3 class="text-sm font-bold text-slate-900 mb-3">Received Public Messages & Queries</h3>
+            <h3 class="text-sm font-bold text-slate-900 mb-3">Public Queries & Feedback</h3>
             <div id="admin-feedback-container" class="space-y-2 text-xs"></div>
           </div>
 
@@ -524,7 +566,7 @@
           <div class="flex items-center justify-between text-[11px]">
             <label class="flex items-center">
               <input type="checkbox" id="login-save-24h" checked class="mr-1 text-madarsa-emerald" />
-              Remember for 24 hours
+              Save session for 24 hours
             </label>
             <button type="button" onclick="switchAuthSub('forgot')" class="text-madarsa-emerald hover:underline font-semibold">Forgot?</button>
           </div>
@@ -540,7 +582,7 @@
 
       <div id="auth-sub-forgot" class="hidden">
         <h3 class="text-base font-bold text-slate-900">Password Recovery</h3>
-        <p class="text-xs text-slate-500 mb-4">Enter your registered mobile or email.</p>
+        <p class="text-xs text-slate-500 mb-4">Enter registered mobile or email to recover credentials.</p>
 
         <form onsubmit="handleForgotPassword(event)" class="space-y-3 text-xs">
           <div>
@@ -548,12 +590,11 @@
             <input type="text" id="forgot-input" required class="w-full border rounded p-2 outline-none" />
           </div>
           <button type="submit" class="w-full bg-slate-800 text-white font-bold py-2 rounded hover:bg-slate-700">
-            Dispatch Reset Password Details
+            Dispatch Reset Details
           </button>
         </form>
         <button onclick="switchAuthSub('login')" class="mt-3 text-xs text-madarsa-emerald font-semibold hover:underline block text-center w-full">Back to Login</button>
       </div>
-
     </div>
   </div>
 
@@ -598,29 +639,33 @@
         </div>
         <div class="grid grid-cols-2 gap-2">
           <div>
+            <label class="block font-bold mb-1">Assigned Seating Desk</label>
+            <input type="text" id="edit-cand-seat" placeholder="e.g. Hall A - Desk 12" class="w-full border rounded p-2" />
+          </div>
+          <div>
             <label class="block font-bold mb-1">Marks (Out of 100)</label>
             <input type="number" id="edit-cand-marks" min="0" max="100" class="w-full border rounded p-2" />
           </div>
-          <div>
-            <label class="block font-bold mb-1">Result Standing</label>
-            <select id="edit-cand-status" class="w-full border rounded p-2">
-              <option value="Under Evaluation">Under Evaluation</option>
-              <option value="Passed">Passed</option>
-              <option value="Prize Winner">Prize Winner (Top 48)</option>
-              <option value="Disqualified">Disqualified</option>
-            </select>
-          </div>
         </div>
         <div>
-          <label class="block font-bold mb-1">Reset Password</label>
-          <input type="text" id="edit-cand-newpwd" placeholder="Enter new password (optional)" class="w-full border rounded p-2" />
+          <label class="block font-bold mb-1">Result Standing</label>
+          <select id="edit-cand-status" class="w-full border rounded p-2">
+            <option value="Under Evaluation">Under Evaluation</option>
+            <option value="Passed">Passed</option>
+            <option value="Prize Winner">Prize Winner (Top 48)</option>
+            <option value="Disqualified">Disqualified</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-bold mb-1">Reset Password (Optional)</label>
+          <input type="text" id="edit-cand-newpwd" placeholder="Leave empty to retain current" class="w-full border rounded p-2" />
         </div>
         <div class="flex gap-2 pt-2">
           <button type="submit" class="flex-1 bg-madarsa-deep text-white font-bold py-2 rounded">
             Save Updates
           </button>
           <button type="button" onclick="triggerEmailDetailsToCandidate()" class="bg-blue-600 text-white font-bold px-3 py-2 rounded">
-            <i class="fa-solid fa-envelope mr-1"></i> Email Details
+            <i class="fa-solid fa-envelope mr-1"></i> Email
           </button>
         </div>
       </form>
@@ -647,8 +692,8 @@
     let students = JSON.parse(localStorage.getItem('sm_students')) || [];
     let feedbacks = JSON.parse(localStorage.getItem('sm_feedbacks')) || [];
     let notices = JSON.parse(localStorage.getItem('sm_notices')) || [
-      { id: 1, title: "Hall Ticket & Application Form Issuance", date: "Official", desc: "Students can now download their formal Application Form and Hall Ticket from the portal." },
-      { id: 2, title: "48 Grand Prizes Announced", date: "Update", desc: "Separate merit evaluations will be conducted for boys and girls across all levels." }
+      { id: 1, title: "Automated Seating Matrix Active", date: "Official", desc: "Seating desks have been assigned according to hall ticket categories." },
+      { id: 2, title: "ID Verification Alert", date: "Mandatory", desc: "Bring physical original of the submitted ID card (Aadhaar or PAN) on examination day." }
     ];
 
     let session = getPersistentSession();
@@ -660,6 +705,7 @@
       renderNotices();
       syncConfigUI();
       updateAuthUI();
+      renderSeatingMatrixPreview();
     });
 
     function startLiveIndiaClock() {
@@ -728,6 +774,7 @@
       window.scrollTo(0, 0);
     }
 
+    // SESSION & AUTH
     function saveSession(userData, remember24h) {
       const now = new Date().getTime();
       const expiry = remember24h ? now + (24 * 60 * 60 * 1000) : now + (2 * 60 * 60 * 1000);
@@ -811,13 +858,13 @@
         return;
       }
 
-      alert('Invalid credentials. Please verify username and password.');
+      alert('Invalid login credentials. Please verify your details.');
     }
 
     function handleForgotPassword(e) {
       e.preventDefault();
       const target = document.getElementById('forgot-input').value.trim();
-      alert(`Password reset instructions have been dispatched for ${target}.`);
+      alert(`Recovery instructions dispatched to ${target}.`);
       closeModal('modal-auth');
     }
 
@@ -827,7 +874,7 @@
       const newP = document.getElementById('chg-new-pwd').value;
 
       if (session.user.role !== 'student') {
-        alert('Admin passwords must be updated via server system files.');
+        alert('Administrative passwords cannot be modified from the user console.');
         closeModal('modal-change-password');
         return;
       }
@@ -836,22 +883,28 @@
       if (idx !== -1 && students[idx].password === oldP) {
         students[idx].password = newP;
         localStorage.setItem('sm_students', JSON.stringify(students));
-        alert('Password successfully updated.');
+        alert('Password updated.');
         closeModal('modal-change-password');
       } else {
         alert('Current password does not match.');
       }
     }
 
-    // REGISTRATION HANDLER
+    // REGISTRATION WITH SEAT ALLOCATION
     function handleStudentRegister(e) {
       e.preventDefault();
       const category = document.getElementById('reg-category').value;
       const gender = document.getElementById('reg-gender').value;
       const attempt = document.querySelector('input[name="reg-attempt"]:checked').value;
+      const idType = document.getElementById('reg-id-type').value;
+      const idNumber = document.getElementById('reg-id-number').value.trim();
       const seq = 1000 + students.length + 1;
       const ticketNo = `SUN-${category}-${gender}-${seq}`;
       const appId = `APP-HAMOOMEA-${new Date().getFullYear()}-${seq}`;
+
+      // Default Automatic Seating Calculation
+      const hallName = gender === 'M' ? 'Hall A (Boys)' : 'Hall B (Girls)';
+      const deskNo = `${hallName} - Desk #${(students.length % 50) + 1}`;
 
       const newCand = {
         appId,
@@ -860,9 +913,12 @@
         father: document.getElementById('reg-father').value.trim(),
         phone: document.getElementById('reg-phone').value.trim(),
         email: document.getElementById('reg-email').value.trim() || 'N/A',
+        idType,
+        idNumber,
         category,
         gender,
         attempt,
+        seat: deskNo,
         address: document.getElementById('reg-address').value.trim(),
         password: document.getElementById('reg-password').value,
         marks: 0,
@@ -874,107 +930,109 @@
       localStorage.setItem('sm_students', JSON.stringify(students));
 
       saveSession({ id: newCand.ticketNo, name: newCand.name, role: 'student', data: newCand }, true);
-      alert(`Registration Successful!\nAssigned Hall Ticket No: ${ticketNo}\nApplication Form ID: ${appId}`);
+      alert(`Registration Successful!\nAssigned Hall Ticket No: ${ticketNo}\nAllocated Desk: ${deskNo}`);
       displayHallTicket(newCand);
     }
 
-    // DUAL LOOKUP (HALL TICKET OR APPLICATION FORM)
-    function handleDocLookup(e) {
-      e.preventDefault();
-      const phone = document.getElementById('lookup-phone').value.trim();
-      const name = document.getElementById('lookup-name').value.trim().toLowerCase();
-      const father = document.getElementById('lookup-father').value.trim().toLowerCase();
-      const docType = document.getElementById('lookup-doc-type').value;
-
-      const matched = students.find(s => 
-        s.phone === phone && 
-        s.name.trim().toLowerCase() === name && 
-        s.father.trim().toLowerCase() === father
-      );
-
-      if (!matched) {
-        alert('Verification Failed! The entered Mobile Number, Candidate Name, and Father Name do not match our records.');
+    // SEATING PLAN MATRIX ENGINE
+    function autoGenerateSeatingPlan() {
+      if (students.length === 0) {
+        alert('No registered candidates found to arrange.');
         return;
       }
 
-      if (docType === 'ticket') {
-        displayHallTicket(matched);
-      } else {
-        displayApplicationForm(matched);
+      let mCount = 1;
+      let fCount = 1;
+
+      students.forEach(s => {
+        if (s.gender === 'M') {
+          s.seat = `Hall A (Boys Wing) - Desk #${mCount++}`;
+        } else {
+          s.seat = `Hall B (Girls Wing) - Desk #${fCount++}`;
+        }
+      });
+
+      localStorage.setItem('sm_students', JSON.stringify(students));
+      renderSeatingMatrixPreview();
+      renderManagementRoster();
+      alert(`Automated Seating Plan Generated! Allocated ${students.length} students across Hall A and Hall B.`);
+    }
+
+    function clearSeatingPlan() {
+      if (confirm('Reset seating desk allocations for all candidates?')) {
+        students.forEach(s => s.seat = 'Unassigned');
+        localStorage.setItem('sm_students', JSON.stringify(students));
+        renderSeatingMatrixPreview();
+        renderManagementRoster();
       }
     }
 
-    // DOCUMENT 1: OFFICIAL HALL TICKET
-    function displayHallTicket(cand) {
+    function renderSeatingMatrixPreview() {
+      const container = document.getElementById('seating-matrix-preview');
+      if (!container) return;
+
+      if (students.length === 0) {
+        container.innerHTML = `<span class="text-gray-400 p-2 col-span-full">No candidates enrolled yet.</span>`;
+        return;
+      }
+
+      container.innerHTML = students.map(s => `
+        <div class="p-2 border rounded ${s.gender === 'M' ? 'bg-blue-50 border-blue-200' : 'bg-pink-50 border-pink-200'}">
+          <span class="font-mono font-bold text-red-700 block">${s.ticketNo}</span>
+          <span class="font-semibold text-slate-800 truncate block">${s.name}</span>
+          <span class="text-[10px] font-bold text-madarsa-emerald block mt-1"><i class="fa-solid fa-chair mr-0.5"></i> ${s.seat || 'Unassigned'}</span>
+        </div>
+      `).join('');
+    }
+
+    // 1-CLICK BULK APPLICATION DOSSIER PULL
+    function pullAllApplicationForms() {
+      if (students.length === 0) {
+        alert('No registered candidate forms available.');
+        return;
+      }
+
       const area = document.getElementById('printable-document');
-      area.innerHTML = `
-        <div class="border-b-2 border-madarsa-emerald pb-3 mb-4 flex justify-between items-center">
-          <div class="flex items-center space-x-3">
-            <div class="w-12 h-12 bg-madarsa-emerald text-amber-300 flex items-center justify-center rounded-full text-2xl font-bold border-2 border-madarsa-gold">
-              <i class="fa-solid fa-award"></i>
-            </div>
-            <div>
-              <h2 class="text-lg font-black text-madarsa-deep font-cinzel">2nd SEERAT-UN-NABI COMPETITION</h2>
-              <p class="text-[11px] text-gray-600 font-bold uppercase">Shahi Masjid Bagh-e-Aam, Hyderabad</p>
-              <p class="text-[10px] text-madarsa-emerald font-semibold">Online Madarsa Al Hamoomea for Islamic & Arabic Studies</p>
-            </div>
-          </div>
-          <div class="text-right">
-            <span class="text-[10px] text-gray-500 font-bold uppercase block">Hall Ticket Number</span>
-            <span class="text-lg font-mono font-black text-red-600">${cand.ticketNo}</span>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-12 gap-4">
-          <div class="col-span-8 space-y-2 text-xs">
-            <p><strong>Candidate Name:</strong> <span class="uppercase font-bold">${cand.name}</span></p>
-            <p><strong>Father's Name:</strong> <span class="uppercase">${cand.father}</span></p>
-            <p><strong>Category:</strong> <span class="font-bold text-madarsa-emerald">${cand.category}</span> (${cand.gender === 'M' ? 'Male Candidate' : 'Female Candidate'})</p>
-            <p><strong>Participation Attempt:</strong> <span class="font-semibold text-amber-800">${cand.attempt || '1st Time'}</span></p>
-            <p><strong>Contact Phone:</strong> ${cand.phone}</p>
-            <p><strong>Exam Date & Time:</strong> <span class="text-red-700 font-bold">${config.examDate}</span></p>
-            <p><strong>Examination Venue:</strong> <span class="font-bold">${config.examVenue}</span></p>
-            <p><strong>Residential Address:</strong> ${cand.address}</p>
-          </div>
-
-          <div class="col-span-4 flex flex-col items-center justify-between border-l border-slate-300 pl-4">
-            <div class="w-28 h-32 border-2 border-dashed border-slate-400 bg-slate-50 flex flex-col items-center justify-center text-center p-1 rounded text-[10px] text-slate-500">
-              <i class="fa-regular fa-user text-xl mb-1 text-slate-400"></i>
-              <span>Affix Recent Passport Photo & Cross-Sign</span>
-            </div>
-            <div class="mt-2 text-center">
-              <div id="ticket-doc-qr" class="p-1 border bg-white inline-block"></div>
-              <span class="block text-[8px] text-slate-400 uppercase mt-0.5">Invigilator Scan QR</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="mt-6 border-t border-slate-200 pt-3 text-[10px] text-slate-600 space-y-0.5">
-          <p class="font-bold text-slate-800">Mandatory Examination Rules:</p>
-          <p>1. The student must paste a recent physical passport-size photo on this card and bring one government identity card.</p>
-          <p>2. Candidates must report at Shahi Masjid Bagh-e-Aam at least 30 minutes before exam commencement.</p>
-          <p>3. 48 Merit Prizes will be awarded across Intermediate, Graduate, and Postgraduate brackets.</p>
+      let combinedHTML = `
+        <div class="no-print mb-4 p-3 bg-amber-100 border-l-4 border-amber-500 text-xs text-amber-900 font-bold flex justify-between items-center">
+          <span>Official Master Archive: Pulling all ${students.length} Student Application Forms</span>
+          <button onclick="window.print()" class="bg-slate-800 text-white px-3 py-1 rounded">Print All Now</button>
         </div>
       `;
 
-      new QRCode(document.getElementById('ticket-doc-qr'), {
-        text: `VERIFIED|HT:${cand.ticketNo}|APP:${cand.appId}|NAME:${cand.name}|CAT:${cand.category}|ATTEMPT:${cand.attempt}`,
-        width: 80,
-        height: 80
+      students.forEach((cand, idx) => {
+        combinedHTML += `
+          <div class="application-form-page ${idx < students.length - 1 ? 'page-break' : ''} mb-8 pb-8">
+            ${generateApplicationFormHTML(cand, `bulk-qr-${idx}`)}
+          </div>
+        `;
+      });
+
+      area.innerHTML = combinedHTML;
+
+      // Render QRs for each form
+      students.forEach((cand, idx) => {
+        const qrEl = document.getElementById(`bulk-qr-${idx}`);
+        if (qrEl) {
+          new QRCode(qrEl, {
+            text: `FORM|APP:${cand.appId}|HT:${cand.ticketNo}|NAME:${cand.name}|SEAT:${cand.seat}`,
+            width: 70,
+            height: 70
+          });
+        }
       });
 
       navigateTab('printable');
     }
 
-    // DOCUMENT 2: FORMAL APPLICATION FORM
-    function displayApplicationForm(cand) {
-      const area = document.getElementById('printable-document');
-      area.innerHTML = `
+    // APPLICATION FORM HTML TEMPLATE
+    function generateApplicationFormHTML(cand, qrElementId) {
+      return `
         <div class="text-center border-b-2 border-madarsa-gold pb-3 mb-4">
           <div class="flex justify-between items-center px-2">
             <div class="text-left text-[10px] text-slate-500">
-              <p><strong>Form ID:</strong> ${cand.appId || 'APP-2026-REG'}</p>
-              <p><strong>Registered Date:</strong> ${cand.registeredDate || new Date().toLocaleDateString('en-IN')}</p>
+              <p><strong>Form ID:</strong> ${cand.appId}</p>
+              <p><strong>Registered Date:</strong> ${cand.registeredDate}</p>
             </div>
             <div class="text-center">
               <p class="font-arabic text-xl font-bold text-madarsa-deep leading-none">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ</p>
@@ -1003,19 +1061,22 @@
               <p><strong>6. Gender:</strong> ${cand.gender === 'M' ? 'Male' : 'Female'}</p>
             </div>
 
-            <div class="p-2.5 bg-amber-50 border border-amber-200 rounded">
-              <p><strong>7. Competition Attempt Record:</strong></p>
-              <p class="text-amber-950 font-bold mt-0.5"><i class="fa-solid fa-check-double text-amber-700 mr-1"></i> ${cand.attempt || '1st Time (New Applicant)'}</p>
+            <div class="grid grid-cols-2 gap-2 bg-madarsa-cream p-2.5 rounded border border-madarsa-border">
+              <p><strong>7. Verification Document:</strong> <span class="font-bold text-slate-900">${cand.idType || 'Govt ID'}</span> (Verified)</p>
+              <p><strong>8. Attempt Status:</strong> <span class="font-bold text-amber-900">${cand.attempt || '1st Time'}</span></p>
             </div>
 
-            <div class="p-2.5 bg-slate-50 border border-slate-200 rounded">
-              <p><strong>8. Residential Address:</strong></p>
-              <p class="text-slate-700">${cand.address}</p>
+            <div class="p-2.5 bg-emerald-50 border border-emerald-300 rounded">
+              <p><strong>9. Official Examination Seating Desk Allocation:</strong></p>
+              <p class="text-madarsa-deep font-bold text-sm mt-0.5"><i class="fa-solid fa-chair text-madarsa-emerald mr-1"></i> ${cand.seat || 'Allocated at Exam Gate'}</p>
+            </div>
+
+            <div class="p-2 bg-slate-50 border border-slate-200 rounded">
+              <p><strong>10. Residential Address:</strong> ${cand.address}</p>
             </div>
             
-            <div class="p-2.5 bg-slate-50 border border-slate-200 rounded">
-              <p><strong>9. Scheduled Exam Venue & Date:</strong></p>
-              <p class="font-semibold text-slate-800">${config.examVenue} | <span class="text-red-700">${config.examDate}</span></p>
+            <div class="p-2 bg-slate-50 border border-slate-200 rounded">
+              <p><strong>11. Scheduled Exam Venue & Date:</strong> ${config.examVenue} | <span class="text-red-700 font-bold">${config.examDate}</span></p>
             </div>
           </div>
 
@@ -1025,37 +1086,132 @@
               <span>Affix Candidate Photograph</span>
             </div>
             <div class="mt-2 text-center">
-              <div id="form-doc-qr" class="p-1 border bg-white inline-block"></div>
-              <span class="block text-[8px] text-slate-400 uppercase mt-0.5">Application QR</span>
+              <div id="${qrElementId}" class="p-1 border bg-white inline-block"></div>
+              <span class="block text-[8px] text-slate-400 uppercase mt-0.5">Verification QR</span>
             </div>
           </div>
         </div>
 
         <div class="mt-4 border-t border-slate-300 pt-3 text-[10px] text-slate-600">
-          <p class="font-bold text-slate-800">Candidate & Guardian Declaration:</p>
+          <p class="font-bold text-slate-800">Declaration by Candidate & Parent:</p>
           <p class="italic leading-relaxed mt-0.5">
-            "I hereby declare that all information provided in this registration form is accurate and truthful. I agree to abide by the rules, code of discipline, and schedule established by Shahi Masjid Bagh-e-Aam and Madarsa Al Hamoomea for the 2nd Seerat-un-Nabi Competition."
+            "I certify that the information entered is accurate. I understand that identity cards will be audited against government records at entry, and I will report to my assigned seating desk."
           </p>
 
-          <div class="grid grid-cols-2 gap-8 mt-8 pt-4 border-t border-dashed border-slate-300 text-center">
+          <div class="grid grid-cols-2 gap-8 mt-6 pt-2 border-t border-dashed border-slate-300 text-center">
             <div>
               <span class="block text-slate-400">__________________________________________</span>
               <span class="font-bold text-slate-800 text-[11px] block mt-1">Candidate Signature</span>
             </div>
             <div>
               <span class="block text-slate-400">__________________________________________</span>
-              <span class="font-bold text-slate-800 text-[11px] block mt-1">Authorized Madarsa Registrar / Stamp</span>
+              <span class="font-bold text-slate-800 text-[11px] block mt-1">Authorized Registrar Signature & Seal</span>
             </div>
           </div>
         </div>
       `;
+    }
 
-      new QRCode(document.getElementById('form-doc-qr'), {
-        text: `FORM|APP:${cand.appId}|HT:${cand.ticketNo}|NAME:${cand.name}|ATTEMPT:${cand.attempt}`,
+    // DUAL LOOKUP
+    function handleDocLookup(e) {
+      e.preventDefault();
+      const phone = document.getElementById('lookup-phone').value.trim();
+      const name = document.getElementById('lookup-name').value.trim().toLowerCase();
+      const father = document.getElementById('lookup-father').value.trim().toLowerCase();
+      const docType = document.getElementById('lookup-doc-type').value;
+
+      const matched = students.find(s => 
+        s.phone === phone && 
+        s.name.trim().toLowerCase() === name && 
+        s.father.trim().toLowerCase() === father
+      );
+
+      if (!matched) {
+        alert('Verification Failed! The entered Mobile Number, Candidate Name, and Father Name do not match our database.');
+        return;
+      }
+
+      if (docType === 'ticket') {
+        displayHallTicket(matched);
+      } else {
+        displayApplicationForm(matched);
+      }
+    }
+
+    function displayHallTicket(cand) {
+      const area = document.getElementById('printable-document');
+      area.innerHTML = `
+        <div class="border-b-2 border-madarsa-emerald pb-3 mb-4 flex justify-between items-center">
+          <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 bg-madarsa-emerald text-amber-300 flex items-center justify-center rounded-full text-2xl font-bold border-2 border-madarsa-gold">
+              <i class="fa-solid fa-award"></i>
+            </div>
+            <div>
+              <h2 class="text-lg font-black text-madarsa-deep font-cinzel">2nd SEERAT-UN-NABI COMPETITION</h2>
+              <p class="text-[11px] text-gray-600 font-bold uppercase">Shahi Masjid Bagh-e-Aam, Hyderabad</p>
+              <p class="text-[10px] text-madarsa-emerald font-semibold">Online Madarsa Al Hamoomea for Islamic & Arabic Studies</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="text-[10px] text-gray-500 font-bold uppercase block">Hall Ticket Number</span>
+            <span class="text-lg font-mono font-black text-red-600">${cand.ticketNo}</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-12 gap-4">
+          <div class="col-span-8 space-y-2 text-xs">
+            <p><strong>Candidate Name:</strong> <span class="uppercase font-bold">${cand.name}</span></p>
+            <p><strong>Father's Name:</strong> <span class="uppercase">${cand.father}</span></p>
+            <p><strong>Category:</strong> <span class="font-bold text-madarsa-emerald">${cand.category}</span> (${cand.gender === 'M' ? 'Male Candidate' : 'Female Candidate'})</p>
+            <p><strong>Verification ID:</strong> ${cand.idType || 'Govt ID'}</p>
+            
+            <div class="p-2 bg-amber-50 border border-amber-300 rounded">
+              <p><strong>Assigned Seating Desk:</strong></p>
+              <span class="text-sm font-black text-red-700"><i class="fa-solid fa-chair mr-1"></i> ${cand.seat || 'Assigned at Door'}</span>
+            </div>
+
+            <p><strong>Exam Date & Time:</strong> <span class="text-red-700 font-bold">${config.examDate}</span></p>
+            <p><strong>Examination Venue:</strong> <span class="font-bold">${config.examVenue}</span></p>
+            <p><strong>Address:</strong> ${cand.address}</p>
+          </div>
+
+          <div class="col-span-4 flex flex-col items-center justify-between border-l border-slate-300 pl-4">
+            <div class="w-28 h-32 border-2 border-dashed border-slate-400 bg-slate-50 flex flex-col items-center justify-center text-center p-1 rounded text-[10px] text-slate-500">
+              <i class="fa-regular fa-user text-xl mb-1 text-slate-400"></i>
+              <span>Affix Recent Passport Photo & Cross-Sign</span>
+            </div>
+            <div class="mt-2 text-center">
+              <div id="ticket-doc-qr" class="p-1 border bg-white inline-block"></div>
+              <span class="block text-[8px] text-slate-400 uppercase mt-0.5">Invigilator Scan QR</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 border-t border-slate-200 pt-3 text-[10px] text-slate-600 space-y-0.5">
+          <p class="font-bold text-slate-800">Mandatory Instructions:</p>
+          <p>1. Must carry the physical original card for the identity verified during registration (${cand.idType || 'Aadhaar / PAN'}).</p>
+          <p>2. Occupy the specific desk number (${cand.seat}) marked in your designated hall.</p>
+          <p>3. Report strictly 30 minutes before exam time.</p>
+        </div>
+      `;
+
+      new QRCode(document.getElementById('ticket-doc-qr'), {
+        text: `VERIFY|HT:${cand.ticketNo}|NAME:${cand.name}|SEAT:${cand.seat}|CAT:${cand.category}`,
+        width: 80,
+        height: 80
+      });
+
+      navigateTab('printable');
+    }
+
+    function displayApplicationForm(cand) {
+      const area = document.getElementById('printable-document');
+      area.innerHTML = generateApplicationFormHTML(cand, 'single-form-qr');
+      new QRCode(document.getElementById('single-form-qr'), {
+        text: `FORM|APP:${cand.appId}|HT:${cand.ticketNo}|NAME:${cand.name}|SEAT:${cand.seat}`,
         width: 75,
         height: 75
       });
-
       navigateTab('printable');
     }
 
@@ -1075,32 +1231,12 @@
       resBox.innerHTML = `
         <div class="border-l-4 border-madarsa-emerald pl-3 space-y-1 text-xs">
           <h4 class="text-sm font-bold text-slate-900">${found.name} (Father: ${found.father})</h4>
-          <p><strong>Bracket:</strong> ${found.category} - ${found.gender === 'M' ? 'Male' : 'Female'}</p>
-          <p><strong>Attempt:</strong> ${found.attempt || '1st Time'}</p>
+          <p><strong>Category:</strong> ${found.category} - ${found.gender === 'M' ? 'Male' : 'Female'}</p>
+          <p><strong>Desk Allocation:</strong> ${found.seat || 'N/A'}</p>
           <p><strong>Score:</strong> <span class="font-mono text-base font-bold text-madarsa-emerald">${found.marks || 0} / 100</span></p>
-          <p><strong>Status / Award Standing:</strong> <span class="font-bold text-amber-800">${found.status || 'Under Evaluation'}</span></p>
+          <p><strong>Standing / Prize Status:</strong> <span class="font-bold text-amber-800">${found.status || 'Under Evaluation'}</span></p>
         </div>
       `;
-    }
-
-    // FEEDBACK
-    function handleFeedbackSubmit(e) {
-      e.preventDefault();
-      const entry = {
-        id: Date.now(),
-        name: document.getElementById('fb-name').value.trim(),
-        phone: document.getElementById('fb-phone').value.trim(),
-        email: document.getElementById('fb-email').value.trim() || 'N/A',
-        medium: document.getElementById('fb-medium').value,
-        message: document.getElementById('fb-msg').value.trim(),
-        date: new Date().toLocaleDateString('en-IN')
-      };
-
-      feedbacks.unshift(entry);
-      localStorage.setItem('sm_feedbacks', JSON.stringify(feedbacks));
-      alert('Your message has been received by the Madarsa Committee. We will contact you shortly.');
-      document.getElementById('fb-msg').value = '';
-      navigateTab('home');
     }
 
     // DASHBOARD VIEWS
@@ -1125,12 +1261,14 @@
 
       if (role === 'student') {
         const myData = students.find(s => s.ticketNo === session.user.id) || session.user.data;
+        document.getElementById('student-dash-seat-badge').innerText = `Assigned: ${myData.seat || 'Pending'}`;
         document.getElementById('student-dash-result-box').innerHTML = `
-          Marks: <span class="text-madarsa-emerald font-bold font-mono">${myData.marks || 0}/100</span> | Status: <span class="text-amber-800 font-bold">${myData.status || 'Enrolled'}</span>
+          Score: <span class="text-madarsa-emerald font-bold font-mono">${myData.marks || 0}/100</span> | Status: <span class="text-amber-800 font-bold">${myData.status || 'Enrolled'}</span>
         `;
       } else {
         renderManagementRoster();
         renderFeedbackList();
+        renderSeatingMatrixPreview();
       }
 
       navigateTab('dashboard');
@@ -1153,11 +1291,10 @@
           <td class="p-2.5 font-semibold">${s.name}</td>
           <td class="p-2.5">${s.father}</td>
           <td class="p-2.5">${s.category} (${s.gender})</td>
-          <td class="p-2.5 font-semibold text-amber-800">${s.attempt || '1st Time'}</td>
-          <td class="p-2.5">${s.phone}</td>
-          <td class="p-2.5"><span class="font-bold text-madarsa-emerald">${s.marks || 0}</span> / 100 <span class="text-[10px] text-gray-500">(${s.status || 'Active'})</span></td>
+          <td class="p-2.5 font-bold text-madarsa-emerald">${s.seat || 'Unassigned'}</td>
+          <td class="p-2.5"><span class="font-bold text-madarsa-emerald">${s.marks || 0}</span> / 100</td>
           <td class="p-2.5 text-center space-x-1">
-            <button onclick="openEditCandidateModal(${idx})" class="text-blue-600 hover:underline">Marks</button>
+            <button onclick="openEditCandidateModal(${idx})" class="text-blue-600 hover:underline">Edit</button>
             <button onclick="displayHallTicket(students[${idx}])" class="text-emerald-700 hover:underline">Ticket</button>
             <button onclick="displayApplicationForm(students[${idx}])" class="text-amber-700 hover:underline">Form</button>
             ${session.user.role === 'super_admin' ? `<button onclick="deleteCandidate(${idx})" class="text-red-600 hover:underline">Delete</button>` : ''}
@@ -1180,6 +1317,7 @@
       document.getElementById('edit-cand-ht').innerText = c.ticketNo;
       document.getElementById('edit-cand-name').value = c.name;
       document.getElementById('edit-cand-father').value = c.father;
+      document.getElementById('edit-cand-seat').value = c.seat || '';
       document.getElementById('edit-cand-marks').value = c.marks || 0;
       document.getElementById('edit-cand-status').value = c.status || 'Under Evaluation';
       document.getElementById('edit-cand-newpwd').value = '';
@@ -1193,6 +1331,7 @@
 
       c.name = document.getElementById('edit-cand-name').value.trim();
       c.father = document.getElementById('edit-cand-father').value.trim();
+      c.seat = document.getElementById('edit-cand-seat').value.trim();
       c.marks = parseInt(document.getElementById('edit-cand-marks').value) || 0;
       c.status = document.getElementById('edit-cand-status').value;
       
@@ -1203,21 +1342,16 @@
       localStorage.setItem('sm_students', JSON.stringify(students));
       closeModal('modal-edit-candidate');
       renderManagementRoster();
-      alert('Candidate details updated successfully.');
-    }
-
-    function triggerEmailDetailsToCandidate() {
-      const idx = document.getElementById('edit-cand-index').value;
-      const c = students[idx];
-      const mailtoLink = `mailto:${c.email}?subject=Competition Update - ${c.ticketNo}&body=Dear ${c.name},%0D%0AHall Ticket: ${c.ticketNo}%0D%0AExam Date: ${config.examDate}%0D%0AVenue: ${config.examVenue}%0D%0AMarks: ${c.marks || 0}/100%0D%0AStatus: ${c.status}%0D%0A%0D%0A- Madarsa Al Hamoomea & Shahi Masjid`;
-      window.location.href = mailtoLink;
+      renderSeatingMatrixPreview();
+      alert('Candidate details updated.');
     }
 
     function deleteCandidate(idx) {
-      if (confirm(`Super Admin Action: Delete candidate ${students[idx].ticketNo}?`)) {
+      if (confirm(`Super Admin Verification: Delete candidate ${students[idx].ticketNo}?`)) {
         students.splice(idx, 1);
         localStorage.setItem('sm_students', JSON.stringify(students));
         renderManagementRoster();
+        renderSeatingMatrixPreview();
       }
     }
 
@@ -1231,20 +1365,39 @@
       localStorage.setItem('sm_config', JSON.stringify(config));
       syncConfigUI();
       renderSocialRibbon();
-      alert('Global configuration updated across website and all hall tickets.');
+      alert('Master configuration updated.');
     }
 
-    function publishNoticeItem() {
-      const title = document.getElementById('notice-new-title').value.trim();
-      const desc = document.getElementById('notice-new-desc').value.trim();
-      if (!title || !desc) return alert('Enter title and notice body');
+    function exportStudentsToCSV() {
+      let csv = "AppID,HallTicket,Name,Father,ID_Type,Category,Attempt,Gender,DeskSeat,Phone,Email,Marks,Status\n";
+      students.forEach(s => {
+        csv += `"${s.appId}","${s.ticketNo}","${s.name}","${s.father}","${s.idType || 'Govt ID'}","${s.category}","${s.attempt || '1st Time'}","${s.gender}","${s.seat || 'Unassigned'}","${s.phone}","${s.email}","${s.marks || 0}","${s.status}"\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Madarsa_Candidates_${Date.now()}.csv`;
+      a.click();
+    }
 
-      notices.unshift({ id: Date.now(), title, date: "Just now", desc });
-      localStorage.setItem('sm_notices', JSON.stringify(notices));
-      renderNotices();
-      document.getElementById('notice-new-title').value = '';
-      document.getElementById('notice-new-desc').value = '';
-      alert('Notice posted successfully.');
+    function handleFeedbackSubmit(e) {
+      e.preventDefault();
+      const entry = {
+        id: Date.now(),
+        name: document.getElementById('fb-name').value.trim(),
+        phone: document.getElementById('fb-phone').value.trim(),
+        email: document.getElementById('fb-email').value.trim() || 'N/A',
+        medium: document.getElementById('fb-medium').value,
+        message: document.getElementById('fb-msg').value.trim(),
+        date: new Date().toLocaleDateString('en-IN')
+      };
+
+      feedbacks.unshift(entry);
+      localStorage.setItem('sm_feedbacks', JSON.stringify(feedbacks));
+      alert('Inquiry dispatched. Committee will contact you.');
+      document.getElementById('fb-msg').value = '';
+      navigateTab('home');
     }
 
     function renderFeedbackList() {
@@ -1264,33 +1417,15 @@
             <a href="https://wa.me/91${f.phone.replace(/[^0-9]/g, '')}?text=Salam%20${encodeURIComponent(f.name)},%20regarding%20your%20query%20at%20Shahi%20Masjid:%20" target="_blank" class="bg-emerald-600 text-white px-3 py-1 rounded font-semibold hover:bg-emerald-700">
               <i class="fa-brands fa-whatsapp mr-1"></i> WhatsApp
             </a>
-            ${f.email !== 'N/A' ? `
-              <a href="mailto:${f.email}?subject=Response from Madarsa Al Hamoomea / Shahi Masjid" class="bg-blue-600 text-white px-3 py-1 rounded font-semibold hover:bg-blue-700">
-                <i class="fa-solid fa-envelope mr-1"></i> Email
-              </a>
-            ` : ''}
           </div>
         </div>
       `).join('');
     }
 
-    function exportStudentsToCSV() {
-      let csv = "AppID,HallTicket,Name,Father,Category,Attempt,Gender,Phone,Email,Marks,Status\n";
-      students.forEach(s => {
-        csv += `"${s.appId || ''}","${s.ticketNo}","${s.name}","${s.father}","${s.category}","${s.attempt || '1st Time'}","${s.gender}","${s.phone}","${s.email}","${s.marks || 0}","${s.status}"\n`;
-      });
-      const blob = new Blob([csv], { type: 'text/csv' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `Madarsa_Candidates_${Date.now()}.csv`;
-      a.click();
-    }
-
     function downloadPDFDoc() {
       const el = document.getElementById('printable-document');
       html2pdf().set({
-        margin: 8,
+        margin: 6,
         filename: 'Madarsa_Seerat_Document.pdf',
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2 },
