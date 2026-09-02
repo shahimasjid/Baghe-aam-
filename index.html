@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Shahi Masjid Bagh-e-Aam & Online Madarsa Al Hamoomea | Seerat Portal</title>
+  <title>Shahi Masjid Bagh-e-Aam & Online Madarsa Al Hamoomi | Seerat Portal</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -23,7 +23,7 @@
       
       <p class="font-arabic text-2xl md:text-3xl text-emerald-950 font-bold leading-tight">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ</p>
       <h2 class="font-cinzel text-lg md:text-xl font-black text-emerald-900 mt-2">السَّلاَمُ عَلَيْكُمْ وَرَحْمَةُ اللهِ وَبَرَكَاتُهُ</h2>
-      <p class="text-[11px] font-bold text-amber-700 tracking-widest uppercase mt-0.5">Shahi Masjid Bagh-e-Aam & Online Madarsa Al Hamoomea</p>
+      <p class="text-[11px] font-bold text-amber-700 tracking-widest uppercase mt-0.5">Shahi Masjid Bagh-e-Aam & Online Madarsa Al Hamoomi</p>
       
       <div class="my-5 p-5 bg-gradient-to-br from-amber-50 to-emerald-50 rounded-xl border border-amber-300 text-slate-800 text-center space-y-3">
         <p class="font-arabic text-2xl text-emerald-900 font-bold tracking-wide">رَّبِّ زِدْنِي عِلْمًا</p>
@@ -55,7 +55,7 @@
     </div>
   </div>
 
-  <!-- Header & Navigation (Faculty Register shifted right next to Login slot) -->
+  <!-- Header & Navigation (Clean navigation with Central Portal Sign In on the right) -->
   <header class="bg-white border-b-2 border-amber-500 shadow-sm sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
       <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTab('home')">
@@ -71,9 +71,9 @@
         </div>
       </div>
 
-      <nav class="flex flex-wrap items-center gap-1 text-xs font-bold text-slate-700">
+      <nav class="flex flex-wrap items-center gap-1.5 text-xs font-bold text-slate-700">
         <button onclick="navigateTab('home')" class="px-2.5 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Home</button>
-        <button onclick="navigateTab('competitions')" class="px-2.5 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Enrollment</button>
+        <button onclick="navigateTab('competitions')" class="px-2.5 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Student Enrollment</button>
         <button onclick="navigateTab('prizes')" class="px-2.5 py-1.5 bg-amber-50 text-amber-900 border border-amber-300 rounded hover:bg-amber-100 transition">
           <i class="fa-solid fa-trophy mr-1 text-amber-600"></i> 48 Prizes
         </button>
@@ -85,11 +85,8 @@
         <button onclick="navigateTab('results-public')" class="px-2.5 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Results</button>
         <button onclick="navigateTab('feedback')" class="px-2.5 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Helpdesk</button>
         
-        <!-- Faculty Register shifted to the right -->
-        <button onclick="navigateTab('faculty-register')" class="ml-2 px-3 py-1.5 bg-purple-50 text-purple-900 border border-purple-300 rounded-lg hover:bg-purple-100 transition shadow-sm">
-          <i class="fa-solid fa-user-tie mr-1"></i> Faculty Register
-        </button>
-        <span id="nav-auth-slot" class="ml-1"></span>
+        <!-- Right-side Authentication Slot -->
+        <span id="nav-auth-slot" class="ml-2"></span>
       </nav>
     </div>
   </header>
@@ -168,8 +165,8 @@
                 <button onclick="navigateTab('competitions')" class="bg-amber-500 hover:bg-amber-400 text-emerald-950 font-black text-xs px-5 py-2.5 rounded-lg shadow transition">
                   Enroll Student Now
                 </button>
-                <button onclick="navigateTab('faculty-register')" class="bg-purple-900 hover:bg-purple-800 text-white font-bold text-xs px-4 py-2.5 rounded-lg border border-purple-400 transition">
-                  Register as Faculty
+                <button onclick="openModal('modal-auth')" class="bg-emerald-950 hover:bg-emerald-900 text-amber-300 font-bold text-xs px-5 py-2.5 rounded-lg border border-amber-500/50 shadow transition">
+                  <i class="fa-solid fa-right-to-bracket mr-1.5 text-amber-400"></i> Central Portal Sign In
                 </button>
                 <button onclick="navigateTab('prizes')" class="bg-white/10 hover:bg-white/20 text-white font-bold text-xs px-4 py-2.5 rounded-lg border border-white/20 transition">
                   View 48 Prizes
@@ -300,57 +297,7 @@
       </div>
     </section>
 
-    <!-- Tab: Faculty Registration -->
-    <section id="tab-faculty-register" class="hidden space-y-6">
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 max-w-xl mx-auto">
-        <div class="border-b pb-3">
-          <span class="text-[11px] font-bold text-purple-700 uppercase tracking-wider">Faculty & Invigilator Wing</span>
-          <h2 class="text-xl font-extrabold text-emerald-950 mt-0.5">Faculty Registration Portal</h2>
-          <p class="text-xs text-slate-500">Notice: Faculty accounts require verification & approval from Admin or Super Admin before dashboard access is granted.</p>
-        </div>
-
-        <form id="faculty-reg-form" onsubmit="handleFacultyRegister(event)" class="mt-5 space-y-3 text-xs">
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Full Name (with Honorific) *</label>
-            <input type="text" id="fac-reg-name" required placeholder="e.g. Moulana / Mufti / Dr. / Prof." class="w-full border rounded p-2.5 outline-none focus:ring-2 focus:ring-purple-800" />
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Official / Personal Email *</label>
-            <input type="email" id="fac-reg-email" required placeholder="faculty@institution.org" class="w-full border rounded p-2.5 outline-none focus:ring-2 focus:ring-purple-800" />
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Mobile / WhatsApp Number *</label>
-            <input type="tel" id="fac-reg-phone" required placeholder="10-digit mobile number" class="w-full border rounded p-2.5 outline-none focus:ring-2 focus:ring-purple-800" />
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Set Secure Faculty Password *</label>
-            <input type="password" id="fac-reg-pwd" required minlength="4" placeholder="Minimum 4 characters" class="w-full border rounded p-2.5 outline-none focus:ring-2 focus:ring-purple-800" />
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Academic Department / Specialization *</label>
-            <select id="fac-reg-dept" required class="w-full border rounded p-2.5 outline-none font-medium">
-              <option value="Islamic Jurisprudence & Hadith">Islamic Jurisprudence & Hadith</option>
-              <option value="Arabic Language & Grammar">Arabic Language & Grammar</option>
-              <option value="Seerat & Islamic History">Seerat & Islamic History</option>
-              <option value="Exam Controller & Invigilation Wing">Exam Controller & Invigilation Wing</option>
-            </select>
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Preferred Exam Hall Assignment</label>
-            <select id="fac-reg-hall" class="w-full border rounded p-2.5 outline-none font-medium">
-              <option value="Hall A (Boys Wing)">Hall A (Boys Wing)</option>
-              <option value="Hall B (Girls Wing)">Hall B (Girls Wing)</option>
-              <option value="Central Verification Counter">Central Verification Counter</option>
-            </select>
-          </div>
-          <button type="submit" class="w-full bg-purple-900 hover:bg-purple-800 text-white font-bold py-3 rounded-lg shadow transition mt-2 text-xs">
-            Submit Faculty Application for Admin Approval
-          </button>
-        </form>
-      </div>
-    </section>
-
-    <!-- Tab: Prize Gallery -->
+    <!-- Tab: Prize Gallery (48 Packages) -->
     <section id="tab-prizes" class="hidden space-y-6">
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
         <div class="flex flex-wrap justify-between items-center border-b pb-4 gap-3">
@@ -378,7 +325,7 @@
       </div>
     </section>
 
-    <!-- Tab: Seerat Knowledge Hub -->
+    <!-- Tab: Seerat Knowledge Hub (500+ Words) -->
     <section id="tab-seerat-hub" class="hidden space-y-6">
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 max-w-5xl mx-auto">
         <div class="flex flex-wrap justify-between items-center border-b pb-4 gap-3">
@@ -521,46 +468,24 @@
       <div id="printable-document" class="bg-white p-6 md:p-8 max-w-4xl mx-auto shadow-md text-slate-900 islamic-border"></div>
     </section>
 
-    <!-- Tab: Professional Unified Dashboard -->
+    <!-- Tab: Professional Executive Dashboard -->
     <section id="tab-dashboard" class="space-y-6">
       
-      <!-- 1. UNAUTHENTICATED DIRECT LOGIN CONSOLE (Inside Dashboard) -->
-      <div id="dashboard-unauthenticated-card" class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden max-w-2xl mx-auto">
-        <div class="bg-gradient-to-r from-emerald-950 via-emerald-900 to-teal-950 p-6 text-white text-center">
-          <div class="w-12 h-12 mx-auto rounded-xl bg-amber-500 text-emerald-950 flex items-center justify-center font-black text-xl mb-2 shadow">
-            <i class="fa-solid fa-shield-halved"></i>
-          </div>
-          <h2 class="font-cinzel text-xl font-bold text-amber-300">Central Portal Sign In</h2>
-          <p class="text-xs text-emerald-200 mt-0.5">Authenticate as Student, Faculty, Admin, or Super Admin</p>
+      <!-- 1. UNAUTHENTICATED NOTICE -->
+      <div id="dashboard-unauth-prompt" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-12 text-center max-w-lg mx-auto space-y-4">
+        <div class="w-16 h-16 rounded-full bg-emerald-50 text-emerald-800 flex items-center justify-center text-2xl mx-auto border border-emerald-200">
+          <i class="fa-solid fa-lock"></i>
         </div>
-
-        <div class="p-6">
-          <!-- 4-Role Selector Tabs -->
-          <div class="grid grid-cols-4 gap-2 mb-5">
-            <button id="tab-btn-student" type="button" onclick="selectDashboardLoginRole('student')" class="py-2 px-3 rounded-lg font-bold text-xs bg-emerald-950 text-amber-300 shadow">Student</button>
-            <button id="tab-btn-faculty" type="button" onclick="selectDashboardLoginRole('faculty')" class="py-2 px-3 rounded-lg font-bold text-xs bg-slate-100 text-slate-600 hover:bg-slate-200">Faculty</button>
-            <button id="tab-btn-admin" type="button" onclick="selectDashboardLoginRole('admin')" class="py-2 px-3 rounded-lg font-bold text-xs bg-slate-100 text-slate-600 hover:bg-slate-200">Admin</button>
-            <button id="tab-btn-super" type="button" onclick="selectDashboardLoginRole('super')" class="py-2 px-3 rounded-lg font-bold text-xs bg-slate-100 text-slate-600 hover:bg-slate-200">Super Admin</button>
-          </div>
-
-          <form onsubmit="handleDashboardDirectLogin(event)" class="space-y-4 text-xs">
-            <input type="hidden" id="dash-login-role-type" value="student" />
-            <div>
-              <label class="block font-bold text-slate-700 mb-1" id="dash-login-label-id">Mobile Number / Hall Ticket Number</label>
-              <input type="text" id="dash-login-id" required placeholder="Enter login identifier" class="w-full border rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-emerald-800" />
-            </div>
-            <div>
-              <label class="block font-bold text-slate-700 mb-1">Password</label>
-              <input type="password" id="dash-login-pwd" required placeholder="Enter password" class="w-full border rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-emerald-800" />
-            </div>
-            <button type="submit" class="w-full bg-emerald-950 hover:bg-emerald-900 text-amber-300 font-bold py-3 rounded-lg transition text-xs shadow-md">
-              Sign In to Official Dashboard
-            </button>
-          </form>
+        <div>
+          <h3 class="text-lg font-bold text-slate-900 font-cinzel">Authentication Required</h3>
+          <p class="text-xs text-slate-500 mt-1">Please sign in to access your authorized profile, examination management desk, or invigilation tools.</p>
         </div>
+        <button onclick="openModal('modal-auth')" class="bg-emerald-950 hover:bg-emerald-900 text-amber-300 font-bold px-6 py-2.5 rounded-lg text-xs shadow">
+          Open Portal Sign In Console
+        </button>
       </div>
 
-      <!-- 2. AUTHENTICATED EXECUTIVE DASHBOARD CONSOLE -->
+      <!-- 2. AUTHENTICATED EXECUTIVE CONSOLE -->
       <div id="dashboard-authenticated-content" class="hidden space-y-6">
         
         <!-- Header Profile Banner -->
@@ -874,7 +799,7 @@
 
   </main>
 
-  <!-- Universal Modal Authentication Dialog -->
+  <!-- Universal Modal Authentication Dialog with Embedded Faculty Registration -->
   <div id="modal-auth" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
     <div class="bg-white rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl relative grid grid-cols-1 md:grid-cols-5">
       <button onclick="closeModal('modal-auth')" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 text-lg z-10">
@@ -887,7 +812,7 @@
             <i class="fa-solid fa-mosque"></i>
           </div>
           <h3 class="font-cinzel text-base font-bold text-amber-300">Shahi Masjid Central Portal</h3>
-          <p class="text-[11px] text-emerald-200 mt-1">Online Madarsa Al Hamoomea</p>
+          <p class="text-[11px] text-emerald-200 mt-1">Online Madarsa Al Hamoomi</p>
         </div>
         <div class="text-[10px] text-emerald-300/80 space-y-1 mt-6">
           <p>• Verified candidate result tracking</p>
@@ -897,29 +822,94 @@
       </div>
 
       <div class="md:col-span-3 p-6 bg-white flex flex-col justify-center">
-        <h3 class="text-base font-bold text-emerald-950">Account Sign In</h3>
-        <p class="text-xs text-slate-500 mb-4">Select your portal role to authenticate:</p>
+        
+        <!-- Standard Login Pane -->
+        <div id="modal-login-form">
+          <h3 class="text-base font-bold text-emerald-950">Central Portal Sign In</h3>
+          <p class="text-xs text-slate-500 mb-4">Authenticate as Student, Faculty, Admin, or Super Admin</p>
 
-        <div class="flex rounded-lg bg-slate-100 p-1 mb-4 text-[11px] font-bold">
-          <input type="hidden" id="modal-login-role-hint" value="student" />
-          <button type="button" onclick="setModalRoleHint('student')" id="role-hint-student" class="flex-1 py-1 rounded bg-white text-emerald-950 shadow-sm">Student</button>
-          <button type="button" onclick="setModalRoleHint('faculty')" id="role-hint-faculty" class="flex-1 py-1 rounded text-slate-600">Faculty</button>
-          <button type="button" onclick="setModalRoleHint('super')" id="role-hint-super" class="flex-1 py-1 rounded text-slate-600">Admin</button>
+          <div class="flex rounded-lg bg-slate-100 p-1 mb-4 text-[11px]">
+            <input type="hidden" id="modal-login-role-hint" value="student" />
+            <button type="button" onclick="setModalRoleHint('student')" id="role-hint-student" class="flex-1 py-1.5 rounded-lg bg-white text-emerald-950 font-bold shadow-sm">Student</button>
+            <button type="button" onclick="setModalRoleHint('faculty')" id="role-hint-faculty" class="flex-1 py-1.5 rounded-lg text-slate-600 font-bold">Faculty</button>
+            <button type="button" onclick="setModalRoleHint('admin')" id="role-hint-admin" class="flex-1 py-1.5 rounded-lg text-slate-600 font-bold">Admin</button>
+            <button type="button" onclick="setModalRoleHint('super')" id="role-hint-super" class="flex-1 py-1.5 rounded-lg text-slate-600 font-bold">Super</button>
+          </div>
+
+          <form onsubmit="handleUniversalLogin(event)" class="space-y-3 text-xs">
+            <div>
+              <label class="block font-bold mb-1 text-slate-700" id="modal-login-label-id">Mobile Number / Hall Ticket ID</label>
+              <input type="text" id="modal-login-id" required class="w-full border rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-emerald-800" />
+            </div>
+            <div>
+              <label class="block font-bold mb-1 text-slate-700">Password</label>
+              <input type="password" id="modal-login-pwd" required class="w-full border rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-emerald-800" />
+            </div>
+            <button type="submit" class="w-full bg-emerald-950 hover:bg-emerald-900 text-amber-300 font-bold py-2.5 rounded-lg transition shadow">
+              Sign In to Official Dashboard
+            </button>
+          </form>
+
+          <!-- Toggle for Faculty Registration -->
+          <div id="modal-faculty-reg-toggle" class="hidden mt-4 pt-3 border-t text-center text-xs">
+            <span class="text-slate-500">New invigilator or faculty member?</span>
+            <button type="button" onclick="toggleFacultyModalRegistration(true)" class="text-emerald-800 font-bold hover:underline ml-1">
+              Register as Faculty
+            </button>
+          </div>
         </div>
 
-        <form onsubmit="handleUniversalLogin(event)" class="space-y-3 text-xs">
-          <div>
-            <label class="block font-bold mb-1 text-slate-700">Mobile / Username / Hall Ticket</label>
-            <input type="text" id="modal-login-id" required class="w-full border rounded p-2 outline-none focus:ring-2 focus:ring-emerald-800" />
+        <!-- Embedded Faculty Registration Pane -->
+        <div id="modal-faculty-registration-pane" class="hidden text-xs">
+          <div class="flex justify-between items-center mb-3">
+            <h3 class="text-sm font-bold text-purple-950">Faculty Registration Portal</h3>
+            <button type="button" onclick="toggleFacultyModalRegistration(false)" class="text-slate-500 hover:underline text-[11px]">
+              <i class="fa-solid fa-arrow-left mr-1"></i> Back to Login
+            </button>
           </div>
-          <div>
-            <label class="block font-bold mb-1 text-slate-700">Password</label>
-            <input type="password" id="modal-login-pwd" required class="w-full border rounded p-2 outline-none focus:ring-2 focus:ring-emerald-800" />
-          </div>
-          <button type="submit" class="w-full bg-emerald-950 text-amber-300 font-bold py-2.5 rounded hover:bg-emerald-900 transition shadow">
-            Sign In to Dashboard
-          </button>
-        </form>
+
+          <form id="modal-faculty-reg-form" onsubmit="handleFacultyRegister(event)" class="space-y-2.5">
+            <div>
+              <label class="block font-bold text-slate-700 mb-0.5">Full Name (with Title) *</label>
+              <input type="text" id="fac-reg-name" required placeholder="e.g. Moulana / Dr. / Mufti" class="w-full border rounded p-2" />
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block font-bold text-slate-700 mb-0.5">Mobile Number *</label>
+                <input type="tel" id="fac-reg-phone" required class="w-full border rounded p-2" />
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-0.5">Personal / Work Email *</label>
+                <input type="email" id="fac-reg-email" required class="w-full border rounded p-2" />
+              </div>
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-0.5">Create Secure Password *</label>
+              <input type="password" id="fac-reg-pwd" required minlength="4" class="w-full border rounded p-2" />
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-0.5">Academic Specialization *</label>
+              <select id="fac-reg-dept" required class="w-full border rounded p-2">
+                <option value="Islamic Jurisprudence & Hadith">Islamic Jurisprudence & Hadith</option>
+                <option value="Arabic Language & Grammar">Arabic Language & Grammar</option>
+                <option value="Seerat & Islamic History">Seerat & Islamic History</option>
+                <option value="Exam Controller & Invigilation Wing">Exam Controller & Invigilation Wing</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-0.5">Assigned Exam Hall Preference</label>
+              <select id="fac-reg-hall" class="w-full border rounded p-2">
+                <option value="Hall A (Boys Wing)">Hall A (Boys Wing)</option>
+                <option value="Hall B (Girls Wing)">Hall B (Girls Wing)</option>
+                <option value="Central Counter">Central Counter</option>
+              </select>
+            </div>
+            <button type="submit" class="w-full bg-purple-900 hover:bg-purple-800 text-white font-bold py-2 rounded shadow mt-1">
+              Submit Faculty Application for Admin Approval
+            </button>
+          </form>
+        </div>
+
       </div>
     </div>
   </div>
