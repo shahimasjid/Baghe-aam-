@@ -55,7 +55,7 @@
     </div>
   </div>
 
-  <!-- Header & Navigation -->
+  <!-- Header & Navigation (Faculty Register shifted right next to Login slot) -->
   <header class="bg-white border-b-2 border-amber-500 shadow-sm sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
       <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTab('home')">
@@ -72,22 +72,24 @@
       </div>
 
       <nav class="flex flex-wrap items-center gap-1 text-xs font-bold text-slate-700">
-        <button onclick="navigateTab('home')" class="px-3 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Home</button>
-        <button onclick="navigateTab('competitions')" class="px-3 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Student Enrollment</button>
-        <button onclick="navigateTab('faculty-register')" class="px-3 py-1.5 bg-purple-50 text-purple-900 border border-purple-300 rounded hover:bg-purple-100 transition">
-          <i class="fa-solid fa-user-tie mr-1"></i> Faculty Register
-        </button>
-        <button onclick="navigateTab('prizes')" class="px-3 py-1.5 bg-amber-50 text-amber-900 border border-amber-300 rounded hover:bg-amber-100 transition">
+        <button onclick="navigateTab('home')" class="px-2.5 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Home</button>
+        <button onclick="navigateTab('competitions')" class="px-2.5 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Enrollment</button>
+        <button onclick="navigateTab('prizes')" class="px-2.5 py-1.5 bg-amber-50 text-amber-900 border border-amber-300 rounded hover:bg-amber-100 transition">
           <i class="fa-solid fa-trophy mr-1 text-amber-600"></i> 48 Prizes
         </button>
-        <button onclick="navigateTab('seerat-hub')" class="px-3 py-1.5 bg-emerald-50 text-emerald-950 border border-emerald-300 rounded hover:bg-emerald-100 transition">
-          <i class="fa-solid fa-book-open mr-1 text-emerald-800"></i> Seerat Hub (500+ Words)
+        <button onclick="navigateTab('seerat-hub')" class="px-2.5 py-1.5 bg-emerald-50 text-emerald-950 border border-emerald-300 rounded hover:bg-emerald-100 transition">
+          <i class="fa-solid fa-book-open mr-1 text-emerald-800"></i> Seerat Hub
         </button>
-        <button onclick="navigateTab('model-papers')" class="px-3 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Papers</button>
-        <button onclick="navigateTab('doc-lookup')" class="px-3 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Admit & OMR</button>
-        <button onclick="navigateTab('results-public')" class="px-3 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Results</button>
-        <button onclick="navigateTab('feedback')" class="px-3 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Helpdesk</button>
-        <span id="nav-auth-slot" class="ml-2"></span>
+        <button onclick="navigateTab('model-papers')" class="px-2.5 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Papers</button>
+        <button onclick="navigateTab('doc-lookup')" class="px-2.5 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Admit & OMR</button>
+        <button onclick="navigateTab('results-public')" class="px-2.5 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Results</button>
+        <button onclick="navigateTab('feedback')" class="px-2.5 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Helpdesk</button>
+        
+        <!-- Faculty Register shifted to the right -->
+        <button onclick="navigateTab('faculty-register')" class="ml-2 px-3 py-1.5 bg-purple-50 text-purple-900 border border-purple-300 rounded-lg hover:bg-purple-100 transition shadow-sm">
+          <i class="fa-solid fa-user-tie mr-1"></i> Faculty Register
+        </button>
+        <span id="nav-auth-slot" class="ml-1"></span>
       </nav>
     </div>
   </header>
@@ -160,7 +162,6 @@
               <p id="txt-comp-subtitle" class="text-xs md:text-sm text-emerald-200 italic mt-1 font-serif"></p>
               <p id="txt-comp-desc" class="text-xs text-slate-200 mt-3 leading-relaxed"></p>
 
-              <!-- Dynamic Dignitaries Box -->
               <div id="dignitaries-display-box" class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
 
               <div class="mt-6 flex flex-wrap items-center gap-3">
@@ -299,13 +300,13 @@
       </div>
     </section>
 
-    <!-- Tab: Faculty Registration (With Password) -->
+    <!-- Tab: Faculty Registration -->
     <section id="tab-faculty-register" class="hidden space-y-6">
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 max-w-xl mx-auto">
         <div class="border-b pb-3">
           <span class="text-[11px] font-bold text-purple-700 uppercase tracking-wider">Faculty & Invigilator Wing</span>
           <h2 class="text-xl font-extrabold text-emerald-950 mt-0.5">Faculty Registration Portal</h2>
-          <p class="text-xs text-slate-500">Notice: Faculty accounts require official verification & approval from Admin or Super Admin before dashboard access is granted.</p>
+          <p class="text-xs text-slate-500">Notice: Faculty accounts require verification & approval from Admin or Super Admin before dashboard access is granted.</p>
         </div>
 
         <form id="faculty-reg-form" onsubmit="handleFacultyRegister(event)" class="mt-5 space-y-3 text-xs">
@@ -349,7 +350,7 @@
       </div>
     </section>
 
-    <!-- Tab: Prize Gallery (48 Packages) -->
+    <!-- Tab: Prize Gallery -->
     <section id="tab-prizes" class="hidden space-y-6">
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
         <div class="flex flex-wrap justify-between items-center border-b pb-4 gap-3">
@@ -377,7 +378,7 @@
       </div>
     </section>
 
-    <!-- Tab: Seerat Knowledge Hub (500+ Words) -->
+    <!-- Tab: Seerat Knowledge Hub -->
     <section id="tab-seerat-hub" class="hidden space-y-6">
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 max-w-5xl mx-auto">
         <div class="flex flex-wrap justify-between items-center border-b pb-4 gap-3">
@@ -520,56 +521,131 @@
       <div id="printable-document" class="bg-white p-6 md:p-8 max-w-4xl mx-auto shadow-md text-slate-900 islamic-border"></div>
     </section>
 
-    <!-- Tab: Unified Dashboard (Student, Faculty, Admin, Super Admin) -->
-    <section id="tab-dashboard" class="hidden space-y-6">
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+    <!-- Tab: Professional Unified Dashboard -->
+    <section id="tab-dashboard" class="space-y-6">
+      
+      <!-- 1. UNAUTHENTICATED DIRECT LOGIN CONSOLE (Inside Dashboard) -->
+      <div id="dashboard-unauthenticated-card" class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden max-w-2xl mx-auto">
+        <div class="bg-gradient-to-r from-emerald-950 via-emerald-900 to-teal-950 p-6 text-white text-center">
+          <div class="w-12 h-12 mx-auto rounded-xl bg-amber-500 text-emerald-950 flex items-center justify-center font-black text-xl mb-2 shadow">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <h2 class="font-cinzel text-xl font-bold text-amber-300">Central Portal Sign In</h2>
+          <p class="text-xs text-emerald-200 mt-0.5">Authenticate as Student, Faculty, Admin, or Super Admin</p>
+        </div>
+
+        <div class="p-6">
+          <!-- 4-Role Selector Tabs -->
+          <div class="grid grid-cols-4 gap-2 mb-5">
+            <button id="tab-btn-student" type="button" onclick="selectDashboardLoginRole('student')" class="py-2 px-3 rounded-lg font-bold text-xs bg-emerald-950 text-amber-300 shadow">Student</button>
+            <button id="tab-btn-faculty" type="button" onclick="selectDashboardLoginRole('faculty')" class="py-2 px-3 rounded-lg font-bold text-xs bg-slate-100 text-slate-600 hover:bg-slate-200">Faculty</button>
+            <button id="tab-btn-admin" type="button" onclick="selectDashboardLoginRole('admin')" class="py-2 px-3 rounded-lg font-bold text-xs bg-slate-100 text-slate-600 hover:bg-slate-200">Admin</button>
+            <button id="tab-btn-super" type="button" onclick="selectDashboardLoginRole('super')" class="py-2 px-3 rounded-lg font-bold text-xs bg-slate-100 text-slate-600 hover:bg-slate-200">Super Admin</button>
+          </div>
+
+          <form onsubmit="handleDashboardDirectLogin(event)" class="space-y-4 text-xs">
+            <input type="hidden" id="dash-login-role-type" value="student" />
+            <div>
+              <label class="block font-bold text-slate-700 mb-1" id="dash-login-label-id">Mobile Number / Hall Ticket Number</label>
+              <input type="text" id="dash-login-id" required placeholder="Enter login identifier" class="w-full border rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-emerald-800" />
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Password</label>
+              <input type="password" id="dash-login-pwd" required placeholder="Enter password" class="w-full border rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-emerald-800" />
+            </div>
+            <button type="submit" class="w-full bg-emerald-950 hover:bg-emerald-900 text-amber-300 font-bold py-3 rounded-lg transition text-xs shadow-md">
+              Sign In to Official Dashboard
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- 2. AUTHENTICATED EXECUTIVE DASHBOARD CONSOLE -->
+      <div id="dashboard-authenticated-content" class="hidden space-y-6">
         
-        <div class="flex flex-wrap justify-between items-center border-b pb-4 gap-3">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-emerald-950 text-amber-400 flex items-center justify-center font-bold text-lg">
+        <!-- Header Profile Banner -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-wrap justify-between items-center gap-4">
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-900 to-emerald-950 text-amber-400 flex items-center justify-center font-bold text-2xl shadow border border-amber-500">
               <i class="fa-solid fa-gauge-high"></i>
             </div>
             <div>
-              <div class="flex items-center gap-2">
-                <h2 class="text-xl font-black text-emerald-950" id="dash-user-name">Welcome</h2>
-                <span id="dash-role-pill" class="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full"></span>
+              <div class="flex items-center gap-3">
+                <h2 class="text-xl font-black text-emerald-950 font-cinzel" id="dash-user-name">Welcome</h2>
+                <span id="dash-role-pill" class="text-[10px] font-black uppercase px-3 py-1 rounded-full"></span>
               </div>
-              <p class="text-xs text-slate-500">24-Hour Verified Security Session</p>
+              <p class="text-xs text-slate-500 mt-0.5">24-Hour Verified Security Session • Shahi Masjid Central Operations</p>
             </div>
           </div>
           
           <div class="flex items-center gap-2">
-            <button onclick="handleSessionLogout()" class="text-xs bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded font-bold border border-red-200">
-              Logout
+            <button onclick="handleSessionLogout()" class="text-xs bg-red-50 text-red-600 hover:bg-red-100 px-4 py-2 rounded-lg font-bold border border-red-200 shadow-sm transition">
+              <i class="fa-solid fa-arrow-right-from-bracket mr-1"></i> Sign Out
             </button>
           </div>
         </div>
 
-        <!-- Student Profile Dashboard: 10 Advanced Features -->
-        <div id="dash-section-student" class="hidden mt-6 space-y-4">
-          <h3 class="text-sm font-black text-emerald-950 flex items-center gap-2">
+        <!-- KPI Statistic Cards -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="p-4 bg-white rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div>
+              <span class="text-[11px] font-bold text-slate-500 uppercase block">Total Registered</span>
+              <span class="text-2xl font-black text-emerald-950" id="stat-total-students">0</span>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-800 flex items-center justify-center text-lg"><i class="fa-solid fa-users"></i></div>
+          </div>
+
+          <div class="p-4 bg-white rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div>
+              <span class="text-[11px] font-bold text-slate-500 uppercase block">Exam Attendance</span>
+              <span class="text-2xl font-black text-indigo-900" id="stat-present-count">0</span>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-800 flex items-center justify-center text-lg"><i class="fa-solid fa-user-check"></i></div>
+          </div>
+
+          <div class="p-4 bg-white rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div>
+              <span class="text-[11px] font-bold text-slate-500 uppercase block">Approved Faculty</span>
+              <span class="text-2xl font-black text-purple-950" id="stat-faculty-count">0</span>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-800 flex items-center justify-center text-lg"><i class="fa-solid fa-user-tie"></i></div>
+          </div>
+
+          <div class="p-4 bg-white rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+            <div>
+              <span class="text-[11px] font-bold text-slate-500 uppercase block">Results Status</span>
+              <span class="text-base font-black text-amber-700 mt-1 block" id="stat-release-state">Under Lock</span>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-800 flex items-center justify-center text-lg"><i class="fa-solid fa-shield-halved"></i></div>
+          </div>
+        </div>
+
+        <!-- Student View: 10 Advanced Features -->
+        <div id="dash-section-student" class="hidden space-y-4">
+          <h3 class="text-sm font-black text-emerald-950 flex items-center gap-2 border-b pb-2">
             <i class="fa-solid fa-graduation-cap text-emerald-800"></i> Student Portal Services (10 Advanced Utilities)
           </h3>
           <div id="student-features-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
         </div>
 
-        <!-- Faculty Dashboard: Exam Hall Attendance Tracker & OMR Verification -->
-        <div id="dash-section-faculty" class="hidden mt-6 space-y-6">
-          <div class="p-4 bg-purple-50 border border-purple-200 rounded-xl flex flex-wrap justify-between items-center gap-3">
+        <!-- Faculty View: Attendance & Verification -->
+        <div id="dash-section-faculty" class="hidden space-y-6">
+          <div class="p-5 bg-gradient-to-r from-purple-900 to-indigo-950 text-white rounded-xl shadow flex flex-wrap justify-between items-center gap-3">
             <div>
-              <h3 class="text-sm font-bold text-purple-950">Faculty Invigilation Center</h3>
-              <p class="text-xs text-slate-600">Assigned Exam Duty Wing: <strong id="faculty-assigned-hall"></strong></p>
+              <span class="text-[10px] bg-purple-500 text-white font-black px-2 py-0.5 rounded uppercase">Invigilation Console</span>
+              <h3 class="text-base font-bold text-amber-300 mt-1">Faculty Examination Control Wing</h3>
+              <p class="text-xs text-purple-200">Assigned Hall: <strong id="faculty-assigned-hall" class="text-white"></strong></p>
             </div>
             <div class="flex gap-2">
-              <button onclick="generateBatchOMR()" class="bg-purple-900 text-white font-bold px-3 py-1.5 rounded text-xs shadow">
-                <i class="fa-solid fa-print mr-1"></i> Print All Candidate OMR Sheets
+              <button onclick="generateBatchOMR()" class="bg-amber-500 hover:bg-amber-400 text-emerald-950 font-bold px-4 py-2 rounded-lg text-xs shadow">
+                <i class="fa-solid fa-print mr-1"></i> Batch Print All OMR Sheets
               </button>
             </div>
           </div>
 
-          <div>
-            <h4 class="text-xs font-bold text-slate-900 mb-2">Participant Attendance Tracker (Present / Absent / Not Interested) & Result Verification</h4>
-            <div class="overflow-x-auto border rounded-lg bg-white">
+          <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+            <h4 class="text-xs font-bold text-slate-900 mb-3 uppercase tracking-wide">Candidate Attendance & Result Verification Queue</h4>
+            <div class="overflow-x-auto border rounded-lg">
               <table class="w-full text-xs text-left">
                 <thead class="bg-slate-100 uppercase text-[10px] text-slate-600 border-b">
                   <tr>
@@ -577,7 +653,7 @@
                     <th class="p-2.5">Candidate Name</th>
                     <th class="p-2.5">Seat Desk</th>
                     <th class="p-2.5">Exam Day Attendance</th>
-                    <th class="p-2.5 text-center">OMR / Verification</th>
+                    <th class="p-2.5 text-center">OMR / Verify</th>
                   </tr>
                 </thead>
                 <tbody id="faculty-attendance-tbody" class="divide-y"></tbody>
@@ -586,27 +662,27 @@
           </div>
         </div>
 
-        <!-- Management Dashboard: Admin & Super Admin (15 Advanced Features) -->
-        <div id="dash-section-management" class="hidden mt-6 space-y-6">
+        <!-- Admin & Super Admin View (15 Advanced Tools) -->
+        <div id="dash-section-management" class="hidden space-y-6">
           
-          <!-- Master Control Bar: 1-Click Excel, Backup & Sync -->
-          <div class="p-4 bg-slate-900 text-white rounded-xl shadow flex flex-wrap justify-between items-center gap-3">
+          <!-- Data Exchange Toolbar -->
+          <div class="p-5 bg-gradient-to-r from-slate-900 via-indigo-950 to-emerald-950 text-white rounded-2xl shadow flex flex-wrap justify-between items-center gap-3">
             <div>
               <h3 class="text-sm font-black text-amber-400 flex items-center gap-2">
                 <i class="fa-solid fa-cloud-arrow-up"></i> Central Data Exchange & Synchronization Hub
               </h3>
-              <p class="text-[11px] text-slate-300">1-Click Excel export, mobile-to-browser JSON database sync, and multi-stage result releases.</p>
+              <p class="text-[11px] text-slate-300 mt-0.5">1-Click Excel export, mobile-to-browser JSON database sync, and multi-stage result releases.</p>
             </div>
 
             <div class="flex flex-wrap gap-2 text-xs">
-              <button onclick="exportStudentsToExcel()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3 py-1.5 rounded shadow flex items-center gap-1.5">
+              <button onclick="exportStudentsToExcel()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3 py-2 rounded-lg shadow flex items-center gap-1.5">
                 <i class="fa-solid fa-file-excel"></i> 1-Click Excel Export
               </button>
-              <button onclick="backupDatabaseToJSON()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold px-3 py-1.5 rounded shadow flex items-center gap-1.5">
-                <i class="fa-solid fa-download"></i> Download Backup (JSON)
+              <button onclick="backupDatabaseToJSON()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold px-3 py-2 rounded-lg shadow flex items-center gap-1.5">
+                <i class="fa-solid fa-download"></i> Backup (JSON)
               </button>
-              <button onclick="triggerRestoreDatabase()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-3 py-1.5 rounded shadow flex items-center gap-1.5">
-                <i class="fa-solid fa-upload"></i> Sync/Restore (Mobile to Web)
+              <button onclick="triggerRestoreDatabase()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-3 py-2 rounded-lg shadow flex items-center gap-1.5">
+                <i class="fa-solid fa-upload"></i> Sync Data (Mobile/Web)
               </button>
               <input type="file" id="file-restore-input" accept=".json" class="hidden" onchange="handleDatabaseRestoreFile(event)" />
               <button id="btn-toggle-results-release" onclick="toggleResultsRelease()"></button>
@@ -614,9 +690,9 @@
           </div>
 
           <!-- Batch Document Printing Panel -->
-          <div class="p-4 bg-purple-50 border border-purple-200 rounded-xl flex flex-wrap justify-between items-center gap-3">
+          <div class="p-4 bg-purple-50/70 border border-purple-200 rounded-xl flex flex-wrap justify-between items-center gap-3">
             <div>
-              <h4 class="text-xs font-bold text-purple-950 uppercase">1-Click Batch Document Actions</h4>
+              <h4 class="text-xs font-bold text-purple-950 uppercase">1-Click Batch Printing Actions</h4>
               <p class="text-xs text-slate-600">Print or save standardized documents for all registered students.</p>
             </div>
             <div class="flex flex-wrap gap-2 text-xs">
@@ -714,12 +790,12 @@
             <div id="dynamic-seating-matrix-preview" class="p-3 bg-white rounded-lg border max-h-80 overflow-y-auto"></div>
           </div>
 
-          <!-- Faculty Approval, Denial & Revocation Queue -->
-          <div class="p-4 bg-white border rounded-xl space-y-3">
-            <h4 class="text-xs font-bold text-slate-900 flex items-center gap-2">
+          <!-- Faculty Approval & Vetting Queue -->
+          <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 space-y-3">
+            <h4 class="text-xs font-bold text-slate-900 flex items-center gap-2 uppercase tracking-wide">
               <i class="fa-solid fa-user-shield text-purple-700"></i> Faculty Registration Approval & Access Queue
             </h4>
-            <div class="overflow-x-auto border rounded bg-white">
+            <div class="overflow-x-auto border rounded-lg">
               <table class="w-full text-xs text-left">
                 <thead class="bg-slate-100 uppercase text-[10px] text-slate-600 border-b">
                   <tr>
@@ -736,12 +812,12 @@
             </div>
           </div>
 
-          <!-- Inbound Feedback Management Desk -->
-          <div class="p-4 bg-white border rounded-xl space-y-3">
-            <h4 class="text-xs font-bold text-slate-900 flex items-center gap-2">
+          <!-- Feedback Management Desk -->
+          <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 space-y-3">
+            <h4 class="text-xs font-bold text-slate-900 flex items-center gap-2 uppercase tracking-wide">
               <i class="fa-solid fa-envelope-open-text text-teal-700"></i> Inbound Feedback Desk (Direct WhatsApp & Email Responder)
             </h4>
-            <div class="overflow-x-auto border rounded bg-white">
+            <div class="overflow-x-auto border rounded-lg">
               <table class="w-full text-xs text-left">
                 <thead class="bg-slate-100 uppercase text-[10px] text-slate-600 border-b">
                   <tr>
@@ -756,22 +832,22 @@
             </div>
           </div>
 
-          <!-- Candidate Master Directory & Prize Allotment Control -->
-          <div class="p-4 bg-white border rounded-xl space-y-3">
+          <!-- Master Candidate Directory -->
+          <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 space-y-3">
             <div class="flex flex-wrap justify-between items-center gap-2">
               <div class="flex items-center gap-3">
-                <h4 class="text-xs font-bold text-slate-900">Enrolled Student Directory & Prize Allotment Control</h4>
+                <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wide">Enrolled Student Directory & Prize Allotment Control</h4>
                 <div class="flex items-center gap-1 bg-slate-100 p-0.5 rounded border text-[11px]">
                   <button id="btn-roster-list" onclick="switchRosterLayout('list')" class="px-2 py-0.5 rounded font-bold bg-white text-emerald-950 shadow-sm">List</button>
                   <button id="btn-roster-grid" onclick="switchRosterLayout('grid')" class="px-2 py-0.5 rounded font-bold text-slate-600 hover:text-emerald-950">Grid</button>
                 </div>
               </div>
               <div>
-                <input type="text" id="roster-search" onkeyup="filterRosterTable()" placeholder="Search Name/HT/Phone..." class="border text-xs rounded px-3 py-1.5 outline-none w-56" />
+                <input type="text" id="roster-search" onkeyup="filterRosterTable()" placeholder="Search Name/HT/Phone..." class="border text-xs rounded-lg px-3 py-1.5 outline-none w-56" />
               </div>
             </div>
 
-            <div id="roster-list-wrapper" class="overflow-x-auto border rounded-lg bg-white">
+            <div id="roster-list-wrapper" class="overflow-x-auto border rounded-lg">
               <table class="w-full text-xs text-left">
                 <thead class="bg-slate-100 uppercase text-[10px] text-slate-600 border-b">
                   <tr>
@@ -798,7 +874,7 @@
 
   </main>
 
-  <!-- Universal Authentication Modal -->
+  <!-- Universal Modal Authentication Dialog -->
   <div id="modal-auth" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
     <div class="bg-white rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl relative grid grid-cols-1 md:grid-cols-5">
       <button onclick="closeModal('modal-auth')" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 text-lg z-10">
@@ -825,19 +901,20 @@
         <p class="text-xs text-slate-500 mb-4">Select your portal role to authenticate:</p>
 
         <div class="flex rounded-lg bg-slate-100 p-1 mb-4 text-[11px] font-bold">
-          <button type="button" onclick="setLoginRoleHint('student')" id="role-hint-student" class="flex-1 py-1 rounded bg-white text-emerald-950 shadow-sm">Student</button>
-          <button type="button" onclick="setLoginRoleHint('faculty')" id="role-hint-faculty" class="flex-1 py-1 rounded text-slate-600">Faculty</button>
-          <button type="button" onclick="setLoginRoleHint('super')" id="role-hint-super" class="flex-1 py-1 rounded text-slate-600">Admin</button>
+          <input type="hidden" id="modal-login-role-hint" value="student" />
+          <button type="button" onclick="setModalRoleHint('student')" id="role-hint-student" class="flex-1 py-1 rounded bg-white text-emerald-950 shadow-sm">Student</button>
+          <button type="button" onclick="setModalRoleHint('faculty')" id="role-hint-faculty" class="flex-1 py-1 rounded text-slate-600">Faculty</button>
+          <button type="button" onclick="setModalRoleHint('super')" id="role-hint-super" class="flex-1 py-1 rounded text-slate-600">Admin</button>
         </div>
 
         <form onsubmit="handleUniversalLogin(event)" class="space-y-3 text-xs">
           <div>
-            <label class="block font-bold mb-1 text-slate-700" id="login-label-id">Mobile Number / Hall Ticket ID</label>
-            <input type="text" id="login-id" required class="w-full border rounded p-2 outline-none focus:ring-2 focus:ring-emerald-800" />
+            <label class="block font-bold mb-1 text-slate-700">Mobile / Username / Hall Ticket</label>
+            <input type="text" id="modal-login-id" required class="w-full border rounded p-2 outline-none focus:ring-2 focus:ring-emerald-800" />
           </div>
           <div>
             <label class="block font-bold mb-1 text-slate-700">Password</label>
-            <input type="password" id="login-pwd" required class="w-full border rounded p-2 outline-none focus:ring-2 focus:ring-emerald-800" />
+            <input type="password" id="modal-login-pwd" required class="w-full border rounded p-2 outline-none focus:ring-2 focus:ring-emerald-800" />
           </div>
           <button type="submit" class="w-full bg-emerald-950 text-amber-300 font-bold py-2.5 rounded hover:bg-emerald-900 transition shadow">
             Sign In to Dashboard
