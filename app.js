@@ -1,17 +1,22 @@
-// app.js - Aeroplane 2x2 Seating, Gender Auto-ID, Seerat Hub & Stamp Layout
+// app.js - Grid/List View Toggles, Aeroplane 2x2 Seating, 48 Prizes & 500+ Words Seerat
 var config = window.DataStore.get('sm_config', window.INITIAL_CONFIG);
 var students = window.DataStore.get('sm_students', []);
 var notices = window.DataStore.get('sm_notices', window.INITIAL_NOTICES);
 var papers = window.DataStore.get('sm_papers', window.INITIAL_PAPERS);
+var prizes = window.DataStore.get('sm_prizes', window.INITIAL_PRIZES);
 var feedbacks = window.DataStore.get('sm_feedbacks', []);
 var session = getPersistentSession();
+
+// Layout view flags
+var prizeLayoutMode = 'grid';
+var rosterLayoutMode = 'list';
 
 window.dismissGreeting = function() {
   document.getElementById('greeting-overlay').classList.add('hidden');
 };
 
 window.navigateTab = function(tabId) {
-  var tabs = ['home', 'competitions', 'seerat-hub', 'model-papers', 'doc-lookup', 'results-public', 'feedback', 'printable', 'dashboard'];
+  var tabs = ['home', 'competitions', 'prizes', 'seerat-hub', 'model-papers', 'doc-lookup', 'results-public', 'feedback', 'printable', 'dashboard'];
   tabs.forEach(function(id) {
     var el = document.getElementById('tab-' + id);
     if (el) el.classList.add('hidden');
@@ -20,6 +25,7 @@ window.navigateTab = function(tabId) {
   if (target) target.classList.remove('hidden');
   window.scrollTo(0, 0);
 
+  if (tabId === 'prizes') renderPrizesDisplay();
   if (tabId === 'seerat-hub') renderSeeratHubContent();
 };
 
@@ -39,6 +45,7 @@ window.addEventListener('DOMContentLoaded', function() {
   renderSocialRibbon();
   renderNotices();
   renderModelPapers();
+  renderPrizesDisplay();
   syncConfigUI();
   updateAuthUI();
   renderSeatingMatrixPreview();
@@ -82,8 +89,9 @@ function syncConfigUI() {
   setText('txt-badge-comp', config.compBadge);
   setText('txt-comp-desc', config.compDesc);
   setText('banner-exam-date-str', config.examDate);
+  setText('banner-venue-str', config.examVenue);
   setText('txt-juma-announcement', config.jumaLine);
-  setText('ribbon-poc', config.pocContact);
+  setText('topbar-poc', config.pocContact);
 
   setVal('cfg-masjid-title', config.masjidTitle);
   setVal('cfg-date-time', config.examDate);
@@ -102,9 +110,9 @@ function renderPrayerTimes() {
   var container = document.getElementById('prayer-time-table');
   if (!container) return;
   container.innerHTML = config.prayers.map(function(p) {
-    return '<div class="flex justify-between items-center py-1.5 border-b border-slate-100">' +
+    return '<div class="flex justify-between items-center py-1 border-b border-slate-100">' +
       '<span class="font-bold text-slate-800">' + p.name + '</span>' +
-      '<div class="space-x-3">' +
+      '<div class="space-x-2 text-[11px]">' +
         '<span class="text-slate-400">Azan: ' + p.adhan + '</span>' +
         '<span class="text-emerald-800 font-mono font-bold">Iqama: ' + p.iqama + '</span>' +
       '</div>' +
@@ -132,10 +140,10 @@ function renderNotices() {
   el.innerHTML = notices.map(function(n) {
     return '<div class="p-2.5 bg-amber-50/60 border border-amber-200/80 rounded-lg">' +
       '<div class="flex justify-between font-bold text-slate-800">' +
-        '<span>' + n.title + '</span>' +
-        '<span class="text-[10px] text-amber-700 font-normal">' + n.date + '</span>' +
+        '<span>${n.title}</span>' +
+        '<span class="text-[10px] text-amber-700 font-normal">${n.date}</span>' +
       '</div>' +
-      '<p class="text-[11px] text-slate-600 mt-1">' + n.desc + '</p>' +
+      '<p class="text-[11px] text-slate-600 mt-1">${n.desc}</p>' +
     '</div>';
   }).join('');
 }
@@ -156,61 +164,183 @@ function renderModelPapers() {
   }).join('');
 }
 
-window.addNewModelPaper = function() {
-  var title = document.getElementById('new-paper-title').value.trim();
-  var year = document.getElementById('new-paper-year').value.trim();
-  var url = document.getElementById('new-paper-url').value.trim();
-  if (!title || !url) return alert('Enter title and paper URL');
-
-  papers.unshift({ id: Date.now(), title: title, year: year || '2026', url: url });
-  window.DataStore.set('sm_papers', papers);
-  renderModelPapers();
-  alert('Model paper published.');
+// 48 PRIZE WINNERS DISPLAY (GRID VS LIST VIEW)
+window.switchPrizeLayout = function(mode) {
+  prizeLayoutMode = mode;
+  var btnGrid = document.getElementById('btn-prize-grid');
+  var btnList = document.getElementById('btn-prize-list');
+  if (mode === 'grid') {
+    btnGrid.className = 'px-3 py-1 rounded font-bold bg-white text-emerald-950 shadow-sm';
+    btnList.className = 'px-3 py-1 rounded font-bold text-slate-600 hover:text-emerald-950';
+  } else {
+    btnList.className = 'px-3 py-1 rounded font-bold bg-white text-emerald-950 shadow-sm';
+    btnGrid.className = 'px-3 py-1 rounded font-bold text-slate-600 hover:text-emerald-950';
+  }
+  renderPrizesDisplay();
 };
 
-// TRILINGUAL SEERAT HUB RENDERER
+function renderPrizesDisplay() {
+  var container = document.getElementById('prize-winners-display');
+  if (!container) return;
+
+  if (prizeLayoutMode === 'grid') {
+    container.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4';
+    container.innerHTML = prizes.map(function(p) {
+      return '<div class="p-4 bg-gradient-to-br from-white to-amber-50/40 rounded-xl border border-amber-200/80 shadow-sm hover:shadow transition flex flex-col justify-between">' +
+        '<div>' +
+          '<div class="flex justify-between items-center mb-2">' +
+            '<span class="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-amber-500 text-emerald-950">' + p.rank + '</span>' +
+            '<span class="font-mono text-xs font-bold text-red-600">' + p.ht + '</span>' +
+          '</div>' +
+          '<h3 class="font-bold text-slate-900 text-sm">' + p.name + '</h3>' +
+          '<span class="text-[11px] text-emerald-900 font-semibold">' + p.category + '</span>' +
+        '</div>' +
+        '<div class="mt-4 pt-3 border-t border-amber-200 flex items-center gap-2">' +
+          '<div class="w-8 h-8 rounded-lg bg-emerald-950 text-amber-400 flex items-center justify-center font-bold text-sm">' +
+            '<i class="fa-solid fa-' + p.icon + '"></i>' +
+          '</div>' +
+          '<div>' +
+            '<span class="text-[10px] text-slate-400 block uppercase font-bold">Awarded Prize</span>' +
+            '<span class="text-xs font-bold text-emerald-950">' + p.prize + '</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  } else {
+    container.className = 'overflow-x-auto border rounded-xl bg-white shadow-sm';
+    container.innerHTML = '<table class="w-full text-xs text-left">' +
+      '<thead class="bg-slate-100 uppercase text-[10px] text-slate-600 border-b">' +
+        '<tr>' +
+          '<th class="p-3">Rank</th>' +
+          '<th class="p-3">Candidate Name</th>' +
+          '<th class="p-3">Hall Ticket ID</th>' +
+          '<th class="p-3">Category</th>' +
+          '<th class="p-3">Allotted Prize Item</th>' +
+        '</tr>' +
+      '</thead>' +
+      '<tbody class="divide-y">' +
+        prizes.map(function(p) {
+          return '<tr class="hover:bg-slate-50">' +
+            '<td class="p-3 font-bold text-amber-700">' + p.rank + '</td>' +
+            '<td class="p-3 font-bold text-slate-900">' + p.name + '</td>' +
+            '<td class="p-3 font-mono text-red-600 font-bold">' + p.ht + '</td>' +
+            '<td class="p-3 font-medium">' + p.category + '</td>' +
+            '<td class="p-3 font-bold text-emerald-950"><i class="fa-solid fa-' + p.icon + ' mr-1 text-amber-600"></i> ' + p.prize + '</td>' +
+          '</tr>';
+        }).join('') +
+      '</tbody>' +
+    '</table>';
+  }
+}
+
+// ROSTER VIEW TOGGLE (GRID VS LIST) IN ADMIN
+window.switchRosterLayout = function(mode) {
+  rosterLayoutMode = mode;
+  var btnList = document.getElementById('btn-roster-list');
+  var btnGrid = document.getElementById('btn-roster-grid');
+  var listWrap = document.getElementById('roster-list-wrapper');
+  var gridWrap = document.getElementById('roster-grid-wrapper');
+
+  if (mode === 'list') {
+    btnList.className = 'px-2 py-0.5 rounded font-bold bg-white text-emerald-950 shadow-sm';
+    btnGrid.className = 'px-2 py-0.5 rounded font-bold text-slate-600 hover:text-emerald-950';
+    listWrap.classList.remove('hidden');
+    gridWrap.classList.add('hidden');
+  } else {
+    btnGrid.className = 'px-2 py-0.5 rounded font-bold bg-white text-emerald-950 shadow-sm';
+    btnList.className = 'px-2 py-0.5 rounded font-bold text-slate-600 hover:text-emerald-950';
+    gridWrap.classList.remove('hidden');
+    listWrap.classList.add('hidden');
+  }
+  renderManagementRoster();
+};
+
+function renderManagementRoster() {
+  var tbody = document.getElementById('admin-roster-tbody');
+  var gridWrap = document.getElementById('roster-grid-wrapper');
+  if (!tbody || !gridWrap) return;
+
+  // Table List Render
+  tbody.innerHTML = students.map(function(s, idx) {
+    var badgeClass = s.status === 'Blocked' ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-800';
+    return '<tr class="hover:bg-slate-50 text-xs">' +
+      '<td class="p-2.5 font-mono font-bold text-red-600">' + s.ticketNo + '</td>' +
+      '<td class="p-2.5 font-semibold">' + s.name + '</td>' +
+      '<td class="p-2.5">' + s.father + '</td>' +
+      '<td class="p-2.5">' + (s.dob || 'N/A') + '</td>' +
+      '<td class="p-2.5">' + s.category + ' (' + s.gender + ')</td>' +
+      '<td class="p-2.5 font-bold text-emerald-800">' + (s.seat || 'Unassigned') + '</td>' +
+      '<td class="p-2.5 font-bold text-amber-800">' + (s.prize || 'None') + '</td>' +
+      '<td class="p-2.5 text-center space-x-1">' +
+        '<button onclick="openEditCandidateModal(' + idx + ')" class="text-blue-600 hover:underline font-bold">Edit</button>' +
+        '<button onclick="displayHallTicket(students[' + idx + '])" class="text-emerald-700 hover:underline font-bold">Admit Card</button>' +
+        (session.user.role === 'super_admin' ? '<button onclick="deleteCandidate(' + idx + ')" class="text-red-600 hover:underline">Del</button>' : '') +
+      '</td>' +
+    '</tr>';
+  }).join('');
+
+  // Grid Card Render
+  gridWrap.innerHTML = students.map(function(s, idx) {
+    return '<div class="p-3.5 bg-white border rounded-xl shadow-sm space-y-2 text-xs">' +
+      '<div class="flex justify-between items-center">' +
+        '<span class="font-mono font-bold text-red-600">' + s.ticketNo + '</span>' +
+        '<span class="px-2 py-0.5 rounded text-[10px] font-bold ' + (s.status === 'Blocked' ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-800') + '">' + s.status + '</span>' +
+      '</div>' +
+      '<h4 class="font-bold text-slate-900">' + s.name + '</h4>' +
+      '<p class="text-slate-500">Father: ' + s.father + ' | DOB: ' + (s.dob || 'N/A') + '</p>' +
+      '<p class="text-emerald-900 font-semibold">Seat: ' + (s.seat || 'Unassigned') + '</p>' +
+      '<p class="text-amber-800 font-bold">Prize: ' + (s.prize || 'None') + '</p>' +
+      '<div class="pt-2 border-t flex justify-end gap-2 text-[11px]">' +
+        '<button onclick="openEditCandidateModal(' + idx + ')" class="text-blue-600 font-bold hover:underline">Edit</button>' +
+        '<button onclick="displayHallTicket(students[' + idx + '])" class="text-emerald-800 font-bold hover:underline">Admit Card</button>' +
+        (session.user.role === 'super_admin' ? '<button onclick="deleteCandidate(' + idx + ')" class="text-red-600 hover:underline">Delete</button>' : '') +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// 500+ WORDS COMPREHENSIVE SEERAT HUB RENDERER
 window.renderSeeratHubContent = function() {
   var lang = document.getElementById('seerat-lang-select').value || 'en';
-  var data = window.SEERAT_KNOWLEDGE_BASE[lang] || window.SEERAT_KNOWLEDGE_BASE['en'];
+  var data = window.SEERAT_COMPREHENSIVE_TEXT[lang] || window.SEERAT_COMPREHENSIVE_TEXT['en'];
   var container = document.getElementById('seerat-hub-container');
   if (!container) return;
 
   var isRtl = lang === 'ar' ? 'dir="rtl" text-right font-arabic' : '';
 
-  var faqsHtml = data.faqs.map(function(f) {
-    return '<div class="p-3 bg-slate-50 border rounded-lg">' +
-      '<p class="font-bold text-emerald-950 text-xs">' + f.q + '</p>' +
-      '<p class="text-xs text-slate-700 mt-1 leading-relaxed">' + f.a + '</p>' +
-    '</div>';
-  }).join('');
-
   container.innerHTML = '<div class="' + isRtl + ' space-y-6">' +
     '<div class="p-5 bg-gradient-to-br from-amber-50 to-emerald-50 rounded-xl border border-amber-300 space-y-3">' +
-      '<h3 class="text-base font-bold text-emerald-950 flex items-center gap-2">' +
-        '<i class="fa-solid fa-tree text-amber-600"></i> ' + data.lineageTitle +
-      '</h3>' +
-      '<div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">' +
+      '<div class="flex justify-between items-center border-b border-amber-200 pb-2">' +
+        '<h3 class="text-base font-bold text-emerald-950 flex items-center gap-2">' +
+          '<i class="fa-solid fa-tree text-amber-600"></i> ' + data.lineageHeader +
+        '</h3>' +
+        '<span class="text-[10px] font-bold bg-amber-500 text-emerald-950 px-2 py-0.5 rounded">' + data.wordCount + '</span>' +
+      '</div>' +
+      '<div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs leading-relaxed">' +
         '<p><strong>Father:</strong> ' + data.father + '</p>' +
         '<p><strong>Mother:</strong> ' + data.mother + '</p>' +
         '<p><strong>Grandfather:</strong> ' + data.grandfather + '</p>' +
-        '<p><strong>Protector Uncle:</strong> ' + data.uncle + '</p>' +
-        '<p class="md:col-span-2"><strong>Blessed Birth:</strong> ' + data.birth + '</p>' +
-        '<p class="md:col-span-2"><strong>Ummahat-ul-Momineen (Wives):</strong> ' + data.wives + '</p>' +
+        '<p><strong>Protective Uncle:</strong> ' + data.uncle + '</p>' +
+        '<p class="md:col-span-2"><strong>Blessed Wives (Ummahat-ul-Momineen):</strong> ' + data.wives + '</p>' +
         '<p class="md:col-span-2"><strong>Blessed Sons:</strong> ' + data.sons + '</p>' +
         '<p class="md:col-span-2"><strong>Blessed Daughters:</strong> ' + data.daughters + '</p>' +
       '</div>' +
     '</div>' +
 
-    '<div>' +
-      '<h3 class="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">' +
-        '<i class="fa-solid fa-clipboard-question text-emerald-800"></i> Exam Syllabus & Frequently Asked Questions' +
+    '<div class="p-6 bg-white border border-slate-200 rounded-xl shadow-sm space-y-4 text-xs md:text-sm leading-relaxed text-slate-800">' +
+      '<h3 class="text-base font-bold text-emerald-950 flex items-center gap-2 border-b pb-2">' +
+        '<i class="fa-solid fa-feather-pointed text-emerald-800"></i> ' + data.title +
       '</h3>' +
-      '<div class="space-y-2.5">' + faqsHtml + '</div>' +
+      '<div class="prose max-w-none space-y-3 text-justify">' +
+        data.narrative.split('\n\n').map(function(paragraph) {
+          return '<p class="leading-relaxed">' + paragraph + '</p>';
+        }).join('') +
+      '</div>' +
     '</div>' +
   '</div>';
 };
 
-// MULTI-FIELD DUPLICATE DETECTION & GENDER ROLL GENERATION
+// MULTI-FIELD DUPLICATE VERIFICATION & ROLL ALLOTMENT
 function generateUniqueHallTicket(gender, category) {
   var prefix = (gender === 'M') ? 'SUN3-B-' : 'SUN3-G-';
   var categoryCode = category.toUpperCase();
@@ -223,7 +353,6 @@ function generateUniqueHallTicket(gender, category) {
   var nextSeq = startNumber + candidateList.length + 1;
   var candidateHT = prefix + categoryCode + '-' + nextSeq;
 
-  // Collision Verification Loop
   while (students.some(function(s) { return s.ticketNo === candidateHT; })) {
     nextSeq++;
     candidateHT = prefix + categoryCode + '-' + nextSeq;
@@ -242,18 +371,16 @@ window.handleStudentRegister = function(e) {
   var category = document.getElementById('reg-category').value;
   var gender = document.getElementById('reg-gender').value;
 
-  // Duplicate Check 1: DOB + Govt ID
   var duplicateId = students.some(function(s) {
     return s.dob === dob && s.idNumber === idNumber;
   });
 
-  // Duplicate Check 2: Same Name + Father Name + Phone
   var duplicateBio = students.some(function(s) {
     return s.phone === phone && s.name.toLowerCase() === name.toLowerCase() && s.father.toLowerCase() === father.toLowerCase();
   });
 
   if (duplicateId || duplicateBio) {
-    alert('Duplicate Registration Error: A candidate with this ID number, Date of Birth, or matching Guardian contact already exists in our records.');
+    alert('Duplicate Registration Error: A candidate with matching Government ID Number, Date of Birth, or Guardian mobile already exists.');
     return;
   }
 
@@ -280,6 +407,7 @@ window.handleStudentRegister = function(e) {
     gender: gender,
     attempt: attempt,
     seat: seat,
+    prize: 'None',
     address: document.getElementById('reg-address').value.trim(),
     password: document.getElementById('reg-password').value,
     marks: 0,
@@ -291,7 +419,7 @@ window.handleStudentRegister = function(e) {
   window.DataStore.set('sm_students', students);
 
   saveSession({ id: cand.ticketNo, name: cand.name, role: 'student', data: cand }, true);
-  alert('Registration Successful!\nAssigned Hall Ticket: ' + ticketNo + '\nAllocated Desk: ' + seat);
+  alert('Enrollment Complete!\nAllotted Hall Ticket ID: ' + ticketNo + '\nAllocated Seat: ' + seat);
   displayHallTicket(cand);
 };
 
@@ -304,7 +432,6 @@ window.renderSeatingMatrixPreview = function() {
   var totalRows = rowsInput ? parseInt(rowsInput.value) || 25 : 25;
 
   var matrixHTML = '<div class="space-y-2">';
-  
   for (var r = 1; r <= totalRows; r++) {
     matrixHTML += '<div class="flex items-center justify-between gap-2 p-1.5 bg-slate-50 border rounded text-xs">' +
       '<span class="w-12 font-bold font-mono text-slate-500">Row ' + r + '</span>' +
@@ -319,7 +446,6 @@ window.renderSeatingMatrixPreview = function() {
       '</div>' +
     '</div>';
   }
-
   matrixHTML += '</div>';
   container.innerHTML = matrixHTML;
 };
@@ -344,7 +470,7 @@ function renderSingleSeat(row, col) {
 }
 
 window.manualAssignSeatPrompt = function(seatCode) {
-  var roll = prompt('Enter Hall Ticket Number to manually allocate to Seat ' + seatCode + ':');
+  var roll = prompt('Enter Hall Ticket Number to allocate Seat ' + seatCode + ':');
   if (!roll) return;
   var cand = students.find(function(s) { return s.ticketNo === roll.trim().toUpperCase(); });
   if (!cand) return alert('Candidate not found.');
@@ -354,7 +480,7 @@ window.manualAssignSeatPrompt = function(seatCode) {
   window.DataStore.set('sm_students', students);
   renderSeatingMatrixPreview();
   renderManagementRoster();
-  alert('Candidate ' + cand.name + ' successfully mapped to seat ' + seatCode);
+  alert('Candidate ' + cand.name + ' mapped to seat ' + seatCode);
 };
 
 window.autoGenerateSeatingPlan = function() {
@@ -381,11 +507,11 @@ window.autoGenerateSeatingPlan = function() {
   window.DataStore.set('sm_students', students);
   renderSeatingMatrixPreview();
   renderManagementRoster();
-  alert('Automated 2x2 Aeroplane Seating Plan generated for all candidates.');
+  alert('2x2 Aeroplane Seating Plan generated successfully.');
 };
 
 window.clearSeatingPlan = function() {
-  if (confirm('Reset seating plan for all students?')) {
+  if (confirm('Reset seating plan for all candidates?')) {
     students.forEach(function(s) { s.seat = 'Unassigned'; });
     window.DataStore.set('sm_students', students);
     renderSeatingMatrixPreview();
@@ -393,7 +519,7 @@ window.clearSeatingPlan = function() {
   }
 };
 
-// OFFICIAL DOCUMENT GENERATOR WITH MADARSA STAMP SEAL
+// OFFICIAL DOCUMENT GENERATOR WITH MADARSA SEAL STAMP
 window.displayHallTicket = function(cand) {
   var area = document.getElementById('printable-document');
   area.innerHTML = '<div class="border-b-2 border-emerald-900 pb-3 mb-4 flex justify-between items-center">' +
@@ -481,7 +607,64 @@ window.pullAllApplicationForms = function() {
   window.navigateTab('printable');
 };
 
-// AUTH & SESSIONS
+// ROLE LOGIN HINTS & UNIVERSAL AUTH
+window.setLoginRoleHint = function(role) {
+  var btnS = document.getElementById('role-hint-student');
+  var btnF = document.getElementById('role-hint-faculty');
+  var btnA = document.getElementById('role-hint-super');
+  var lbl = document.getElementById('login-label-id');
+
+  btnS.className = 'flex-1 py-1 rounded text-slate-600';
+  btnF.className = 'flex-1 py-1 rounded text-slate-600';
+  btnA.className = 'flex-1 py-1 rounded text-slate-600';
+
+  if (role === 'student') {
+    btnS.className = 'flex-1 py-1 rounded bg-white text-emerald-950 shadow-sm';
+    lbl.innerText = 'Mobile Number / Hall Ticket ID';
+  } else if (role === 'faculty') {
+    btnF.className = 'flex-1 py-1 rounded bg-white text-emerald-950 shadow-sm';
+    lbl.innerText = 'Faculty Username (e.g. Admin1)';
+  } else {
+    btnA.className = 'flex-1 py-1 rounded bg-white text-emerald-950 shadow-sm';
+    lbl.innerText = 'Maintenance Super Admin Username';
+  }
+};
+
+window.handleUniversalLogin = function(e) {
+  e.preventDefault();
+  var id = document.getElementById('login-id').value.trim();
+  var pwd = document.getElementById('login-pwd').value.trim();
+  var remember = document.getElementById('login-save-24h').checked;
+
+  if (id === 'Admin' && pwd === '9290') {
+    saveSession({ id: 'Admin', name: 'Super Admin (Maintenance)', role: 'super_admin' }, remember);
+    window.closeModal('modal-auth');
+    openDashboard();
+    return;
+  }
+
+  if (id === 'Admin1' && pwd === '2580') {
+    saveSession({ id: 'Admin1', name: 'Faculty & Invigilator Admin', role: 'admin' }, remember);
+    window.closeModal('modal-auth');
+    openDashboard();
+    return;
+  }
+
+  var found = students.find(function(s) {
+    return (s.phone === id || s.email === id || s.ticketNo === id) && s.password === pwd;
+  });
+
+  if (found) {
+    if (found.status === 'Blocked') return alert('Profile blocked due to duplicate audit conflict. Contact mosque office.');
+    saveSession({ id: found.ticketNo, name: found.name, role: 'student', data: found }, remember);
+    window.closeModal('modal-auth');
+    openDashboard();
+    return;
+  }
+
+  alert('Invalid credentials. Please verify your login role and password.');
+};
+
 function saveSession(user, remember24h) {
   var now = new Date().getTime();
   var expiry = remember24h ? now + (24 * 3600 * 1000) : now + (2 * 3600 * 1000);
@@ -517,50 +700,15 @@ function updateAuthUI() {
   var slot = document.getElementById('nav-auth-slot');
   if (!slot) return;
   if (session && session.user) {
-    slot.innerHTML = '<button onclick="navigateTab(\'dashboard\')" class="bg-amber-400 text-emerald-950 px-3 py-1 rounded-full font-bold">' +
+    slot.innerHTML = '<button onclick="navigateTab(\'dashboard\')" class="bg-amber-500 text-emerald-950 px-3 py-1.5 rounded-lg font-bold">' +
       'Dashboard (' + session.user.name + ')' +
     '</button>';
   } else {
-    slot.innerHTML = '<button onclick="openModal(\'modal-auth\')" class="bg-amber-400 text-emerald-950 px-3.5 py-1.5 rounded-full font-bold">' +
+    slot.innerHTML = '<button onclick="openModal(\'modal-auth\')" class="bg-emerald-950 text-amber-300 px-4 py-1.5 rounded-lg font-bold border border-amber-500/50 hover:bg-emerald-900">' +
       'Login' +
     '</button>';
   }
 }
-
-window.handleUniversalLogin = function(e) {
-  e.preventDefault();
-  var id = document.getElementById('login-id').value.trim();
-  var pwd = document.getElementById('login-pwd').value.trim();
-  var remember = document.getElementById('login-save-24h').checked;
-
-  if (id === 'Admin' && pwd === '9290') {
-    saveSession({ id: 'Admin', name: 'Super Admin (Maintenance)', role: 'super_admin' }, remember);
-    window.closeModal('modal-auth');
-    openDashboard();
-    return;
-  }
-
-  if (id === 'Admin1' && pwd === '2580') {
-    saveSession({ id: 'Admin1', name: 'Faculty & Invigilator Admin', role: 'admin' }, remember);
-    window.closeModal('modal-auth');
-    openDashboard();
-    return;
-  }
-
-  var found = students.find(function(s) {
-    return (s.phone === id || s.email === id || s.ticketNo === id) && s.password === pwd;
-  });
-
-  if (found) {
-    if (found.status === 'Blocked') return alert('Profile blocked due to verification audit. Contact mosque office.');
-    saveSession({ id: found.ticketNo, name: found.name, role: 'student', data: found }, remember);
-    window.closeModal('modal-auth');
-    openDashboard();
-    return;
-  }
-
-  alert('Invalid credentials.');
-};
 
 function openDashboard() {
   if (!session || !session.user) return window.openModal('modal-auth');
@@ -591,32 +739,13 @@ function openDashboard() {
   window.navigateTab('dashboard');
 }
 
-function renderManagementRoster() {
-  var tbody = document.getElementById('admin-roster-tbody');
-  if (!tbody) return;
-  tbody.innerHTML = students.map(function(s, idx) {
-    var badgeClass = s.status === 'Blocked' ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-800';
-    return '<tr class="hover:bg-slate-50 text-xs">' +
-      '<td class="p-2.5 font-mono font-bold text-red-600">' + s.ticketNo + '</td>' +
-      '<td class="p-2.5 font-semibold">' + s.name + '</td>' +
-      '<td class="p-2.5">' + s.father + '</td>' +
-      '<td class="p-2.5">' + (s.dob || 'N/A') + '</td>' +
-      '<td class="p-2.5">' + s.category + ' (' + s.gender + ')</td>' +
-      '<td class="p-2.5 font-bold text-emerald-800">' + (s.seat || 'Unassigned') + '</td>' +
-      '<td class="p-2.5"><span class="px-2 py-0.5 rounded text-[10px] font-bold ' + badgeClass + '">' + s.status + '</span></td>' +
-      '<td class="p-2.5 text-center space-x-1">' +
-        '<button onclick="openEditCandidateModal(' + idx + ')" class="text-blue-600 hover:underline">Edit</button>' +
-        '<button onclick="displayHallTicket(students[' + idx + '])" class="text-emerald-700 hover:underline">Ticket</button>' +
-        (session.user.role === 'super_admin' ? '<button onclick="deleteCandidate(' + idx + ')" class="text-red-600 hover:underline">Delete</button>' : '') +
-      '</td>' +
-    '</tr>';
-  }).join('');
-}
-
 window.filterRosterTable = function() {
   var q = document.getElementById('roster-search').value.toLowerCase();
   document.querySelectorAll('#admin-roster-tbody tr').forEach(function(r) {
     r.style.display = r.innerText.toLowerCase().includes(q) ? '' : 'none';
+  });
+  document.querySelectorAll('#roster-grid-wrapper > div').forEach(function(card) {
+    card.style.display = card.innerText.toLowerCase().includes(q) ? '' : 'none';
   });
 };
 
@@ -629,6 +758,7 @@ window.openEditCandidateModal = function(idx) {
   document.getElementById('edit-cand-seat').value = c.seat || '';
   document.getElementById('edit-cand-marks').value = c.marks || 0;
   document.getElementById('edit-cand-status').value = c.status;
+  document.getElementById('edit-cand-prize').value = c.prize || 'None';
   document.getElementById('edit-cand-newpwd').value = '';
   window.openModal('modal-edit-candidate');
 };
@@ -642,6 +772,7 @@ window.saveCandidateModifications = function(e) {
   c.seat = document.getElementById('edit-cand-seat').value.trim();
   c.marks = parseInt(document.getElementById('edit-cand-marks').value) || 0;
   c.status = document.getElementById('edit-cand-status').value;
+  c.prize = document.getElementById('edit-cand-prize').value;
   var newPwd = document.getElementById('edit-cand-newpwd').value.trim();
   if (newPwd) c.password = newPwd;
 
@@ -650,7 +781,7 @@ window.saveCandidateModifications = function(e) {
   window.closeModal('modal-edit-candidate');
   renderManagementRoster();
   renderSeatingMatrixPreview();
-  alert('Candidate record updated.');
+  alert('Candidate modifications and prize allotment saved.');
 };
 
 window.deleteCandidate = function(idx) {
@@ -683,7 +814,7 @@ window.saveSuperAdminConfig = function() {
   syncConfigUI();
   renderPrayerTimes();
   renderSocialRibbon();
-  alert('Global settings, prayer times, and social links saved.');
+  alert('Global institutional configurations updated successfully.');
 };
 
 window.showCurrentStudentDoc = function(type) {
@@ -721,6 +852,7 @@ window.handlePublicResultLookup = function() {
   resBox.classList.remove('hidden');
   resBox.innerHTML = '<h4 class="text-sm font-bold text-slate-900">' + cand.name + ' (' + cand.ticketNo + ')</h4>' +
     '<p class="text-xs"><strong>Seat:</strong> ' + cand.seat + ' | <strong>Score:</strong> <span class="font-bold text-emerald-800 font-mono">' + cand.marks + '/100</span></p>' +
+    '<p class="text-xs"><strong>Prize Allotment:</strong> <span class="font-bold text-amber-700">' + (cand.prize || 'Under Evaluation') + '</span></p>' +
     '<p class="text-xs"><strong>Status:</strong> ' + cand.status + '</p>';
 };
 
