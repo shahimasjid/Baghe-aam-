@@ -1,4 +1,4 @@
-// app.js - Full Interactive Logic: Faculty Approval, Seating Matrices, Attendance, Awards & Admin Tools
+// app.js - Full Interactive Logic: Excel Export, Sync, OMR Generation, Multi-Stage Results & Seating
 var config = window.DataStore.get('sm_config', window.INITIAL_CONFIG);
 var students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
 var prizes = window.DataStore.get('sm_prizes', window.INITIAL_PRIZES);
@@ -17,7 +17,7 @@ window.dismissGreeting = function() {
 };
 
 window.navigateTab = function(tabId) {
-  var tabs = ['home', 'competitions', 'faculty-register', 'prizes', 'seerat-hub', 'model-papers', 'doc-lookup', 'feedback', 'printable', 'dashboard'];
+  var tabs = ['home', 'competitions', 'faculty-register', 'prizes', 'seerat-hub', 'model-papers', 'doc-lookup', 'results-public', 'feedback', 'printable', 'dashboard'];
   tabs.forEach(function(id) {
     var el = document.getElementById('tab-' + id);
     if (el) el.classList.add('hidden');
@@ -46,6 +46,7 @@ window.addEventListener('DOMContentLoaded', function() {
   renderNotices();
   renderModelPapers();
   renderPrizesDisplay();
+  renderSeeratHubContent();
   syncConfigUI();
   updateAuthUI();
 });
@@ -82,7 +83,6 @@ function syncConfigUI() {
   setText('txt-juma-announcement', config.jumaLine);
   setText('topbar-poc', config.pocContact);
 
-  // Dignitary Box
   var dignitaryBox = document.getElementById('dignitaries-display-box');
   if (dignitaryBox) {
     var chiefHtml = config.dignitaries.chiefGuest ? 
@@ -159,27 +159,27 @@ function renderModelPapers() {
 }
 
 // ----------------------------------------------------
-// DYNAMIC PRIZE RENDERING
+// 48 PRIZE GALLERY DISPLAY
 // ----------------------------------------------------
 window.switchPrizeLayout = function(mode) {
   prizeLayoutMode = mode;
+  var btnGrid = document.getElementById('btn-prize-grid');
+  var btnList = document.getElementById('btn-prize-list');
+  if (btnGrid && btnList) {
+    if (mode === 'grid') {
+      btnGrid.className = 'px-3 py-1 rounded font-bold bg-white text-emerald-950 shadow-sm';
+      btnList.className = 'px-3 py-1 rounded font-bold text-slate-600 hover:text-emerald-950';
+    } else {
+      btnList.className = 'px-3 py-1 rounded font-bold bg-white text-emerald-950 shadow-sm';
+      btnGrid.className = 'px-3 py-1 rounded font-bold text-slate-600 hover:text-emerald-950';
+    }
+  }
   renderPrizesDisplay();
 };
 
 function renderPrizesDisplay() {
   var container = document.getElementById('prize-winners-display');
   if (!container) return;
-
-  if (prizes.length === 0) {
-    container.innerHTML = `
-      <div class="text-center py-12 bg-slate-50 rounded-xl border border-dashed border-slate-300 p-6">
-        <i class="fa-solid fa-award text-4xl text-amber-600 mb-2"></i>
-        <h3 class="text-sm font-bold text-slate-800">No Award Allotments Published Yet</h3>
-        <p class="text-xs text-slate-500 mt-1">Official prize winners and citations will be allocated dynamically by the Examination Board.</p>
-      </div>
-    `;
-    return;
-  }
 
   if (prizeLayoutMode === 'grid') {
     container.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4';
@@ -198,7 +198,7 @@ function renderPrizesDisplay() {
             '<i class="fa-solid fa-' + (p.icon || 'trophy') + '"></i>' +
           '</div>' +
           '<div>' +
-            '<span class="text-[10px] text-slate-400 block uppercase font-bold">Allotted Prize</span>' +
+            '<span class="text-[10px] text-slate-400 block uppercase font-bold">Allocated Award</span>' +
             '<span class="text-xs font-bold text-emerald-950">' + p.prize + '</span>' +
           '</div>' +
         '</div>' +
@@ -224,6 +224,50 @@ function renderPrizesDisplay() {
     '</table>';
   }
 }
+
+// ----------------------------------------------------
+// SEERAT-UN-NABI ﷺ KNOWLEDGE HUB
+// ----------------------------------------------------
+window.renderSeeratHubContent = function() {
+  var langSelect = document.getElementById('seerat-lang-select');
+  var lang = langSelect ? langSelect.value : 'en';
+  var data = window.SEERAT_COMPREHENSIVE_TEXT[lang] || window.SEERAT_COMPREHENSIVE_TEXT['en'];
+  var container = document.getElementById('seerat-hub-container');
+  if (!container) return;
+
+  var isRtl = lang === 'ar' ? 'dir="rtl" text-right font-arabic' : '';
+
+  container.innerHTML = '<div class="' + isRtl + ' space-y-6">' +
+    '<div class="p-5 bg-gradient-to-br from-amber-50 to-emerald-50 rounded-xl border border-amber-300 space-y-3">' +
+      '<div class="flex justify-between items-center border-b border-amber-200 pb-2">' +
+        '<h3 class="text-base font-bold text-emerald-950 flex items-center gap-2">' +
+          '<i class="fa-solid fa-tree text-amber-600"></i> ' + data.lineageHeader +
+        '</h3>' +
+        '<span class="text-[10px] font-bold bg-amber-500 text-emerald-950 px-2 py-0.5 rounded">' + data.wordCount + '</span>' +
+      '</div>' +
+      '<div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs leading-relaxed">' +
+        '<p><strong>Father:</strong> ' + data.father + '</p>' +
+        '<p><strong>Mother:</strong> ' + data.mother + '</p>' +
+        '<p><strong>Grandfather:</strong> ' + data.grandfather + '</p>' +
+        '<p><strong>Protective Uncle:</strong> ' + data.uncle + '</p>' +
+        '<p class="md:col-span-2"><strong>Blessed Wives (Ummahat-ul-Momineen):</strong> ' + data.wives + '</p>' +
+        '<p class="md:col-span-2"><strong>Blessed Sons:</strong> ' + data.sons + '</p>' +
+        '<p class="md:col-span-2"><strong>Blessed Daughters:</strong> ' + data.daughters + '</p>' +
+      '</div>' +
+    '</div>' +
+
+    '<div class="p-6 bg-white border border-slate-200 rounded-xl shadow-sm space-y-4 text-xs md:text-sm leading-relaxed text-slate-800">' +
+      '<h3 class="text-base font-bold text-emerald-950 flex items-center gap-2 border-b pb-2">' +
+        '<i class="fa-solid fa-feather-pointed text-emerald-800"></i> ' + data.title +
+      '</h3>' +
+      '<div class="prose max-w-none space-y-3 text-justify">' +
+        data.narrative.split('\n\n').map(function(paragraph) {
+          return '<p class="leading-relaxed">' + paragraph + '</p>';
+        }).join('') +
+      '</div>' +
+    '</div>' +
+  '</div>';
+};
 
 // ----------------------------------------------------
 // AUTHENTICATION & SESSION PERSISTENCE
@@ -265,7 +309,7 @@ function updateAuthUI() {
     '</button>';
   } else {
     slot.innerHTML = '<button onclick="openModal(\'modal-auth\')" class="bg-emerald-950 text-amber-300 px-4 py-1.5 rounded-lg font-bold border border-amber-500/50 hover:bg-emerald-900 shadow">' +
-      'Portal Login' +
+      'Login' +
     '</button>';
   }
 }
@@ -317,11 +361,11 @@ window.handleUniversalLogin = function(e) {
   var fac = faculties.find(function(f) { return f.phone === id || f.email === id || f.id === id; });
   if (fac) {
     if (fac.status === 'Denied' || fac.status === 'Revoked') {
-      alert('Access Denied: Your faculty registration request has been rejected or revoked by the Admin.');
+      alert('Access Denied: Your faculty registration request has been denied or revoked by the Admin.');
       return;
     }
     if (fac.status === 'Pending') {
-      alert('Account Pending: Your faculty registration is awaiting official approval from Admin or Super Admin.');
+      alert('Account Pending: Your faculty registration is awaiting official verification from Admin or Super Admin.');
       return;
     }
     if (fac.password === pwd) {
@@ -380,25 +424,50 @@ function openDashboard() {
 }
 
 // ----------------------------------------------------
-// 10 ADVANCED STUDENT FEATURES
+// 10 ADVANCED STUDENT FEATURES (WITH OMR & RESULTS)
 // ----------------------------------------------------
 function renderStudentProfileFeatures() {
   var cand = students.find(function(s) { return s.ticketNo === session.user.id; }) || session.user.data;
   var container = document.getElementById('student-features-grid');
   if (!container) return;
 
+  var resultsCardHTML = config.resultsPublished ? `
+    <div class="p-4 bg-emerald-50 border border-emerald-300 rounded-xl flex flex-col justify-between">
+      <div>
+        <i class="fa-solid fa-square-poll-vertical text-emerald-700 text-2xl mb-2"></i>
+        <h4 class="font-bold text-slate-900 text-sm">7. Official Examination Result</h4>
+        <p class="text-xs text-slate-600 mt-1">Status: <strong class="text-emerald-950 font-bold">${cand.resultStatus || 'Declared'}</strong></p>
+        <p class="text-xs text-emerald-900 font-bold font-mono mt-0.5">Marks Obtained: ${cand.marks || 0}/100</p>
+        <p class="text-xs text-amber-800 font-semibold">Award: ${cand.prize || 'Participant'}</p>
+      </div>
+      <span class="text-[10px] text-emerald-800 font-bold mt-2">Released by Central Board</span>
+    </div>
+  ` : `
+    <div class="p-4 bg-slate-50 border rounded-xl flex flex-col justify-between">
+      <div>
+        <i class="fa-solid fa-hourglass-half text-amber-600 text-2xl mb-2"></i>
+        <h4 class="font-bold text-slate-900 text-sm">7. Examination Result</h4>
+        <p class="text-xs text-slate-500 mt-1">Verification Status: <span class="font-bold text-slate-700">${cand.resultVerified ? 'Verified by Faculty' : 'Under Evaluation'}</span></p>
+        <p class="text-xs text-amber-800 font-semibold mt-0.5">Awaiting 1-Click Release by Admin</p>
+      </div>
+      <span class="text-[10px] text-slate-400 font-semibold mt-2">Official Release Pending</span>
+    </div>
+  `;
+
   container.innerHTML = `
+    <!-- 1. Digital Islamic Participation Certificate -->
     <div class="p-4 bg-amber-50 border border-amber-300 rounded-xl flex flex-col justify-between">
       <div>
         <i class="fa-solid fa-certificate text-amber-700 text-2xl mb-2"></i>
         <h4 class="font-bold text-slate-900 text-sm">1. Islamic Participation Certificate</h4>
-        <p class="text-xs text-slate-600 mt-1">Official authenticated certificate with Arabic Hadith, candidate particulars & seal.</p>
+        <p class="text-xs text-slate-600 mt-1">Official certificate with Arabic Hadith, candidate particulars & official Madarsa seal.</p>
       </div>
       <button onclick="generateParticipationCertificate('${cand.ticketNo}')" class="mt-3 bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 rounded text-xs shadow">
         Generate Certificate
       </button>
     </div>
 
+    <!-- 2. Official Hall Ticket Admit Card -->
     <div class="p-4 bg-emerald-50 border border-emerald-300 rounded-xl flex flex-col justify-between">
       <div>
         <i class="fa-solid fa-id-badge text-emerald-800 text-2xl mb-2"></i>
@@ -410,10 +479,23 @@ function renderStudentProfileFeatures() {
       </button>
     </div>
 
+    <!-- 3. Professional Candidate OMR Sheet -->
+    <div class="p-4 bg-purple-50 border border-purple-300 rounded-xl flex flex-col justify-between">
+      <div>
+        <i class="fa-solid fa-table-cells text-purple-800 text-2xl mb-2"></i>
+        <h4 class="font-bold text-slate-900 text-sm">3. Standard Examination OMR Sheet</h4>
+        <p class="text-xs text-slate-600 mt-1">Pre-filled bio grid, roll bubbling matrix & 100-question answer response sheet.</p>
+      </div>
+      <button onclick="generateSingleOMR('${cand.ticketNo}')" class="mt-3 bg-purple-900 hover:bg-purple-800 text-white font-bold py-2 rounded text-xs shadow">
+        Download My OMR Sheet
+      </button>
+    </div>
+
+    <!-- 4. Seating Coordinate Finder -->
     <div class="p-4 bg-blue-50 border border-blue-300 rounded-xl flex flex-col justify-between">
       <div>
         <i class="fa-solid fa-location-dot text-blue-700 text-2xl mb-2"></i>
-        <h4 class="font-bold text-slate-900 text-sm">3. Seating Coordinate Finder</h4>
+        <h4 class="font-bold text-slate-900 text-sm">4. Seating Coordinate Finder</h4>
         <p class="text-xs text-slate-600 mt-1">Verify assigned row and aisle desk coordinates in Hall A or Hall B.</p>
       </div>
       <button onclick="alert('Your Desk Location: ' + '${cand.seat || 'Pending Allotment by Admin'}')" class="mt-3 bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 rounded text-xs">
@@ -421,10 +503,11 @@ function renderStudentProfileFeatures() {
       </button>
     </div>
 
+    <!-- 5. Seerat Reference Hub (500+ Words) -->
     <div class="p-4 bg-slate-50 border rounded-xl flex flex-col justify-between">
       <div>
         <i class="fa-solid fa-book-open text-emerald-900 text-2xl mb-2"></i>
-        <h4 class="font-bold text-slate-900 text-sm">4. Seerat Reference Hub (500+ Words)</h4>
+        <h4 class="font-bold text-slate-900 text-sm">5. Seerat Reference Hub</h4>
         <p class="text-xs text-slate-600 mt-1">Comprehensive biography, lineage, and exam study modules in 3 languages.</p>
       </div>
       <button onclick="navigateTab('seerat-hub')" class="mt-3 bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 rounded text-xs">
@@ -432,10 +515,11 @@ function renderStudentProfileFeatures() {
       </button>
     </div>
 
+    <!-- 6. Model Papers & Exam Pattern -->
     <div class="p-4 bg-slate-50 border rounded-xl flex flex-col justify-between">
       <div>
         <i class="fa-solid fa-file-pdf text-red-600 text-2xl mb-2"></i>
-        <h4 class="font-bold text-slate-900 text-sm">5. Model Papers & Exam Pattern</h4>
+        <h4 class="font-bold text-slate-900 text-sm">6. Model Papers & Exam Pattern</h4>
         <p class="text-xs text-slate-600 mt-1">Download official model question papers & past syllabi.</p>
       </div>
       <button onclick="navigateTab('model-papers')" class="mt-3 bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 rounded text-xs">
@@ -443,49 +527,37 @@ function renderStudentProfileFeatures() {
       </button>
     </div>
 
+    <!-- 7. Dynamic Result Status (Conditional) -->
+    ${resultsCardHTML}
+
+    <!-- 8. Live Attendance Status -->
     <div class="p-4 bg-slate-50 border rounded-xl flex flex-col justify-between">
       <div>
         <i class="fa-solid fa-user-check text-indigo-700 text-2xl mb-2"></i>
-        <h4 class="font-bold text-slate-900 text-sm">6. Exam Day Live Attendance Status</h4>
+        <h4 class="font-bold text-slate-900 text-sm">8. Live Attendance Status</h4>
         <p class="text-xs text-slate-600 mt-1">Status: <span class="font-bold text-emerald-800">${cand.attendance || 'Pending Marking'}</span></p>
       </div>
       <span class="text-[11px] text-slate-400 font-semibold mt-3">Verified by Hall Invigilators</span>
     </div>
 
-    <div class="p-4 bg-slate-50 border rounded-xl flex flex-col justify-between">
-      <div>
-        <i class="fa-solid fa-trophy text-amber-600 text-2xl mb-2"></i>
-        <h4 class="font-bold text-slate-900 text-sm">7. Awards & Marks Standing</h4>
-        <p class="text-xs text-slate-600 mt-1">Standing: <strong class="text-amber-800">${cand.prize || 'Under Evaluation'}</strong> (Marks: ${cand.marks || 0}/100)</p>
-      </div>
-      <span class="text-[11px] text-slate-400 font-semibold mt-3">Official Board Record</span>
-    </div>
-
+    <!-- 9. Committee Helpdesk -->
     <div class="p-4 bg-slate-50 border rounded-xl flex flex-col justify-between">
       <div>
         <i class="fa-solid fa-comments text-teal-700 text-2xl mb-2"></i>
-        <h4 class="font-bold text-slate-900 text-sm">8. Committee Helpdesk & Feedback</h4>
-        <p class="text-xs text-slate-600 mt-1">Send questions directly to the committee; reply received via WhatsApp/Email.</p>
+        <h4 class="font-bold text-slate-900 text-sm">9. Support Helpdesk</h4>
+        <p class="text-xs text-slate-600 mt-1">Direct inquiries dispatched to Mosque Committee with WhatsApp & Email replies.</p>
       </div>
       <button onclick="navigateTab('feedback')" class="mt-3 bg-teal-800 hover:bg-teal-900 text-white font-bold py-2 rounded text-xs">
         Submit Query
       </button>
     </div>
 
-    <div class="p-4 bg-slate-50 border rounded-xl flex flex-col justify-between">
-      <div>
-        <i class="fa-solid fa-clock text-blue-800 text-2xl mb-2"></i>
-        <h4 class="font-bold text-slate-900 text-sm">9. Exam Timetable & Azan Alerts</h4>
-        <p class="text-xs text-slate-600 mt-1">Orientation: ${config.prepTime}<br/>Exam: ${config.examTime}</p>
-      </div>
-      <span class="text-[11px] text-emerald-800 font-bold mt-3">Report 30 mins prior to hall</span>
-    </div>
-
+    <!-- 10. Verified Application Dossier -->
     <div class="p-4 bg-slate-50 border rounded-xl flex flex-col justify-between">
       <div>
         <i class="fa-solid fa-file-contract text-slate-700 text-2xl mb-2"></i>
         <h4 class="font-bold text-slate-900 text-sm">10. Verified Application Dossier</h4>
-        <p class="text-xs text-slate-600 mt-1">Full registered application dossier with Government ID and DOB records.</p>
+        <p class="text-xs text-slate-600 mt-1">Formal enrollment application with DOB and verified identity proof record.</p>
       </div>
       <button onclick="displayApplicationForm(getStudent('${cand.ticketNo}'))" class="mt-3 bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 rounded text-xs">
         View Dossier
@@ -495,7 +567,7 @@ function renderStudentProfileFeatures() {
 }
 
 // ----------------------------------------------------
-// FACULTY REGISTRATION (WITH SECURE PASSWORD)
+// FACULTY REGISTRATION & DASHBOARD
 // ----------------------------------------------------
 window.handleFacultyRegister = function(e) {
   e.preventDefault();
@@ -519,7 +591,7 @@ window.handleFacultyRegister = function(e) {
     password: pwd,
     dept: dept,
     assignedHall: hall,
-    status: "Pending", // Needs Admin or Super Admin Approval
+    status: "Pending",
     role: "faculty",
     registeredDate: new Date().toLocaleDateString('en-IN')
   };
@@ -531,9 +603,6 @@ window.handleFacultyRegister = function(e) {
   window.navigateTab('home');
 };
 
-// ----------------------------------------------------
-// FACULTY DASHBOARD & EXAM DAY ATTENDANCE
-// ----------------------------------------------------
 function renderFacultyDashboard() {
   var fac = session.user.data || faculties.find(function(f) { return f.id === session.user.id; });
   var hallBadge = document.getElementById('faculty-assigned-hall');
@@ -546,7 +615,7 @@ function renderFacultyAttendanceTable() {
   if (!tbody) return;
 
   if (students.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-400">No candidates currently enrolled.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-400">No candidates currently enrolled.</td></tr>';
     return;
   }
 
@@ -563,6 +632,12 @@ function renderFacultyAttendanceTable() {
           '<option value="Not Interested" ' + (s.attendance === 'Not Interested' ? 'selected' : '') + '>Not Interested</option>' +
         '</select>' +
       '</td>' +
+      '<td class="p-2.5 space-x-1 text-center">' +
+        '<button onclick="generateSingleOMR(\'' + s.ticketNo + '\')" class="bg-purple-900 text-white px-2 py-1 rounded text-[10px] font-bold"><i class="fa-solid fa-table-cells mr-1"></i> OMR</button>' +
+        '<button onclick="facultyVerifyResult(' + idx + ')" class="px-2 py-1 rounded text-[10px] font-bold ' + (s.resultVerified ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-700') + '">' +
+          (s.resultVerified ? '<i class="fa-solid fa-check mr-1"></i> Verified' : 'Verify Result') +
+        '</button>' +
+      '</td>' +
     '</tr>';
   }).join('');
 }
@@ -572,8 +647,15 @@ window.updateAttendance = function(idx, val) {
   window.DataStore.set('sm_students', students);
 };
 
+window.facultyVerifyResult = function(idx) {
+  students[idx].resultVerified = !students[idx].resultVerified;
+  window.DataStore.set('sm_students', students);
+  renderFacultyAttendanceTable();
+  renderManagementRoster();
+};
+
 // ----------------------------------------------------
-// 15 ADVANCED ADMIN & SUPER ADMIN FEATURES
+// 15 ADVANCED MANAGEMENT FEATURES (DATA SYNC, EXCEL, OMR & RELEASES)
 // ----------------------------------------------------
 function renderManagementDashboard() {
   renderManagementRoster();
@@ -581,9 +663,262 @@ function renderManagementDashboard() {
   renderFacultyApprovalQueue();
   renderFeedbackManagement();
   syncConfigUI();
+
+  var resBtn = document.getElementById('btn-toggle-results-release');
+  if (resBtn) {
+    resBtn.innerText = config.resultsPublished ? 'Results Released to Public & Students (Click to Lock)' : '1-Click: Release Results Globally';
+    resBtn.className = config.resultsPublished ? 'bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded text-xs shadow' : 'bg-amber-600 hover:bg-amber-700 text-white font-bold px-3 py-1.5 rounded text-xs shadow';
+  }
 }
 
-// 1. DYNAMIC SEATING ENGINE (2x2, 3x3, 4x4, NxN)
+// 1. 1-CLICK EXCEL / CSV DATA EXPORT
+window.exportStudentsToExcel = function() {
+  if (students.length === 0) return alert('No registered students to export.');
+  var headers = ['Application ID', 'Hall Ticket No', 'Candidate Name', 'Father Name', 'DOB', 'Mobile Phone', 'Email', 'Category', 'Gender', 'Assigned Seat', 'Exam Attendance', 'Marks', 'Prize Awarded', 'Status', 'Result Verified'];
+  var rows = students.map(function(s) {
+    return [
+      s.appId,
+      s.ticketNo,
+      '"' + s.name.replace(/"/g, '""') + '"',
+      '"' + s.father.replace(/"/g, '""') + '"',
+      s.dob,
+      s.phone,
+      s.email || 'N/A',
+      s.category,
+      s.gender,
+      '"' + (s.seat || 'Unassigned') + '"',
+      s.attendance || 'Pending',
+      s.marks || 0,
+      '"' + (s.prize || 'None') + '"',
+      s.status,
+      s.resultVerified ? 'YES' : 'NO'
+    ];
+  });
+
+  var csvContent = 'data:text/csv;charset=utf-8,\uFEFF' + [headers.join(','), rows.map(function(e) { return e.join(','); }).join('\n')].join('\n');
+  var encodedUri = encodeURI(csvContent);
+  var link = document.createElement('a');
+  link.setAttribute('href', encodedUri);
+  link.setAttribute('download', 'Seerat_Competition_Students_' + new Date().toISOString().slice(0,10) + '.csv');
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+// 2. 1-CLICK FULL DATABASE BACKUP & RESTORE (MOBILE TO BROWSER SYNC)
+window.backupDatabaseToJSON = function() {
+  var backupData = {
+    version: '3.0',
+    exportDate: new Date().toISOString(),
+    config: config,
+    students: students,
+    prizes: prizes,
+    faculties: faculties,
+    notices: notices,
+    feedbacks: feedbacks
+  };
+
+  var blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'Seerat_Madarsa_Backup_' + new Date().toISOString().slice(0,10) + '.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
+
+window.triggerRestoreDatabase = function() {
+  document.getElementById('file-restore-input').click();
+};
+
+window.handleDatabaseRestoreFile = function(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+
+  var reader = new FileReader();
+  reader.onload = function(evt) {
+    try {
+      var data = JSON.parse(evt.target.result);
+      if (data.students && data.config) {
+        config = data.config;
+        students = data.students;
+        prizes = data.prizes || window.INITIAL_PRIZES;
+        faculties = data.faculties || [];
+        feedbacks = data.feedbacks || [];
+        
+        window.DataStore.set('sm_config', config);
+        window.DataStore.set('sm_students', students);
+        window.DataStore.set('sm_prizes', prizes);
+        window.DataStore.set('sm_faculties', faculties);
+        window.DataStore.set('sm_feedbacks', feedbacks);
+
+        syncConfigUI();
+        renderPrayerTimes();
+        renderManagementDashboard();
+        renderPrizesDisplay();
+        alert('Data Synchronized Successfully! Portal database restored completely.');
+      } else {
+        alert('Invalid Backup File Format.');
+      }
+    } catch (err) {
+      alert('Error parsing JSON backup file.');
+    }
+  };
+  reader.readAsText(file);
+};
+
+// 3. 1-CLICK GLOBAL RESULT RELEASE
+window.toggleResultsRelease = function() {
+  config.resultsPublished = !config.resultsPublished;
+  window.DataStore.set('sm_config', config);
+  renderManagementDashboard();
+  alert(config.resultsPublished ? 'Results Published Globally! Students can now view their marks and ranks on dashboards and public search.' : 'Results Locked! Results hidden from public view.');
+};
+
+// 4. PROFESSIONAL EXAMINATION OMR SHEET GENERATOR
+window.generateSingleOMR = function(ticketNo) {
+  var cand = students.find(function(s) { return s.ticketNo === ticketNo; });
+  if (!cand) return alert('Candidate not found.');
+
+  var area = document.getElementById('printable-document');
+  area.innerHTML = buildProfessionalOMRHTML(cand);
+  window.navigateTab('printable');
+};
+
+window.generateBatchOMR = function() {
+  if (students.length === 0) return alert('No registered candidates to generate OMR sheets.');
+  var area = document.getElementById('printable-document');
+  area.innerHTML = students.map(function(s, idx) {
+    var pb = idx < students.length - 1 ? 'page-break' : '';
+    return '<div class="' + pb + '">' + buildProfessionalOMRHTML(s) + '</div>';
+  }).join('');
+  window.navigateTab('printable');
+};
+
+function buildProfessionalOMRHTML(cand) {
+  var digits = cand.ticketNo.replace(/[^0-9]/g, '');
+  while (digits.length < 6) digits = '0' + digits;
+
+  // Build 100 question response bubble matrix (4 columns x 25 rows)
+  var qColumns = '';
+  for (var col = 0; col < 4; col++) {
+    var startQ = (col * 25) + 1;
+    var endQ = startQ + 24;
+    var rows = '';
+    for (var q = startQ; q <= endQ; q++) {
+      var qNumStr = q < 10 ? '0' + q : '' + q;
+      rows += `
+        <div class="flex items-center justify-between py-0.5 border-b border-slate-200 text-[9px] font-mono">
+          <span class="w-5 font-bold text-slate-800">${qNumStr}</span>
+          <div class="flex gap-1.5">
+            <span class="w-3.5 h-3.5 rounded-full border border-slate-700 flex items-center justify-center text-[7px] font-bold">A</span>
+            <span class="w-3.5 h-3.5 rounded-full border border-slate-700 flex items-center justify-center text-[7px] font-bold">B</span>
+            <span class="w-3.5 h-3.5 rounded-full border border-slate-700 flex items-center justify-center text-[7px] font-bold">C</span>
+            <span class="w-3.5 h-3.5 rounded-full border border-slate-700 flex items-center justify-center text-[7px] font-bold">D</span>
+          </div>
+        </div>
+      `;
+    }
+    qColumns += `<div class="p-2 border border-slate-300 rounded bg-white">${rows}</div>`;
+  }
+
+  // Roll Number bubbling grid
+  var rollHeader = '';
+  var rollBubbles = '';
+  for (var d = 0; d < digits.length; d++) {
+    rollHeader += `<span class="w-4 h-5 border border-slate-400 bg-slate-100 flex items-center justify-center font-mono font-bold text-[10px] text-red-700">${digits[d]}</span>`;
+  }
+  for (var n = 0; n <= 9; n++) {
+    var rowB = '';
+    for (var colIdx = 0; colIdx < digits.length; colIdx++) {
+      var isFilled = parseInt(digits[colIdx]) === n;
+      rowB += `<span class="w-4 h-4 rounded-full border border-slate-600 flex items-center justify-center text-[8px] font-mono ${isFilled ? 'bg-slate-900 text-white font-bold' : ''}">${n}</span>`;
+    }
+    rollBubbles += `<div class="flex justify-between py-0.5">${rowB}</div>`;
+  }
+
+  return `
+    <div class="border-4 border-slate-800 p-6 bg-white text-slate-900 rounded shadow-lg max-w-4xl mx-auto space-y-4 font-sans text-xs">
+      <!-- OMR Header -->
+      <div class="border-b-2 border-slate-900 pb-2 flex justify-between items-center">
+        <div>
+          <h2 class="text-base font-black uppercase text-emerald-950 font-cinzel">${config.compTitle}</h2>
+          <p class="text-[10px] font-bold text-amber-800 uppercase">${config.masjidTitle}</p>
+          <p class="text-[9px] text-slate-600">Official Optical Mark Recognition (OMR) Answer Response Sheet</p>
+        </div>
+        <div class="text-right">
+          <span class="px-2 py-0.5 bg-slate-900 text-white font-mono font-bold text-[10px] rounded">FORM: SEERAT-OMR-2026</span>
+          <p class="text-[9px] font-mono text-slate-500 mt-0.5">BARCODE / SER: ${cand.appId}</p>
+        </div>
+      </div>
+
+      <!-- Instructions & Candidate Bio Grid -->
+      <div class="grid grid-cols-12 gap-3 text-xs">
+        <div class="col-span-7 p-2.5 bg-slate-50 border rounded space-y-1">
+          <p><strong>Candidate Full Name:</strong> <span class="font-bold uppercase text-slate-900">${cand.name}</span></p>
+          <p><strong>Father's Name:</strong> <span class="uppercase">${cand.father}</span></p>
+          <p><strong>Hall Ticket No:</strong> <span class="font-mono font-bold text-red-600">${cand.ticketNo}</span> | <strong>DOB:</strong> ${cand.dob}</p>
+          <p><strong>Category:</strong> <span class="font-bold text-emerald-900">${cand.category} (${cand.gender === 'M' ? 'Boys' : 'Girls'})</span> | <strong>Seat:</strong> ${cand.seat || 'Assigned at Gate'}</p>
+          <div class="mt-2 p-1.5 bg-amber-50 border border-amber-200 rounded text-[9px] text-amber-950 leading-tight">
+            <strong>OMR Rules:</strong> Use Blue or Black Ball Point Pen only. Completely darken the circle corresponding to the correct answer. Do not use white fluid or make stray marks.
+          </div>
+        </div>
+
+        <div class="col-span-5 p-2 border rounded bg-slate-50 flex flex-col items-center justify-between">
+          <span class="text-[9px] font-bold uppercase text-slate-700">Roll Number Shading Grid</span>
+          <div class="flex gap-1 my-1">${rollHeader}</div>
+          <div class="w-full px-2">${rollBubbles}</div>
+        </div>
+      </div>
+
+      <!-- 100 Question Bubble Response Area -->
+      <div>
+        <div class="flex justify-between items-center mb-1">
+          <span class="text-[10px] font-bold text-slate-800 uppercase tracking-wide">Candidate Answers Section (Questions 01 to 100)</span>
+          <span class="text-[9px] font-mono text-slate-500">Total Marks: 100 (1 Mark per Question)</span>
+        </div>
+        <div class="grid grid-cols-4 gap-2">
+          ${qColumns}
+        </div>
+      </div>
+
+      <!-- Signatures & Authentication Stamp -->
+      <div class="border-t-2 border-slate-900 pt-3 flex justify-between items-end text-[10px]">
+        <div class="text-center w-40">
+          <div class="h-8 border-b border-dashed border-slate-400"></div>
+          <span class="font-bold text-slate-700 mt-1 block">Candidate Signature</span>
+        </div>
+
+        <div class="text-center">
+          <div class="w-16 h-16 rounded-full border border-slate-400 flex flex-col items-center justify-center p-1 text-[7px] text-slate-400 mx-auto">
+            <span>OFFICIAL</span>
+            <span>MADARSA SEAL</span>
+          </div>
+        </div>
+
+        <div class="text-center w-40">
+          <div class="h-8 border-b border-dashed border-slate-400"></div>
+          <span class="font-bold text-slate-700 mt-1 block">Invigilator Signature</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// 5. 1-CLICK BATCH DOWNLOAD ADMIT CARDS
+window.pullAllAdmitCards = function() {
+  if (students.length === 0) return alert('No registered candidates to generate Admit Cards.');
+  var area = document.getElementById('printable-document');
+  area.innerHTML = students.map(function(cand, idx) {
+    var pb = idx < students.length - 1 ? 'page-break' : '';
+    return '<div class="' + pb + '">' + buildHallTicketHTML(cand) + '</div>';
+  }).join('');
+  window.navigateTab('printable');
+};
+
+// 6. DYNAMIC SEATING ENGINE (2x2, 3x3, 4x4, NxN)
 window.changeSeatingLayoutType = function(type) {
   config.seatingConfig.layoutType = type;
   if (type === '2x2') { config.seatingConfig.colsPerRow = 4; }
@@ -687,7 +1022,7 @@ window.clearSeatingPlan = function() {
   }
 };
 
-// 2. FACULTY APPROVAL, DENIAL & ACCESS REVOCATION
+// 7. FACULTY APPROVAL & VETTING
 function renderFacultyApprovalQueue() {
   var tbody = document.getElementById('faculty-approval-tbody');
   if (!tbody) return;
@@ -730,7 +1065,7 @@ window.removeFaculty = function(idx) {
   }
 };
 
-// 3. CANDIDATE ROSTER, PRIZE ALLOTMENT & COMPLETE MODIFICATION
+// 8. MASTER ROSTER VIEW & ACTIONS
 window.switchRosterLayout = function(mode) {
   rosterLayoutMode = mode;
   var btnList = document.getElementById('btn-roster-list');
@@ -758,7 +1093,7 @@ function renderManagementRoster() {
   if (!tbody || !gridWrap) return;
 
   if (students.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-slate-400">No candidates enrolled yet. Use the Student Enrollment form to register.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-slate-400">No candidates enrolled yet. Use Student Enrollment to register candidates.</td></tr>';
     gridWrap.innerHTML = '<div class="col-span-full p-6 text-center text-slate-400">No candidate cards available.</div>';
     return;
   }
@@ -774,7 +1109,8 @@ function renderManagementRoster() {
       '<td class="p-2.5 font-bold text-amber-800">' + (s.prize || 'None') + '</td>' +
       '<td class="p-2.5"><span class="px-2 py-0.5 rounded text-[10px] font-bold ' + statusClass + '">' + s.status + ' (' + (s.attendance || 'Pending') + ')</span></td>' +
       '<td class="p-2.5 text-center space-x-1">' +
-        '<button onclick="openEditCandidateModal(' + idx + ')" class="text-blue-600 hover:underline font-bold">Edit & Prize</button>' +
+        '<button onclick="openEditCandidateModal(' + idx + ')" class="text-blue-600 hover:underline font-bold">Edit</button>' +
+        '<button onclick="generateSingleOMR(\'' + s.ticketNo + '\')" class="text-purple-700 hover:underline font-bold">OMR</button>' +
         '<button onclick="generateParticipationCertificate(\'' + s.ticketNo + '\')" class="text-amber-700 hover:underline font-bold">Cert</button>' +
         '<button onclick="displayHallTicket(students[' + idx + '])" class="text-emerald-700 hover:underline font-bold">Admit</button>' +
         (session.user.role === 'super_admin' ? '<button onclick="deleteCandidate(' + idx + ')" class="text-red-600 hover:underline">Del</button>' : '') +
@@ -794,6 +1130,7 @@ function renderManagementRoster() {
       '<p class="text-amber-800 font-bold">Prize: ' + (s.prize || 'None') + '</p>' +
       '<div class="pt-2 border-t flex justify-end gap-2 text-[11px]">' +
         '<button onclick="openEditCandidateModal(' + idx + ')" class="text-blue-600 font-bold hover:underline">Edit</button>' +
+        '<button onclick="generateSingleOMR(\'' + s.ticketNo + '\')" class="text-purple-700 font-bold hover:underline">OMR</button>' +
         '<button onclick="generateParticipationCertificate(\'' + s.ticketNo + '\')" class="text-amber-700 font-bold hover:underline">Cert</button>' +
         (session.user.role === 'super_admin' ? '<button onclick="deleteCandidate(' + idx + ')" class="text-red-600 hover:underline">Delete</button>' : '') +
       '</div>' +
@@ -844,48 +1181,23 @@ window.saveCandidateModifications = function(e) {
   var newPwd = document.getElementById('edit-cand-pwd').value.trim();
   if (newPwd) c.password = newPwd;
 
-  // Sync to public prize gallery if awarded
-  syncPrizeCatalog();
-
   students[idx] = c;
   window.DataStore.set('sm_students', students);
   window.closeModal('modal-edit-candidate');
   renderManagementRoster();
   renderDynamicSeatingMatrix();
-  renderPrizesDisplay();
   alert('Candidate modifications, password, attendance, and prize updated successfully.');
 };
-
-function syncPrizeCatalog() {
-  prizes = [];
-  students.forEach(function(s, idx) {
-    if (s.prize && s.prize !== 'None') {
-      prizes.push({
-        id: idx + 1,
-        rank: s.prize.split(' - ')[0] || 'Honorable Award',
-        category: s.category + (s.gender === 'M' ? ' (Boys)' : ' (Girls)'),
-        ht: s.ticketNo,
-        name: s.name,
-        prize: s.prize,
-        icon: 'trophy'
-      });
-    }
-  });
-  window.DataStore.set('sm_prizes', prizes);
-}
 
 window.deleteCandidate = function(idx) {
   if (confirm('Delete candidate ' + students[idx].ticketNo + ' permanently?')) {
     students.splice(idx, 1);
-    syncPrizeCatalog();
     window.DataStore.set('sm_students', students);
     renderManagementRoster();
     renderDynamicSeatingMatrix();
-    renderPrizesDisplay();
   }
 };
 
-// 4. FEEDBACK DESK WITH TWO-WAY WHATSAPP & EMAIL REPLIES
 function renderFeedbackManagement() {
   var tbody = document.getElementById('admin-feedback-tbody');
   if (!tbody) return;
@@ -916,7 +1228,6 @@ function renderFeedbackManagement() {
   }).join('');
 }
 
-// 5. GLOBAL CONFIGURATION & DIGNITARY MANAGEMENT
 window.saveSuperAdminConfig = function() {
   config.masjidTitle = document.getElementById('cfg-masjid-title').value.trim();
   config.examDate = document.getElementById('cfg-date-time').value.trim();
@@ -958,12 +1269,10 @@ window.generateParticipationCertificate = function(ticketNo) {
 
   var certHTML = `
     <div class="border-8 border-double border-amber-600 p-8 bg-[#fdfcf7] text-slate-900 rounded shadow-xl relative overflow-hidden">
-      <!-- Watermark Background -->
       <div class="absolute inset-0 flex items-center justify-center opacity-5 pointer-events-none text-9xl font-arabic text-emerald-950">
         محمد ﷺ
       </div>
 
-      <!-- Header & Bismillah -->
       <div class="text-center space-y-1 relative z-10">
         <p class="font-arabic text-3xl font-bold text-emerald-950">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ</p>
         <h2 class="font-cinzel text-xl md:text-2xl font-black text-emerald-900 uppercase tracking-wide">${config.masjidTitle}</h2>
@@ -971,7 +1280,6 @@ window.generateParticipationCertificate = function(ticketNo) {
         <div class="h-0.5 bg-gradient-to-r from-transparent via-amber-600 to-transparent w-3/4 mx-auto my-3"></div>
       </div>
 
-      <!-- Certificate Title -->
       <div class="text-center my-4 relative z-10">
         <span class="inline-block px-4 py-1 bg-amber-100 text-amber-900 font-serif italic text-sm border border-amber-300 rounded-full font-bold">
           Certificate of Active Participation
@@ -980,7 +1288,6 @@ window.generateParticipationCertificate = function(ticketNo) {
         <p class="text-xs text-slate-600 font-medium">${config.compSubtitle}</p>
       </div>
 
-      <!-- Hadith Citation Box -->
       <div class="my-5 p-4 bg-emerald-50/80 border border-emerald-300 rounded-lg text-center space-y-1.5 relative z-10">
         <p class="font-arabic text-lg text-emerald-950 font-bold" dir="rtl">
           « مَنْ سَلَكَ طَرِيقًا يَلْتَمِسُ فِيهِ عِلْمًا سَهَّلَ اللَّهُ لَهُ بِهِ طَرِيقًا إِلَى الْجَنَّةِ »
@@ -991,7 +1298,6 @@ window.generateParticipationCertificate = function(ticketNo) {
         <span class="text-[10px] text-amber-800 font-bold block">(Sahih Muslim: 2699)</span>
       </div>
 
-      <!-- Participant Details -->
       <div class="my-6 text-center text-xs md:text-sm leading-relaxed space-y-3 relative z-10">
         <p class="text-slate-700">This is to proudly certify that</p>
         <h4 class="text-xl font-bold text-emerald-950 uppercase underline decoration-amber-500 underline-offset-4 tracking-wider">${cand.name}</h4>
@@ -1005,7 +1311,6 @@ window.generateParticipationCertificate = function(ticketNo) {
         </p>
       </div>
 
-      <!-- Signatures & Madarsa Official Seal -->
       <div class="mt-8 pt-4 border-t border-amber-300 flex justify-between items-end relative z-10 text-xs">
         <div class="text-center space-y-1">
           <div class="font-arabic text-sm text-emerald-900 font-bold">احسن بن محمد الحمومي</div>
@@ -1035,7 +1340,7 @@ function getStudent(ticketNo) {
 }
 
 // ----------------------------------------------------
-// STUDENT REGISTRATION & ENROLLMENT
+// CANDIDATE ENROLLMENT ENGINE
 // ----------------------------------------------------
 function generateUniqueHallTicket(gender, category) {
   var prefix = (gender === 'M') ? 'SUN3-B-' : 'SUN3-G-';
@@ -1103,6 +1408,7 @@ window.handleStudentRegister = function(e) {
     marks: 0,
     status: 'Enrolled',
     attendance: 'Pending',
+    resultVerified: false,
     registeredDate: new Date().toLocaleDateString('en-IN')
   };
 
@@ -1115,11 +1421,10 @@ window.handleStudentRegister = function(e) {
 };
 
 // ----------------------------------------------------
-// DOCUMENT RENDERING (ADMIT CARDS & APPLICATIONS)
+// DOCUMENT RENDERING (HALL TICKETS & ADMIT CARDS)
 // ----------------------------------------------------
-window.displayHallTicket = function(cand) {
-  var area = document.getElementById('printable-document');
-  area.innerHTML = `
+function buildHallTicketHTML(cand) {
+  return `
     <div class="border-b-2 border-emerald-900 pb-3 mb-4 flex justify-between items-center">
       <div>
         <h2 class="text-lg font-black text-emerald-950 font-cinzel">${config.compTitle}</h2>
@@ -1167,7 +1472,11 @@ window.displayHallTicket = function(cand) {
       <span class="font-bold text-emerald-950">Authorized Registrar Stamp</span>
     </div>
   `;
+}
 
+window.displayHallTicket = function(cand) {
+  var area = document.getElementById('printable-document');
+  area.innerHTML = buildHallTicketHTML(cand);
   window.navigateTab('printable');
 };
 
@@ -1212,7 +1521,7 @@ window.downloadPDFDoc = function() {
   var el = document.getElementById('printable-document');
   html2pdf().set({
     margin: 6,
-    filename: 'Madarsa_Seerat_Document.pdf',
+    filename: 'Madarsa_Official_Document.pdf',
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: { scale: 2 },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
@@ -1233,7 +1542,58 @@ window.handleDocLookup = function(e) {
   if (!cand) return alert('Verification Failed: Matching student record not found.');
 
   if (type === 'ticket') displayHallTicket(cand);
+  else if (type === 'omr') generateSingleOMR(cand.ticketNo);
   else displayApplicationForm(cand);
+};
+
+// ----------------------------------------------------
+// PUBLIC RESULT SEARCH
+// ----------------------------------------------------
+window.handlePublicResultLookup = function() {
+  var query = document.getElementById('public-result-search-input').value.trim().toLowerCase();
+  var resBox = document.getElementById('public-result-display');
+  if (!query) return alert('Please enter candidate Hall Ticket number or Full Name.');
+
+  if (!config.resultsPublished) {
+    resBox.classList.remove('hidden');
+    resBox.innerHTML = `
+      <div class="p-4 bg-amber-50 border border-amber-300 rounded-lg text-xs text-amber-900 font-medium">
+        <i class="fa-solid fa-lock mr-1.5 text-amber-600"></i> The official results have not been publicly released by the Examination Board yet. Please check back shortly.
+      </div>
+    `;
+    return;
+  }
+
+  var cand = students.find(function(s) {
+    return s.ticketNo.toLowerCase() === query || s.name.toLowerCase().indexOf(query) !== -1;
+  });
+
+  if (!cand) {
+    resBox.classList.remove('hidden');
+    resBox.innerHTML = `
+      <div class="p-4 bg-red-50 border border-red-300 rounded-lg text-xs text-red-700 font-bold">
+        No candidate result record found matching "${query}".
+      </div>
+    `;
+    return;
+  }
+
+  resBox.classList.remove('hidden');
+  resBox.innerHTML = `
+    <div class="p-4 bg-white border border-emerald-300 rounded-xl shadow-sm text-xs space-y-2">
+      <div class="flex justify-between items-center border-b pb-2">
+        <h4 class="font-bold text-sm text-slate-900">${cand.name}</h4>
+        <span class="font-mono font-bold text-red-600">${cand.ticketNo}</span>
+      </div>
+      <p><strong>Father's Name:</strong> ${cand.father}</p>
+      <p><strong>Academic Stream:</strong> ${cand.category} (${cand.gender === 'M' ? 'Boys Wing' : 'Girls Wing'})</p>
+      <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded flex justify-between items-center">
+        <span>Score: <strong class="font-mono text-emerald-950 font-bold text-sm">${cand.marks || 0}/100</strong></span>
+        <span>Award: <strong class="text-amber-800 font-bold">${cand.prize || 'Participant'}</strong></span>
+      </div>
+      <p class="text-[10px] text-slate-500">Board Status: Verified & Approved</p>
+    </div>
+  `;
 };
 
 window.handleFeedbackSubmit = function(e) {
