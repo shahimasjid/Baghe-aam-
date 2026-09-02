@@ -356,9 +356,11 @@
     <!-- Tab: Model Papers -->
     <section id="tab-model-papers" class="hidden space-y-6">
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 max-w-4xl mx-auto">
-        <div class="border-b pb-3 mb-4">
-          <span class="text-xs font-bold text-amber-700 uppercase">Exam Resources</span>
-          <h2 class="text-xl font-bold text-emerald-950">Previous Examination Model Question Papers</h2>
+        <div class="border-b pb-3 mb-4 flex justify-between items-center">
+          <div>
+            <span class="text-xs font-bold text-amber-700 uppercase">Exam Resources</span>
+            <h2 class="text-xl font-bold text-emerald-950">Previous Examination Model Question Papers</h2>
+          </div>
         </div>
         <div id="model-papers-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
       </div>
@@ -633,10 +635,10 @@
             </div>
           </div>
 
-          <!-- Super Admin Configuration Card -->
+          <!-- Super Admin Configuration Card (Global Timings & Details) -->
           <div id="super-admin-master-card" class="hidden p-5 bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-400 rounded-xl space-y-4">
             <h3 class="text-sm font-black text-amber-950 flex items-center gap-2">
-              <i class="fa-solid fa-pen-to-square text-amber-700"></i> Master Configurations & Dignitary/Guest Settings
+              <i class="fa-solid fa-pen-to-square text-amber-700"></i> Master Portal Configurations & Examination Timetable
             </h3>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
@@ -645,15 +647,15 @@
                 <input type="text" id="cfg-masjid-title" class="w-full border rounded p-2 bg-white" />
               </div>
               <div>
-                <label class="block font-bold mb-1">Exam Date</label>
+                <label class="block font-bold mb-1">Exam Date (e.g. Saturday, January 31, 2026)</label>
                 <input type="text" id="cfg-date-time" class="w-full border rounded p-2 bg-white" />
               </div>
               <div>
-                <label class="block font-bold mb-1">Preparation Time</label>
+                <label class="block font-bold mb-1">Preparation & Seating Window</label>
                 <input type="text" id="cfg-prep-time" class="w-full border rounded p-2 bg-white" />
               </div>
               <div>
-                <label class="block font-bold mb-1">Exam Time</label>
+                <label class="block font-bold mb-1">Exam Duration Window</label>
                 <input type="text" id="cfg-exam-time" class="w-full border rounded p-2 bg-white" />
               </div>
               <div>
@@ -678,20 +680,20 @@
               </div>
               <div class="col-span-full">
                 <button onclick="saveSuperAdminConfig()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-black py-2.5 rounded text-xs shadow transition">
-                  Save All Configurations Globally
+                  <i class="fa-solid fa-floppy-disk mr-1"></i> Save All Configurations & Update Portal Timings Globally
                 </button>
               </div>
             </div>
           </div>
 
-          <!-- Dynamic Seating Matrix Generator (Theater, 2x2, 3x3, 4x4, NxN) -->
+          <!-- Dynamic Cinema Theater Seating Plan Matrix -->
           <div class="p-5 bg-emerald-50 border border-emerald-300 rounded-xl space-y-4">
             <div class="flex flex-wrap justify-between items-center gap-3">
               <div>
                 <h3 class="text-sm font-black text-emerald-950 flex items-center gap-2">
                   <i class="fa-solid fa-couch text-emerald-800"></i> Seating Matrix Configurator
                 </h3>
-                <p class="text-[11px] text-slate-600">Select mode: Cinema Theater Style (Left/Center/Right aisles), 2x2, 3x3, 4x4, or Custom NxN.</p>
+                <p class="text-[11px] text-slate-600">Select mode: Cinema Theater Style (Left/Center/Right wings), 2x2, 3x3, 4x4, or Custom NxN.</p>
               </div>
               <div class="flex flex-wrap gap-2">
                 <button onclick="changeSeatingLayoutType('theater')" class="px-2.5 py-1 text-xs font-bold bg-amber-500 text-emerald-950 rounded shadow">Theater Mode</button>
@@ -711,9 +713,39 @@
             <div class="flex items-center gap-3 text-xs bg-white p-2.5 rounded border">
               <label class="font-bold">Total Rows per Hall:</label>
               <input type="number" id="cfg-seating-rows" min="5" max="100" value="20" class="border rounded p-1 w-16 text-center" onchange="renderDynamicSeatingMatrix()" />
+              <span class="text-[10px] text-slate-500 ml-2"><i class="fa-solid fa-circle-info text-blue-600"></i> Click any seat button to open the manual assignment dialog.</span>
             </div>
 
             <div id="dynamic-seating-matrix-preview" class="p-3 bg-white rounded-lg border max-h-96 overflow-y-auto"></div>
+          </div>
+
+          <!-- Model Papers Management Card (Upload Drive Links) -->
+          <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+              <div>
+                <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wide flex items-center gap-2">
+                  <i class="fa-solid fa-file-pdf text-red-600"></i> Model Question Papers & Drive Links Manager
+                </h4>
+                <p class="text-[11px] text-slate-500">Upload and manage official preparation resources with direct Google Drive links.</p>
+              </div>
+              <button onclick="openModal('modal-add-model-paper')" class="bg-emerald-950 hover:bg-emerald-900 text-amber-300 font-bold px-3 py-1.5 rounded text-xs shadow">
+                <i class="fa-solid fa-plus mr-1"></i> Add Model Paper
+              </button>
+            </div>
+            
+            <div class="overflow-x-auto border rounded-lg">
+              <table class="w-full text-xs text-left">
+                <thead class="bg-slate-100 uppercase text-[10px] text-slate-600 border-b">
+                  <tr>
+                    <th class="p-2">Paper Title</th>
+                    <th class="p-2">Year</th>
+                    <th class="p-2">Google Drive / Resource Link</th>
+                    <th class="p-2 text-center">Manage</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-model-papers-tbody" class="divide-y"></tbody>
+              </table>
+            </div>
           </div>
 
           <!-- Faculty Approval, Denial & Profile Modification Queue -->
@@ -1058,6 +1090,80 @@
             Save Faculty Modifications
           </button>
         </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Manual Theater Seat Assignment Modal -->
+  <div id="modal-seat-assign" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl relative text-xs">
+      <button onclick="closeModal('modal-seat-assign')" class="absolute top-4 right-4 text-gray-400">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <h3 class="text-sm font-bold text-slate-900 mb-1">Cinema Theater Seat Allocator</h3>
+      <p class="text-slate-500 mb-3">Selected Seat Coordinate: <strong id="modal-seat-code-display" class="text-emerald-950 font-mono text-sm"></strong></p>
+      
+      <div id="seat-occupied-info" class="p-2.5 bg-slate-50 border rounded mb-3"></div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Select Candidate to Assign</label>
+          <select id="seat-candidate-select" class="w-full border rounded p-2 text-xs font-semibold outline-none"></select>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Select Examination Wing</label>
+          <select id="seat-hall-select" class="w-full border rounded p-2 text-xs outline-none">
+            <option value="Hall A (Boys Wing)">Hall A (Boys Wing)</option>
+            <option value="Hall B (Girls Wing)">Hall B (Girls Wing)</option>
+          </select>
+        </div>
+        <div class="flex gap-2 pt-2">
+          <button onclick="saveManualSeatAssignment()" class="flex-1 bg-emerald-950 text-amber-300 font-bold py-2 rounded shadow">
+            Assign Seat
+          </button>
+          <button id="btn-seat-unassign" onclick="unassignCurrentSeat()" class="hidden bg-red-100 text-red-700 font-bold px-3 py-2 rounded hover:bg-red-200">
+            Unassign
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upload Model Paper Modal (Drive Links) -->
+  <div id="modal-add-model-paper" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl relative text-xs">
+      <button onclick="closeModal('modal-add-model-paper')" class="absolute top-4 right-4 text-gray-400">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <h3 class="text-sm font-bold text-slate-900 mb-2">Upload Model Question Paper (Drive Link)</h3>
+
+      <form id="form-add-model-paper" onsubmit="handleUploadModelPaper(event)" class="space-y-3">
+        <div>
+          <label class="block font-bold mb-1">Paper Title *</label>
+          <input type="text" id="paper-title" required placeholder="e.g. 3rd Seerat Competition Model Paper" class="w-full border rounded p-2" />
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold mb-1">Edition Year *</label>
+            <input type="text" id="paper-year" required placeholder="e.g. 2026" class="w-full border rounded p-2" />
+          </div>
+          <div>
+            <label class="block font-bold mb-1">Category</label>
+            <select id="paper-category" class="w-full border rounded p-2">
+              <option value="General">All Categories</option>
+              <option value="Intermediate">Intermediate</option>
+              <option value="Graduate">Graduate</option>
+              <option value="Postgraduate">Postgraduate</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold mb-1">Google Drive / Resource Link *</label>
+          <input type="url" id="paper-url" required placeholder="https://drive.google.com/..." class="w-full border rounded p-2 font-mono text-[11px]" />
+        </div>
+        <button type="submit" class="w-full bg-emerald-950 text-amber-300 font-bold py-2 rounded shadow mt-2">
+          Upload & Publish Paper
+        </button>
       </form>
     </div>
   </div>
