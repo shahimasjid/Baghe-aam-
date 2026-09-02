@@ -1,7 +1,5 @@
-// js/data.js
-
-// Default Configuration Schema
-export const INITIAL_CONFIG = {
+// data.js - Root configuration and default data models
+window.INITIAL_CONFIG = {
   masjidTitle: "SHAHI MASJID BAGH-E-AAM",
   masjidSub: "Under the Aegis of Online Madarsa Al Hamoomea for Islamic & Arabic Studies",
   compTitle: "3rd Seerat-un-Nabi Competition",
@@ -27,34 +25,23 @@ export const INITIAL_CONFIG = {
   ]
 };
 
-export const INITIAL_PAPERS = [
+window.INITIAL_PAPERS = [
   { id: 1, title: "1st Seerat Competition Question Paper (All Categories)", year: "2024", url: "#", category: "General" },
   { id: 2, title: "2nd Seerat Competition Model Paper & Key", year: "2025", url: "#", category: "General" }
 ];
 
-export const INITIAL_NOTICES = [
-  { id: 1, title: "3rd Edition Announced", date: "Official", desc: "Registrations are live across Intermediate, Graduate, and PG brackets." },
-  { id: 2, title: "ID Verification Alert", date: "Mandatory", desc: "Bring physical original of the submitted ID card (Aadhaar or PAN) on exam day." }
+window.INITIAL_NOTICES = [
+  { id: 1, title: "3rd Edition Live", date: "Official", desc: "Registrations are live across Intermediate, Graduate, and PG brackets." },
+  { id: 2, title: "Guest Speaker Announced", date: "Update", desc: "Janab Munavar Zama Sahab & Molana Hafiz Dr Ahsan Bin Mohammed Al Hamoomee Sahab will address the gathering." },
+  { id: 3, title: "ID Verification Alert", date: "Mandatory", desc: "Bring physical original of the submitted ID card (Aadhaar or PAN) on exam day." }
 ];
 
-// Optional Firebase Cloud Real-time Syncer
-// Replace values below with your Firebase project keys for cross-device syncing
-export const FIREBASE_CONFIG = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "SENDER_ID",
-  appId: "APP_ID"
-};
-
-// Storage helper with fallback to localStorage
-export class DataStore {
-  static get(key, fallback) {
-    const raw = localStorage.getItem(key);
+window.DataStore = {
+  get: function(key, fallback) {
+    var raw = localStorage.getItem(key);
     return raw ? JSON.parse(raw) : fallback;
-  }
-  static set(key, value) {
+  },
+  set: function(key, value) {
     localStorage.setItem(key, JSON.stringify(value));
   }
-}
+};
