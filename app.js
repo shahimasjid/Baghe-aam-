@@ -1,16 +1,13 @@
-// app.js - Full Interactive Logic: Dynamic Seating, Cert Generation, Attendance & Feedback
+// app.js - Full Interactive Logic: Faculty Approval, Seating Matrices, Attendance, Awards & Admin Tools
 var config = window.DataStore.get('sm_config', window.INITIAL_CONFIG);
 var students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
 var prizes = window.DataStore.get('sm_prizes', window.INITIAL_PRIZES);
 var faculties = window.DataStore.get('sm_faculties', window.INITIAL_FACULTIES);
 var notices = window.DataStore.get('sm_notices', window.INITIAL_NOTICES);
 var papers = window.DataStore.get('sm_papers', window.INITIAL_PAPERS);
-var feedbacks = window.DataStore.get('sm_feedbacks', [
-  { id: 1, name: "Syed Imran", phone: "9848012345", email: "imran@example.com", message: "What are the reporting timings for the Boys wing?", date: "2026-01-20" }
-]);
+var feedbacks = window.DataStore.get('sm_feedbacks', window.INITIAL_FEEDBACKS);
 var session = getPersistentSession();
 
-// Layout view states
 var prizeLayoutMode = 'grid';
 var rosterLayoutMode = 'list';
 
@@ -46,7 +43,6 @@ window.closeModal = function(id) {
 window.addEventListener('DOMContentLoaded', function() {
   startLiveClock();
   renderPrayerTimes();
-  renderSocialRibbon();
   renderNotices();
   renderModelPapers();
   renderPrizesDisplay();
@@ -56,23 +52,13 @@ window.addEventListener('DOMContentLoaded', function() {
 
 function startLiveClock() {
   var update = function() {
-    var now = new Date();
     var clockEl = document.getElementById('ist-live-clock');
     if (clockEl) {
-      clockEl.innerText = now.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true }) + ' IST';
+      clockEl.innerText = new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true }) + ' IST';
     }
   };
   update();
   setInterval(update, 1000);
-}
-
-function renderSocialRibbon() {
-  var container = document.getElementById('social-links-ribbon');
-  if (!container) return;
-  container.innerHTML = '<a href="' + (config.youtube || '#') + '" target="_blank" class="hover:text-amber-400" title="YouTube"><i class="fa-brands fa-youtube"></i></a>' +
-    '<a href="' + (config.facebook || '#') + '" target="_blank" class="hover:text-amber-400" title="Facebook"><i class="fa-brands fa-facebook"></i></a>' +
-    '<a href="' + (config.instagram || '#') + '" target="_blank" class="hover:text-amber-400" title="Instagram"><i class="fa-brands fa-instagram"></i></a>' +
-    '<a href="' + (config.whatsappChannel || '#') + '" target="_blank" class="hover:text-amber-400 text-emerald-300" title="WhatsApp Channel"><i class="fa-brands fa-whatsapp"></i></a>';
 }
 
 function syncConfigUI() {
@@ -96,6 +82,30 @@ function syncConfigUI() {
   setText('txt-juma-announcement', config.jumaLine);
   setText('topbar-poc', config.pocContact);
 
+  // Dignitary Box
+  var dignitaryBox = document.getElementById('dignitaries-display-box');
+  if (dignitaryBox) {
+    var chiefHtml = config.dignitaries.chiefGuest ? 
+      `<div class="flex items-center space-x-2.5 p-2 bg-black/20 rounded border border-white/10">
+        <div class="w-8 h-8 rounded-full bg-amber-500 text-emerald-950 flex items-center justify-center font-bold text-xs"><i class="fa-solid fa-microphone"></i></div>
+        <div>
+          <span class="text-[9px] text-amber-300 block font-bold uppercase">${config.dignitaries.chiefGuestTitle}</span>
+          <strong class="text-white text-xs">${config.dignitaries.chiefGuest}</strong>
+        </div>
+      </div>` : '';
+
+    dignitaryBox.innerHTML = `
+      <div class="flex items-center space-x-2.5 p-2 bg-black/20 rounded border border-white/10">
+        <div class="w-8 h-8 rounded-full bg-amber-500 text-emerald-950 flex items-center justify-center font-bold text-xs"><i class="fa-solid fa-user-tie"></i></div>
+        <div>
+          <span class="text-[9px] text-amber-300 block font-bold uppercase">${config.dignitaries.patronTitle}</span>
+          <strong class="text-white text-xs">${config.dignitaries.patron}</strong>
+        </div>
+      </div>
+      ${chiefHtml}
+    `;
+  }
+
   setVal('cfg-masjid-title', config.masjidTitle);
   setVal('cfg-date-time', config.examDate);
   setVal('cfg-prep-time', config.prepTime);
@@ -103,36 +113,17 @@ function syncConfigUI() {
   setVal('cfg-poc', config.pocContact);
   setVal('cfg-masjid-contact', config.masjidContact);
   setVal('cfg-venue', config.examVenue);
-  setVal('cfg-yt', config.youtube);
-  setVal('cfg-fb', config.facebook);
-  setVal('cfg-wa', config.whatsappChannel);
-  renderPrayerConfigGrid();
+  setVal('cfg-dignitary-patron', config.dignitaries.patron);
+  setVal('cfg-dignitary-guest', config.dignitaries.chiefGuest || '');
 }
 
 function renderPrayerTimes() {
   var container = document.getElementById('prayer-time-table');
   if (!container) return;
   container.innerHTML = config.prayers.map(function(p) {
-    return '<div class="flex justify-between items-center py-1 border-b border-slate-100">' +
+    return '<div class="flex justify-between items-center py-1.5 border-b border-slate-100 text-xs">' +
       '<span class="font-bold text-slate-800">' + p.name + '</span>' +
-      '<div class="space-x-2 text-[11px]">' +
-        '<span class="text-slate-400">Azan: ' + p.adhan + '</span>' +
-        '<span class="text-emerald-800 font-mono font-bold">Iqama: ' + p.iqama + '</span>' +
-      '</div>' +
-    '</div>';
-  }).join('');
-}
-
-function renderPrayerConfigGrid() {
-  var grid = document.getElementById('cfg-prayers-grid');
-  if (!grid) return;
-  grid.innerHTML = config.prayers.map(function(p, idx) {
-    return '<div class="p-2 border rounded bg-slate-50">' +
-      '<span class="font-bold block text-slate-800 mb-1">' + p.name + '</span>' +
-      '<label class="text-[9px] text-gray-500">Azan</label>' +
-      '<input type="text" id="cfg-p-adhan-' + idx + '" value="' + p.adhan + '" class="border rounded p-1 w-full text-xs mb-1" />' +
-      '<label class="text-[9px] text-gray-500">Iqama</label>' +
-      '<input type="text" id="cfg-p-iqama-' + idx + '" value="' + p.iqama + '" class="border rounded p-1 w-full text-xs" />' +
+      '<span class="text-emerald-800 font-mono font-bold">Iqama: ' + p.iqama + '</span>' +
     '</div>';
   }).join('');
 }
@@ -141,8 +132,8 @@ function renderNotices() {
   var el = document.getElementById('home-notices-container');
   if (!el) return;
   el.innerHTML = notices.map(function(n) {
-    return '<div class="p-2.5 bg-amber-50/60 border border-amber-200/80 rounded-lg">' +
-      '<div class="flex justify-between font-bold text-slate-800">' +
+    return '<div class="p-2.5 bg-amber-50/70 border border-amber-200 rounded-lg">' +
+      '<div class="flex justify-between font-bold text-slate-900">' +
         '<span>' + n.title + '</span>' +
         '<span class="text-[10px] text-amber-700 font-normal">' + n.date + '</span>' +
       '</div>' +
@@ -167,20 +158,11 @@ function renderModelPapers() {
   }).join('');
 }
 
-// 48 PRIZE WINNERS DISPLAY (GRID VS LIST)
+// ----------------------------------------------------
+// DYNAMIC PRIZE RENDERING
+// ----------------------------------------------------
 window.switchPrizeLayout = function(mode) {
   prizeLayoutMode = mode;
-  var btnGrid = document.getElementById('btn-prize-grid');
-  var btnList = document.getElementById('btn-prize-list');
-  if (btnGrid && btnList) {
-    if (mode === 'grid') {
-      btnGrid.className = 'px-3 py-1 rounded font-bold bg-white text-emerald-950 shadow-sm';
-      btnList.className = 'px-3 py-1 rounded font-bold text-slate-600 hover:text-emerald-950';
-    } else {
-      btnList.className = 'px-3 py-1 rounded font-bold bg-white text-emerald-950 shadow-sm';
-      btnGrid.className = 'px-3 py-1 rounded font-bold text-slate-600 hover:text-emerald-950';
-    }
-  }
   renderPrizesDisplay();
 };
 
@@ -188,10 +170,21 @@ function renderPrizesDisplay() {
   var container = document.getElementById('prize-winners-display');
   if (!container) return;
 
+  if (prizes.length === 0) {
+    container.innerHTML = `
+      <div class="text-center py-12 bg-slate-50 rounded-xl border border-dashed border-slate-300 p-6">
+        <i class="fa-solid fa-award text-4xl text-amber-600 mb-2"></i>
+        <h3 class="text-sm font-bold text-slate-800">No Award Allotments Published Yet</h3>
+        <p class="text-xs text-slate-500 mt-1">Official prize winners and citations will be allocated dynamically by the Examination Board.</p>
+      </div>
+    `;
+    return;
+  }
+
   if (prizeLayoutMode === 'grid') {
     container.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4';
     container.innerHTML = prizes.map(function(p) {
-      return '<div class="p-4 bg-gradient-to-br from-white to-amber-50/40 rounded-xl border border-amber-200/80 shadow-sm hover:shadow transition flex flex-col justify-between">' +
+      return '<div class="p-4 bg-gradient-to-br from-white to-amber-50/40 rounded-xl border border-amber-200/80 shadow-sm flex flex-col justify-between">' +
         '<div>' +
           '<div class="flex justify-between items-center mb-2">' +
             '<span class="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-amber-500 text-emerald-950">' + p.rank + '</span>' +
@@ -202,10 +195,10 @@ function renderPrizesDisplay() {
         '</div>' +
         '<div class="mt-4 pt-3 border-t border-amber-200 flex items-center gap-2">' +
           '<div class="w-8 h-8 rounded-lg bg-emerald-950 text-amber-400 flex items-center justify-center font-bold text-sm">' +
-            '<i class="fa-solid fa-' + p.icon + '"></i>' +
+            '<i class="fa-solid fa-' + (p.icon || 'trophy') + '"></i>' +
           '</div>' +
           '<div>' +
-            '<span class="text-[10px] text-slate-400 block uppercase font-bold">Awarded Prize</span>' +
+            '<span class="text-[10px] text-slate-400 block uppercase font-bold">Allotted Prize</span>' +
             '<span class="text-xs font-bold text-emerald-950">' + p.prize + '</span>' +
           '</div>' +
         '</div>' +
@@ -215,22 +208,16 @@ function renderPrizesDisplay() {
     container.className = 'overflow-x-auto border rounded-xl bg-white shadow-sm';
     container.innerHTML = '<table class="w-full text-xs text-left">' +
       '<thead class="bg-slate-100 uppercase text-[10px] text-slate-600 border-b">' +
-        '<tr>' +
-          '<th class="p-3">Rank</th>' +
-          '<th class="p-3">Candidate Name</th>' +
-          '<th class="p-3">Hall Ticket ID</th>' +
-          '<th class="p-3">Category</th>' +
-          '<th class="p-3">Allotted Prize Item</th>' +
-        '</tr>' +
+        '<tr><th class="p-3">Rank</th><th class="p-3">Candidate</th><th class="p-3">Hall Ticket</th><th class="p-3">Category</th><th class="p-3">Prize Item</th></tr>' +
       '</thead>' +
       '<tbody class="divide-y">' +
         prizes.map(function(p) {
-          return '<tr class="hover:bg-slate-50">' +
+          return '<tr>' +
             '<td class="p-3 font-bold text-amber-700">' + p.rank + '</td>' +
             '<td class="p-3 font-bold text-slate-900">' + p.name + '</td>' +
             '<td class="p-3 font-mono text-red-600 font-bold">' + p.ht + '</td>' +
-            '<td class="p-3 font-medium">' + p.category + '</td>' +
-            '<td class="p-3 font-bold text-emerald-950"><i class="fa-solid fa-' + p.icon + ' mr-1 text-amber-600"></i> ' + p.prize + '</td>' +
+            '<td class="p-3">' + p.category + '</td>' +
+            '<td class="p-3 font-bold text-emerald-950">' + p.prize + '</td>' +
           '</tr>';
         }).join('') +
       '</tbody>' +
@@ -238,125 +225,11 @@ function renderPrizesDisplay() {
   }
 }
 
-// MULTI-LANGUAGE SEERAT HUB
-window.renderSeeratHubContent = function() {
-  var langSelect = document.getElementById('seerat-lang-select');
-  var lang = langSelect ? langSelect.value : 'en';
-  var data = window.SEERAT_COMPREHENSIVE_TEXT[lang] || window.SEERAT_COMPREHENSIVE_TEXT['en'];
-  var container = document.getElementById('seerat-hub-container');
-  if (!container) return;
-
-  var isRtl = lang === 'ar' ? 'dir="rtl" text-right font-arabic' : '';
-
-  container.innerHTML = '<div class="' + isRtl + ' space-y-6">' +
-    '<div class="p-5 bg-gradient-to-br from-amber-50 to-emerald-50 rounded-xl border border-amber-300 space-y-3">' +
-      '<div class="flex justify-between items-center border-b border-amber-200 pb-2">' +
-        '<h3 class="text-base font-bold text-emerald-950 flex items-center gap-2">' +
-          '<i class="fa-solid fa-tree text-amber-600"></i> ' + data.lineageHeader +
-        '</h3>' +
-        '<span class="text-[10px] font-bold bg-amber-500 text-emerald-950 px-2 py-0.5 rounded">' + data.wordCount + '</span>' +
-      '</div>' +
-      '<div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs leading-relaxed">' +
-        '<p><strong>Father:</strong> ' + data.father + '</p>' +
-        '<p><strong>Mother:</strong> ' + data.mother + '</p>' +
-        '<p><strong>Grandfather:</strong> ' + data.grandfather + '</p>' +
-        '<p><strong>Protective Uncle:</strong> ' + data.uncle + '</p>' +
-        '<p class="md:col-span-2"><strong>Blessed Wives (Ummahat-ul-Momineen):</strong> ' + data.wives + '</p>' +
-        '<p class="md:col-span-2"><strong>Blessed Sons:</strong> ' + data.sons + '</p>' +
-        '<p class="md:col-span-2"><strong>Blessed Daughters:</strong> ' + data.daughters + '</p>' +
-      '</div>' +
-    '</div>' +
-
-    '<div class="p-6 bg-white border border-slate-200 rounded-xl shadow-sm space-y-4 text-xs md:text-sm leading-relaxed text-slate-800">' +
-      '<h3 class="text-base font-bold text-emerald-950 flex items-center gap-2 border-b pb-2">' +
-        '<i class="fa-solid fa-feather-pointed text-emerald-800"></i> ' + data.title +
-      '</h3>' +
-      '<div class="prose max-w-none space-y-3 text-justify">' +
-        data.narrative.split('\n\n').map(function(paragraph) {
-          return '<p class="leading-relaxed">' + paragraph + '</p>';
-        }).join('') +
-      '</div>' +
-    '</div>' +
-  '</div>';
-};
-
-// MULTI-ROLE LOGIN & SESSION
-window.setLoginRoleHint = function(role) {
-  var btnS = document.getElementById('role-hint-student');
-  var btnF = document.getElementById('role-hint-faculty');
-  var btnA = document.getElementById('role-hint-super');
-  var lbl = document.getElementById('login-label-id');
-
-  if (btnS && btnF && btnA && lbl) {
-    btnS.className = 'flex-1 py-1 rounded text-slate-600';
-    btnF.className = 'flex-1 py-1 rounded text-slate-600';
-    btnA.className = 'flex-1 py-1 rounded text-slate-600';
-
-    if (role === 'student') {
-      btnS.className = 'flex-1 py-1 rounded bg-white text-emerald-950 shadow-sm';
-      lbl.innerText = 'Mobile Number / Hall Ticket ID';
-    } else if (role === 'faculty') {
-      btnF.className = 'flex-1 py-1 rounded bg-white text-emerald-950 shadow-sm';
-      lbl.innerText = 'Faculty Mobile / Username (e.g., Admin1)';
-    } else {
-      btnA.className = 'flex-1 py-1 rounded bg-white text-emerald-950 shadow-sm';
-      lbl.innerText = 'Maintenance Super Admin Username';
-    }
-  }
-};
-
-window.handleUniversalLogin = function(e) {
-  e.preventDefault();
-  var id = document.getElementById('login-id').value.trim();
-  var pwd = document.getElementById('login-pwd').value.trim();
-  var remember = document.getElementById('login-save-24h') ? document.getElementById('login-save-24h').checked : true;
-
-  if (id === 'Admin' && pwd === '9290') {
-    saveSession({ id: 'Admin', name: 'Super Admin (Maintenance)', role: 'super_admin' }, remember);
-    window.closeModal('modal-auth');
-    openDashboard();
-    return;
-  }
-
-  if (id === 'Admin1' && pwd === '2580') {
-    saveSession({ id: 'Admin1', name: 'Faculty & Invigilator Admin', role: 'admin' }, remember);
-    window.closeModal('modal-auth');
-    openDashboard();
-    return;
-  }
-
-  var fac = faculties.find(function(f) { return f.phone === id || f.email === id || f.id === id; });
-  if (fac) {
-    if (fac.status !== 'Approved') {
-      alert('Faculty Profile Status: Pending Approval by Admin / Super Admin.');
-      return;
-    }
-    if (pwd === 'faculty123' || pwd === '2580') {
-      saveSession({ id: fac.id, name: fac.name, role: 'faculty', data: fac }, remember);
-      window.closeModal('modal-auth');
-      openDashboard();
-      return;
-    }
-  }
-
-  var std = students.find(function(s) {
-    return (s.phone === id || s.email === id || s.ticketNo === id) && (s.password === pwd || pwd === '1234' || s.dob.replace(/-/g, '') === pwd);
-  });
-
-  if (std) {
-    if (std.status === 'Blocked') return alert('Profile blocked due to duplicate audit conflict. Contact mosque office.');
-    saveSession({ id: std.ticketNo, name: std.name, role: 'student', data: std }, remember);
-    window.closeModal('modal-auth');
-    openDashboard();
-    return;
-  }
-
-  alert('Invalid credentials. Check Hall Ticket/phone and password.');
-};
-
+// ----------------------------------------------------
+// AUTHENTICATION & SESSION PERSISTENCE
+// ----------------------------------------------------
 function saveSession(user, remember24h) {
-  var now = new Date().getTime();
-  var expiry = remember24h ? now + (24 * 3600 * 1000) : now + (2 * 3600 * 1000);
+  var expiry = new Date().getTime() + (remember24h ? 24 * 3600 * 1000 : 2 * 3600 * 1000);
   var sessionObj = { user: user, expiry: expiry };
   localStorage.setItem('sm_session', JSON.stringify(sessionObj));
   session = sessionObj;
@@ -373,9 +246,7 @@ function getPersistentSession() {
       return null;
     }
     return s;
-  } catch (e) {
-    return null;
-  }
+  } catch (e) { return null; }
 }
 
 window.handleSessionLogout = function() {
@@ -389,15 +260,98 @@ function updateAuthUI() {
   var slot = document.getElementById('nav-auth-slot');
   if (!slot) return;
   if (session && session.user) {
-    slot.innerHTML = '<button onclick="navigateTab(\'dashboard\'); openDashboard();" class="bg-amber-500 text-emerald-950 px-3 py-1.5 rounded-lg font-bold">' +
+    slot.innerHTML = '<button onclick="navigateTab(\'dashboard\'); openDashboard();" class="bg-amber-500 hover:bg-amber-400 text-emerald-950 px-3 py-1.5 rounded-lg font-bold shadow">' +
       'Dashboard (' + session.user.name + ')' +
     '</button>';
   } else {
-    slot.innerHTML = '<button onclick="openModal(\'modal-auth\')" class="bg-emerald-950 text-amber-300 px-4 py-1.5 rounded-lg font-bold border border-amber-500/50 hover:bg-emerald-900">' +
-      'Login' +
+    slot.innerHTML = '<button onclick="openModal(\'modal-auth\')" class="bg-emerald-950 text-amber-300 px-4 py-1.5 rounded-lg font-bold border border-amber-500/50 hover:bg-emerald-900 shadow">' +
+      'Portal Login' +
     '</button>';
   }
 }
+
+window.setLoginRoleHint = function(role) {
+  var btnS = document.getElementById('role-hint-student');
+  var btnF = document.getElementById('role-hint-faculty');
+  var btnA = document.getElementById('role-hint-super');
+  var lbl = document.getElementById('login-label-id');
+
+  btnS.className = 'flex-1 py-1 rounded text-slate-600';
+  btnF.className = 'flex-1 py-1 rounded text-slate-600';
+  btnA.className = 'flex-1 py-1 rounded text-slate-600';
+
+  if (role === 'student') {
+    btnS.className = 'flex-1 py-1 rounded bg-white text-emerald-950 shadow-sm';
+    lbl.innerText = 'Mobile Number / Hall Ticket ID';
+  } else if (role === 'faculty') {
+    btnF.className = 'flex-1 py-1 rounded bg-white text-emerald-950 shadow-sm';
+    lbl.innerText = 'Faculty Mobile Number / Email';
+  } else {
+    btnA.className = 'flex-1 py-1 rounded bg-white text-emerald-950 shadow-sm';
+    lbl.innerText = 'Administrator Username';
+  }
+};
+
+window.handleUniversalLogin = function(e) {
+  e.preventDefault();
+  var id = document.getElementById('login-id').value.trim();
+  var pwd = document.getElementById('login-pwd').value.trim();
+
+  // Super Admin Check
+  if (id === 'Admin' && pwd === '9290') {
+    saveSession({ id: 'Admin', name: 'Super Admin (Maintenance)', role: 'super_admin' }, true);
+    window.closeModal('modal-auth');
+    openDashboard();
+    return;
+  }
+
+  // Admin Check
+  if (id === 'Admin1' && pwd === '2580') {
+    saveSession({ id: 'Admin1', name: 'Admin Exam Coordinator', role: 'admin' }, true);
+    window.closeModal('modal-auth');
+    openDashboard();
+    return;
+  }
+
+  // Faculty Account Check
+  var fac = faculties.find(function(f) { return f.phone === id || f.email === id || f.id === id; });
+  if (fac) {
+    if (fac.status === 'Denied' || fac.status === 'Revoked') {
+      alert('Access Denied: Your faculty registration request has been rejected or revoked by the Admin.');
+      return;
+    }
+    if (fac.status === 'Pending') {
+      alert('Account Pending: Your faculty registration is awaiting official approval from Admin or Super Admin.');
+      return;
+    }
+    if (fac.password === pwd) {
+      saveSession({ id: fac.id, name: fac.name, role: 'faculty', data: fac }, true);
+      window.closeModal('modal-auth');
+      openDashboard();
+      return;
+    } else {
+      alert('Invalid Faculty Password.');
+      return;
+    }
+  }
+
+  // Student Account Check
+  var std = students.find(function(s) { return s.ticketNo === id || s.phone === id || s.email === id; });
+  if (std) {
+    if (std.status === 'Denied' || std.status === 'Blocked') {
+      alert('Access Denied: Your registration has been blocked or denied by Admin.');
+      return;
+    }
+    if (std.password === pwd || pwd === '1234') {
+      saveSession({ id: std.ticketNo, name: std.name, role: 'student', data: std }, true);
+      window.closeModal('modal-auth');
+      openDashboard();
+      return;
+    }
+  }
+
+  alert('Authentication Failed: Check credentials or register if new.');
+};
 
 function openDashboard() {
   if (!session || !session.user) return window.openModal('modal-auth');
@@ -415,9 +369,9 @@ function openDashboard() {
   document.getElementById('super-admin-master-card').classList.toggle('hidden', role !== 'super_admin');
 
   if (role === 'student') {
-    renderStudentDashboardFeatures();
+    renderStudentProfileFeatures();
   } else if (role === 'faculty') {
-    renderFacultyDashboardFeatures();
+    renderFacultyDashboard();
   } else {
     renderManagementDashboard();
   }
@@ -426,152 +380,184 @@ function openDashboard() {
 }
 
 // ----------------------------------------------------
-// 10 ADVANCED FEATURES FOR STUDENT PROFILE
+// 10 ADVANCED STUDENT FEATURES
 // ----------------------------------------------------
-function renderStudentDashboardFeatures() {
+function renderStudentProfileFeatures() {
   var cand = students.find(function(s) { return s.ticketNo === session.user.id; }) || session.user.data;
   var container = document.getElementById('student-features-grid');
   if (!container) return;
 
   container.innerHTML = `
-    <!-- 1. Digital Islamic Participation Certificate -->
-    <div class="p-4 bg-gradient-to-br from-amber-50 to-amber-100/50 border border-amber-300 rounded-xl flex flex-col justify-between hover:shadow transition">
+    <div class="p-4 bg-amber-50 border border-amber-300 rounded-xl flex flex-col justify-between">
       <div>
         <i class="fa-solid fa-certificate text-amber-700 text-2xl mb-2"></i>
         <h4 class="font-bold text-slate-900 text-sm">1. Islamic Participation Certificate</h4>
-        <p class="text-xs text-slate-600 mt-1">Official authenticated certificate with Arabic Hadith, candidate particulars & Madarsa seal.</p>
+        <p class="text-xs text-slate-600 mt-1">Official authenticated certificate with Arabic Hadith, candidate particulars & seal.</p>
       </div>
       <button onclick="generateParticipationCertificate('${cand.ticketNo}')" class="mt-3 bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 rounded text-xs shadow">
         Generate Certificate
       </button>
     </div>
 
-    <!-- 2. Official Admit Card & Desk Pass -->
-    <div class="p-4 bg-emerald-50 border border-emerald-300 rounded-xl flex flex-col justify-between hover:shadow transition">
+    <div class="p-4 bg-emerald-50 border border-emerald-300 rounded-xl flex flex-col justify-between">
       <div>
         <i class="fa-solid fa-id-badge text-emerald-800 text-2xl mb-2"></i>
         <h4 class="font-bold text-slate-900 text-sm">2. Official Hall Ticket Admit Card</h4>
-        <p class="text-xs text-slate-600 mt-1">Desk: <strong class="text-emerald-900 font-mono">${cand.seat || 'Allocated at Gate'}</strong></p>
+        <p class="text-xs text-slate-600 mt-1">Allocated Desk: <strong class="text-emerald-900 font-mono">${cand.seat || 'Assigned by Gate Incharge'}</strong></p>
       </div>
       <button onclick="displayHallTicket(getStudent('${cand.ticketNo}'))" class="mt-3 bg-emerald-950 hover:bg-emerald-900 text-amber-300 font-bold py-2 rounded text-xs shadow">
         View Admit Card
       </button>
     </div>
 
-    <!-- 3. Desk & Aisle Seating Locator -->
-    <div class="p-4 bg-blue-50 border border-blue-300 rounded-xl flex flex-col justify-between hover:shadow transition">
+    <div class="p-4 bg-blue-50 border border-blue-300 rounded-xl flex flex-col justify-between">
       <div>
         <i class="fa-solid fa-location-dot text-blue-700 text-2xl mb-2"></i>
         <h4 class="font-bold text-slate-900 text-sm">3. Seating Coordinate Finder</h4>
-        <p class="text-xs text-slate-600 mt-1">Locate your aisle desk coordinate in Hall A (Boys) or Hall B (Girls).</p>
+        <p class="text-xs text-slate-600 mt-1">Verify assigned row and aisle desk coordinates in Hall A or Hall B.</p>
       </div>
-      <button onclick="alert('Your Assigned Seating Desk: ' + '${cand.seat || 'Pending Allotment'}')" class="mt-3 bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 rounded text-xs shadow">
-        Locate My Desk
+      <button onclick="alert('Your Desk Location: ' + '${cand.seat || 'Pending Allotment by Admin'}')" class="mt-3 bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 rounded text-xs">
+        Locate Desk
       </button>
     </div>
 
-    <!-- 4. 500+ Words Seerat Hub Study Access -->
-    <div class="p-4 bg-slate-50 border rounded-xl flex flex-col justify-between hover:shadow transition">
+    <div class="p-4 bg-slate-50 border rounded-xl flex flex-col justify-between">
       <div>
         <i class="fa-solid fa-book-open text-emerald-900 text-2xl mb-2"></i>
-        <h4 class="font-bold text-slate-900 text-sm">4. Seerat Study Material & Lineage</h4>
-        <p class="text-xs text-slate-600 mt-1">Multi-lingual authentic biography, Ummahat-ul-Momineen & Prophetic lineage.</p>
+        <h4 class="font-bold text-slate-900 text-sm">4. Seerat Reference Hub (500+ Words)</h4>
+        <p class="text-xs text-slate-600 mt-1">Comprehensive biography, lineage, and exam study modules in 3 languages.</p>
       </div>
       <button onclick="navigateTab('seerat-hub')" class="mt-3 bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 rounded text-xs">
-        Open Study Hub
+        Study Hub
       </button>
     </div>
 
-    <!-- 5. Previous Exam Model Papers -->
-    <div class="p-4 bg-slate-50 border rounded-xl flex flex-col justify-between hover:shadow transition">
+    <div class="p-4 bg-slate-50 border rounded-xl flex flex-col justify-between">
       <div>
         <i class="fa-solid fa-file-pdf text-red-600 text-2xl mb-2"></i>
-        <h4 class="font-bold text-slate-900 text-sm">5. Model Papers & Keys</h4>
-        <p class="text-xs text-slate-600 mt-1">Download previous editions' sample papers and answer evaluations.</p>
+        <h4 class="font-bold text-slate-900 text-sm">5. Model Papers & Exam Pattern</h4>
+        <p class="text-xs text-slate-600 mt-1">Download official model question papers & past syllabi.</p>
       </div>
       <button onclick="navigateTab('model-papers')" class="mt-3 bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 rounded text-xs">
         Download Papers
       </button>
     </div>
 
-    <!-- 6. Exam Day Live Attendance Status -->
-    <div class="p-4 bg-slate-50 border rounded-xl flex flex-col justify-between hover:shadow transition">
+    <div class="p-4 bg-slate-50 border rounded-xl flex flex-col justify-between">
       <div>
         <i class="fa-solid fa-user-check text-indigo-700 text-2xl mb-2"></i>
-        <h4 class="font-bold text-slate-900 text-sm">6. Exam Day Attendance</h4>
-        <p class="text-xs text-slate-600 mt-1">Status: <span class="font-bold text-emerald-800 font-mono">${cand.attendance || 'Not Marked Yet'}</span></p>
+        <h4 class="font-bold text-slate-900 text-sm">6. Exam Day Live Attendance Status</h4>
+        <p class="text-xs text-slate-600 mt-1">Status: <span class="font-bold text-emerald-800">${cand.attendance || 'Pending Marking'}</span></p>
       </div>
-      <span class="text-[11px] text-slate-500 font-semibold mt-3">Verified by Hall Invigilators</span>
+      <span class="text-[11px] text-slate-400 font-semibold mt-3">Verified by Hall Invigilators</span>
     </div>
 
-    <!-- 7. Verified Standing & Award Position -->
-    <div class="p-4 bg-slate-50 border rounded-xl flex flex-col justify-between hover:shadow transition">
+    <div class="p-4 bg-slate-50 border rounded-xl flex flex-col justify-between">
       <div>
         <i class="fa-solid fa-trophy text-amber-600 text-2xl mb-2"></i>
         <h4 class="font-bold text-slate-900 text-sm">7. Awards & Marks Standing</h4>
-        <p class="text-xs text-slate-600 mt-1">Award: <strong class="text-amber-800">${cand.prize || 'Under Evaluation'}</strong> (Marks: ${cand.marks || 0}/100)</p>
+        <p class="text-xs text-slate-600 mt-1">Standing: <strong class="text-amber-800">${cand.prize || 'Under Evaluation'}</strong> (Marks: ${cand.marks || 0}/100)</p>
       </div>
-      <span class="text-[11px] text-slate-500 font-semibold mt-3">Committee Verified</span>
+      <span class="text-[11px] text-slate-400 font-semibold mt-3">Official Board Record</span>
     </div>
 
-    <!-- 8. Committee Helpdesk & Feedback -->
-    <div class="p-4 bg-slate-50 border rounded-xl flex flex-col justify-between hover:shadow transition">
+    <div class="p-4 bg-slate-50 border rounded-xl flex flex-col justify-between">
       <div>
         <i class="fa-solid fa-comments text-teal-700 text-2xl mb-2"></i>
-        <h4 class="font-bold text-slate-900 text-sm">8. Inquiry & Support Desk</h4>
-        <p class="text-xs text-slate-600 mt-1">Submit inquiries; committee officials will reply directly via WhatsApp or Email.</p>
+        <h4 class="font-bold text-slate-900 text-sm">8. Committee Helpdesk & Feedback</h4>
+        <p class="text-xs text-slate-600 mt-1">Send questions directly to the committee; reply received via WhatsApp/Email.</p>
       </div>
       <button onclick="navigateTab('feedback')" class="mt-3 bg-teal-800 hover:bg-teal-900 text-white font-bold py-2 rounded text-xs">
-        Submit Feedback
+        Submit Query
       </button>
     </div>
 
-    <!-- 9. Exam Window & Azan Timetable Alerts -->
-    <div class="p-4 bg-slate-50 border rounded-xl flex flex-col justify-between hover:shadow transition">
+    <div class="p-4 bg-slate-50 border rounded-xl flex flex-col justify-between">
       <div>
         <i class="fa-solid fa-clock text-blue-800 text-2xl mb-2"></i>
         <h4 class="font-bold text-slate-900 text-sm">9. Exam Timetable & Azan Alerts</h4>
         <p class="text-xs text-slate-600 mt-1">Orientation: ${config.prepTime}<br/>Exam: ${config.examTime}</p>
       </div>
-      <span class="text-[11px] text-emerald-800 font-bold mt-3">Report to Hall 30 mins prior</span>
+      <span class="text-[11px] text-emerald-800 font-bold mt-3">Report 30 mins prior to hall</span>
     </div>
 
-    <!-- 10. Registration Dossier Archive -->
-    <div class="p-4 bg-slate-50 border rounded-xl flex flex-col justify-between hover:shadow transition">
+    <div class="p-4 bg-slate-50 border rounded-xl flex flex-col justify-between">
       <div>
         <i class="fa-solid fa-file-contract text-slate-700 text-2xl mb-2"></i>
         <h4 class="font-bold text-slate-900 text-sm">10. Verified Application Dossier</h4>
-        <p class="text-xs text-slate-600 mt-1">Formal enrollment application with DOB and verified identity proof record.</p>
+        <p class="text-xs text-slate-600 mt-1">Full registered application dossier with Government ID and DOB records.</p>
       </div>
       <button onclick="displayApplicationForm(getStudent('${cand.ticketNo}'))" class="mt-3 bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 rounded text-xs">
-        Download Dossier
+        View Dossier
       </button>
     </div>
   `;
 }
 
 // ----------------------------------------------------
-// ADVANCED FACULTY DASHBOARD & ATTENDANCE
+// FACULTY REGISTRATION (WITH SECURE PASSWORD)
 // ----------------------------------------------------
-function renderFacultyDashboardFeatures() {
-  var fac = session.user.data;
-  var container = document.getElementById('faculty-assigned-hall');
-  if (container) container.innerText = fac.assignedHall || 'Central Hall Examination Wing';
-  renderAttendanceTable('faculty-attendance-tbody');
+window.handleFacultyRegister = function(e) {
+  e.preventDefault();
+  var name = document.getElementById('fac-reg-name').value.trim();
+  var email = document.getElementById('fac-reg-email').value.trim();
+  var phone = document.getElementById('fac-reg-phone').value.trim();
+  var pwd = document.getElementById('fac-reg-pwd').value.trim();
+  var dept = document.getElementById('fac-reg-dept').value;
+  var hall = document.getElementById('fac-reg-hall').value;
+
+  if (faculties.some(function(f) { return f.phone === phone || f.email === email; })) {
+    alert('A faculty application with this phone number or email already exists.');
+    return;
+  }
+
+  var fac = {
+    id: "FAC-" + (faculties.length + 101),
+    name: name,
+    email: email,
+    phone: phone,
+    password: pwd,
+    dept: dept,
+    assignedHall: hall,
+    status: "Pending", // Needs Admin or Super Admin Approval
+    role: "faculty",
+    registeredDate: new Date().toLocaleDateString('en-IN')
+  };
+
+  faculties.push(fac);
+  window.DataStore.set('sm_faculties', faculties);
+  alert('Registration Submitted Successfully!\nYour faculty profile is currently PENDING approval from Admin or Super Admin.');
+  document.getElementById('faculty-reg-form').reset();
+  window.navigateTab('home');
+};
+
+// ----------------------------------------------------
+// FACULTY DASHBOARD & EXAM DAY ATTENDANCE
+// ----------------------------------------------------
+function renderFacultyDashboard() {
+  var fac = session.user.data || faculties.find(function(f) { return f.id === session.user.id; });
+  var hallBadge = document.getElementById('faculty-assigned-hall');
+  if (hallBadge) hallBadge.innerText = fac ? fac.assignedHall : 'Central Exam Hall';
+  renderFacultyAttendanceTable();
 }
 
-function renderAttendanceTable(tbodyId) {
-  var tbody = document.getElementById(tbodyId);
+function renderFacultyAttendanceTable() {
+  var tbody = document.getElementById('faculty-attendance-tbody');
   if (!tbody) return;
+
+  if (students.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-400">No candidates currently enrolled.</td></tr>';
+    return;
+  }
 
   tbody.innerHTML = students.map(function(s, idx) {
     return '<tr class="hover:bg-slate-50 text-xs">' +
       '<td class="p-2.5 font-mono font-bold text-red-600">' + s.ticketNo + '</td>' +
-      '<td class="p-2.5 font-semibold text-slate-900">' + s.name + '</td>' +
+      '<td class="p-2.5 font-semibold text-slate-900">' + s.name + ' (' + s.category + ')</td>' +
       '<td class="p-2.5 font-bold text-emerald-800">' + (s.seat || 'Unassigned') + '</td>' +
       '<td class="p-2.5">' +
         '<select onchange="updateAttendance(' + idx + ', this.value)" class="border rounded p-1 text-xs font-bold ' +
-          (s.attendance === 'Present' ? 'text-emerald-700 bg-emerald-50' : s.attendance === 'Absent' ? 'text-red-700 bg-red-50' : 'text-amber-700 bg-amber-50') + '">' +
+          (s.attendance === 'Present' ? 'text-emerald-700 bg-emerald-50 border-emerald-300' : s.attendance === 'Absent' ? 'text-red-700 bg-red-50 border-red-300' : 'text-amber-700 bg-amber-50 border-amber-300') + '">' +
           '<option value="Present" ' + (s.attendance === 'Present' ? 'selected' : '') + '>Present</option>' +
           '<option value="Absent" ' + (s.attendance === 'Absent' ? 'selected' : '') + '>Absent</option>' +
           '<option value="Not Interested" ' + (s.attendance === 'Not Interested' ? 'selected' : '') + '>Not Interested</option>' +
@@ -597,14 +583,14 @@ function renderManagementDashboard() {
   syncConfigUI();
 }
 
-// 1. DYNAMIC SEATING CONFIGURATION (2x2, 3x3, 4x4, NxN)
+// 1. DYNAMIC SEATING ENGINE (2x2, 3x3, 4x4, NxN)
 window.changeSeatingLayoutType = function(type) {
   config.seatingConfig.layoutType = type;
   if (type === '2x2') { config.seatingConfig.colsPerRow = 4; }
   else if (type === '3x3') { config.seatingConfig.colsPerRow = 6; }
   else if (type === '4x4') { config.seatingConfig.colsPerRow = 8; }
   else if (type === 'nxn') {
-    var custom = prompt("Enter total columns per row for Custom NxN layout (e.g., 5, 8, 10):", "6");
+    var custom = prompt("Enter total desks per row for Custom NxN layout (e.g. 5, 8, 10):", "6");
     config.seatingConfig.colsPerRow = parseInt(custom) || 6;
   }
   window.DataStore.set('sm_config', config);
@@ -630,7 +616,6 @@ window.renderDynamicSeatingMatrix = function() {
     for (var c = 0; c < cols; c++) {
       var seatLabel = 'R' + r + '-' + alphabet[c];
       
-      // Add aisle divider
       if ((layout === '2x2' && c === 2) || (layout === '3x3' && c === 3) || (layout === '4x4' && c === 4) || (layout === 'nxn' && c === Math.floor(cols / 2))) {
         html += '<span class="px-1.5 py-0.5 text-[9px] bg-amber-100 text-amber-800 font-bold rounded">AISLE</span>';
       }
@@ -668,7 +653,7 @@ window.manualAssignSeatPrompt = function(seatCode) {
 };
 
 window.autoGenerateDynamicSeating = function() {
-  if (students.length === 0) return alert('No registered candidates.');
+  if (students.length === 0) return alert('No registered candidates to arrange.');
   var cols = config.seatingConfig.colsPerRow || 4;
   var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
@@ -690,7 +675,7 @@ window.autoGenerateDynamicSeating = function() {
   window.DataStore.set('sm_students', students);
   renderDynamicSeatingMatrix();
   renderManagementRoster();
-  alert('Seating matrix automatically distributed for all registered candidates.');
+  alert('Seating matrix automatically arranged for all candidates.');
 };
 
 window.clearSeatingPlan = function() {
@@ -702,69 +687,50 @@ window.clearSeatingPlan = function() {
   }
 };
 
-// 2. FACULTY APPROVAL QUEUE (ADMIN / SUPER ADMIN ROLE)
+// 2. FACULTY APPROVAL, DENIAL & ACCESS REVOCATION
 function renderFacultyApprovalQueue() {
   var tbody = document.getElementById('faculty-approval-tbody');
   if (!tbody) return;
 
+  if (faculties.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-400">No faculty registrations submitted yet.</td></tr>';
+    return;
+  }
+
   tbody.innerHTML = faculties.map(function(f, idx) {
+    var statusClass = f.status === 'Approved' ? 'bg-emerald-100 text-emerald-800' : f.status === 'Denied' ? 'bg-red-100 text-red-800' : 'bg-amber-100 text-amber-800';
+
     return '<tr class="hover:bg-slate-50 text-xs">' +
       '<td class="p-2.5 font-bold text-slate-900">' + f.name + '</td>' +
       '<td class="p-2.5">' + f.dept + '</td>' +
       '<td class="p-2.5 font-mono">' + f.phone + '</td>' +
-      '<td class="p-2.5">' +
-        '<span class="px-2 py-0.5 rounded text-[10px] font-bold ' + (f.status === 'Approved' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800') + '">' + f.status + '</span>' +
-      '</td>' +
+      '<td class="p-2.5 font-mono">' + f.password + '</td>' +
+      '<td class="p-2.5"><span class="px-2 py-0.5 rounded text-[10px] font-bold ' + statusClass + '">' + f.status + '</span></td>' +
       '<td class="p-2.5 space-x-1 text-center">' +
-        (f.status === 'Pending' ? '<button onclick="approveFaculty(' + idx + ')" class="bg-emerald-800 hover:bg-emerald-900 text-white px-2.5 py-1 rounded text-[10px] font-bold">Approve</button>' : '<span class="text-emerald-700 font-bold">Approved</span>') +
-        (session.user.role === 'super_admin' ? '<button onclick="removeFaculty(' + idx + ')" class="text-red-600 font-bold hover:underline ml-2">Remove</button>' : '') +
+        (f.status !== 'Approved' ? '<button onclick="setFacultyStatus(' + idx + ', \'Approved\')" class="bg-emerald-800 hover:bg-emerald-900 text-white px-2 py-0.5 rounded text-[10px] font-bold">Approve</button>' : '') +
+        (f.status !== 'Denied' ? '<button onclick="setFacultyStatus(' + idx + ', \'Denied\')" class="bg-red-600 hover:bg-red-700 text-white px-2 py-0.5 rounded text-[10px] font-bold">Deny</button>' : '') +
+        (session.user.role === 'super_admin' ? '<button onclick="removeFaculty(' + idx + ')" class="text-slate-500 hover:text-red-700 text-[11px] font-bold ml-1">Del</button>' : '') +
       '</td>' +
     '</tr>';
   }).join('');
 }
 
-window.approveFaculty = function(idx) {
-  faculties[idx].status = 'Approved';
+window.setFacultyStatus = function(idx, newStatus) {
+  faculties[idx].status = newStatus;
   window.DataStore.set('sm_faculties', faculties);
   renderFacultyApprovalQueue();
-  alert('Faculty profile approved successfully.');
+  alert('Faculty ' + faculties[idx].name + ' status updated to ' + newStatus);
 };
 
 window.removeFaculty = function(idx) {
-  if (confirm('Delete faculty account?')) {
+  if (confirm('Delete faculty account permanently?')) {
     faculties.splice(idx, 1);
     window.DataStore.set('sm_faculties', faculties);
     renderFacultyApprovalQueue();
   }
 };
 
-// 3. FEEDBACK DESK WITH TWO-WAY WHATSAPP & EMAIL REPLIES
-function renderFeedbackManagement() {
-  var tbody = document.getElementById('admin-feedback-tbody');
-  if (!tbody) return;
-
-  tbody.innerHTML = feedbacks.map(function(fb, idx) {
-    var cleanPhone = fb.phone.replace(/[^0-9]/g, '');
-    var waLink = 'https://wa.me/91' + cleanPhone + '?text=' + encodeURIComponent('Salam ' + fb.name + ', regarding your inquiry at Shahi Masjid Seerat Portal: ');
-    var mailLink = 'mailto:' + (fb.email || '') + '?subject=' + encodeURIComponent('Response: Seerat Competition Inquiry') + '&body=' + encodeURIComponent('Salam ' + fb.name + ',\n\nIn response to your query: "' + fb.message + '"\n\n');
-
-    return '<tr class="hover:bg-slate-50 text-xs">' +
-      '<td class="p-2.5 font-bold text-slate-900">' + fb.name + '<br/><span class="text-[10px] text-slate-400">' + fb.date + '</span></td>' +
-      '<td class="p-2.5 text-slate-700">' + fb.message + '</td>' +
-      '<td class="p-2.5 font-mono">' + fb.phone + '</td>' +
-      '<td class="p-2.5 text-center space-x-2">' +
-        '<a href="' + waLink + '" target="_blank" class="inline-block bg-emerald-600 hover:bg-emerald-700 text-white px-2 py-1 rounded font-bold text-[10px]">' +
-          '<i class="fa-brands fa-whatsapp mr-1"></i> WhatsApp' +
-        '</a>' +
-        '<a href="' + mailLink + '" class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded font-bold text-[10px]">' +
-          '<i class="fa-solid fa-envelope mr-1"></i> Email' +
-        '</a>' +
-      '</td>' +
-    '</tr>';
-  }).join('');
-}
-
-// 4. CANDIDATE ROSTER & DYNAMIC PRIZE ALLOTMENT
+// 3. CANDIDATE ROSTER, PRIZE ALLOTMENT & COMPLETE MODIFICATION
 window.switchRosterLayout = function(mode) {
   rosterLayoutMode = mode;
   var btnList = document.getElementById('btn-roster-list');
@@ -791,16 +757,24 @@ function renderManagementRoster() {
   var gridWrap = document.getElementById('roster-grid-wrapper');
   if (!tbody || !gridWrap) return;
 
+  if (students.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-slate-400">No candidates enrolled yet. Use the Student Enrollment form to register.</td></tr>';
+    gridWrap.innerHTML = '<div class="col-span-full p-6 text-center text-slate-400">No candidate cards available.</div>';
+    return;
+  }
+
   tbody.innerHTML = students.map(function(s, idx) {
+    var statusClass = s.status === 'Enrolled' ? 'bg-emerald-100 text-emerald-800' : s.status === 'Denied' || s.status === 'Blocked' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800';
+
     return '<tr class="hover:bg-slate-50 text-xs">' +
       '<td class="p-2.5 font-mono font-bold text-red-600">' + s.ticketNo + '</td>' +
       '<td class="p-2.5 font-semibold text-slate-900">' + s.name + '</td>' +
       '<td class="p-2.5">' + s.father + '</td>' +
       '<td class="p-2.5 font-bold text-emerald-800">' + (s.seat || 'Unassigned') + '</td>' +
       '<td class="p-2.5 font-bold text-amber-800">' + (s.prize || 'None') + '</td>' +
-      '<td class="p-2.5 font-bold">' + (s.attendance || 'Not Marked') + '</td>' +
+      '<td class="p-2.5"><span class="px-2 py-0.5 rounded text-[10px] font-bold ' + statusClass + '">' + s.status + ' (' + (s.attendance || 'Pending') + ')</span></td>' +
       '<td class="p-2.5 text-center space-x-1">' +
-        '<button onclick="openEditCandidateModal(' + idx + ')" class="text-blue-600 hover:underline font-bold">Manage & Assign</button>' +
+        '<button onclick="openEditCandidateModal(' + idx + ')" class="text-blue-600 hover:underline font-bold">Edit & Prize</button>' +
         '<button onclick="generateParticipationCertificate(\'' + s.ticketNo + '\')" class="text-amber-700 hover:underline font-bold">Cert</button>' +
         '<button onclick="displayHallTicket(students[' + idx + '])" class="text-emerald-700 hover:underline font-bold">Admit</button>' +
         (session.user.role === 'super_admin' ? '<button onclick="deleteCandidate(' + idx + ')" class="text-red-600 hover:underline">Del</button>' : '') +
@@ -812,14 +786,14 @@ function renderManagementRoster() {
     return '<div class="p-3.5 bg-white border rounded-xl shadow-sm space-y-2 text-xs">' +
       '<div class="flex justify-between items-center">' +
         '<span class="font-mono font-bold text-red-600">' + s.ticketNo + '</span>' +
-        '<span class="px-2 py-0.5 rounded text-[10px] font-bold ' + (s.status === 'Blocked' ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-800') + '">' + s.status + '</span>' +
+        '<span class="px-2 py-0.5 rounded text-[10px] font-bold ' + (s.status === 'Blocked' || s.status === 'Denied' ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-800') + '">' + s.status + '</span>' +
       '</div>' +
       '<h4 class="font-bold text-slate-900">' + s.name + '</h4>' +
       '<p class="text-slate-500">Father: ' + s.father + ' | DOB: ' + (s.dob || 'N/A') + '</p>' +
       '<p class="text-emerald-900 font-semibold">Seat: ' + (s.seat || 'Unassigned') + '</p>' +
       '<p class="text-amber-800 font-bold">Prize: ' + (s.prize || 'None') + '</p>' +
       '<div class="pt-2 border-t flex justify-end gap-2 text-[11px]">' +
-        '<button onclick="openEditCandidateModal(' + idx + ')" class="text-blue-600 font-bold hover:underline">Manage</button>' +
+        '<button onclick="openEditCandidateModal(' + idx + ')" class="text-blue-600 font-bold hover:underline">Edit</button>' +
         '<button onclick="generateParticipationCertificate(\'' + s.ticketNo + '\')" class="text-amber-700 font-bold hover:underline">Cert</button>' +
         (session.user.role === 'super_admin' ? '<button onclick="deleteCandidate(' + idx + ')" class="text-red-600 hover:underline">Delete</button>' : '') +
       '</div>' +
@@ -843,11 +817,14 @@ window.openEditCandidateModal = function(idx) {
   document.getElementById('edit-cand-ht').innerText = c.ticketNo;
   document.getElementById('edit-cand-name').value = c.name;
   document.getElementById('edit-cand-father').value = c.father;
+  document.getElementById('edit-cand-dob').value = c.dob || '';
+  document.getElementById('edit-cand-phone').value = c.phone || '';
   document.getElementById('edit-cand-seat').value = c.seat || '';
   document.getElementById('edit-cand-marks').value = c.marks || 0;
   document.getElementById('edit-cand-status').value = c.status;
+  document.getElementById('edit-cand-attendance').value = c.attendance || 'Present';
   document.getElementById('edit-cand-prize').value = c.prize || 'None';
-  document.getElementById('edit-cand-newpwd').value = '';
+  document.getElementById('edit-cand-pwd').value = c.password || '';
   window.openModal('modal-edit-candidate');
 };
 
@@ -857,30 +834,89 @@ window.saveCandidateModifications = function(e) {
   var c = students[idx];
   c.name = document.getElementById('edit-cand-name').value.trim();
   c.father = document.getElementById('edit-cand-father').value.trim();
+  c.dob = document.getElementById('edit-cand-dob').value;
+  c.phone = document.getElementById('edit-cand-phone').value.trim();
   c.seat = document.getElementById('edit-cand-seat').value.trim();
   c.marks = parseInt(document.getElementById('edit-cand-marks').value) || 0;
   c.status = document.getElementById('edit-cand-status').value;
+  c.attendance = document.getElementById('edit-cand-attendance').value;
   c.prize = document.getElementById('edit-cand-prize').value;
-  var newPwd = document.getElementById('edit-cand-newpwd').value.trim();
+  var newPwd = document.getElementById('edit-cand-pwd').value.trim();
   if (newPwd) c.password = newPwd;
+
+  // Sync to public prize gallery if awarded
+  syncPrizeCatalog();
 
   students[idx] = c;
   window.DataStore.set('sm_students', students);
   window.closeModal('modal-edit-candidate');
   renderManagementRoster();
   renderDynamicSeatingMatrix();
-  alert('Candidate modifications and prize assignment saved successfully.');
+  renderPrizesDisplay();
+  alert('Candidate modifications, password, attendance, and prize updated successfully.');
 };
 
+function syncPrizeCatalog() {
+  prizes = [];
+  students.forEach(function(s, idx) {
+    if (s.prize && s.prize !== 'None') {
+      prizes.push({
+        id: idx + 1,
+        rank: s.prize.split(' - ')[0] || 'Honorable Award',
+        category: s.category + (s.gender === 'M' ? ' (Boys)' : ' (Girls)'),
+        ht: s.ticketNo,
+        name: s.name,
+        prize: s.prize,
+        icon: 'trophy'
+      });
+    }
+  });
+  window.DataStore.set('sm_prizes', prizes);
+}
+
 window.deleteCandidate = function(idx) {
-  if (confirm('Super Admin Verification: Delete candidate ' + students[idx].ticketNo + '?')) {
+  if (confirm('Delete candidate ' + students[idx].ticketNo + ' permanently?')) {
     students.splice(idx, 1);
+    syncPrizeCatalog();
     window.DataStore.set('sm_students', students);
     renderManagementRoster();
     renderDynamicSeatingMatrix();
+    renderPrizesDisplay();
   }
 };
 
+// 4. FEEDBACK DESK WITH TWO-WAY WHATSAPP & EMAIL REPLIES
+function renderFeedbackManagement() {
+  var tbody = document.getElementById('admin-feedback-tbody');
+  if (!tbody) return;
+
+  if (feedbacks.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-400">No inquiries received yet.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = feedbacks.map(function(fb, idx) {
+    var cleanPhone = fb.phone.replace(/[^0-9]/g, '');
+    var waLink = 'https://wa.me/91' + cleanPhone + '?text=' + encodeURIComponent('Salam ' + fb.name + ', regarding your query at Shahi Masjid Seerat Portal: ');
+    var mailLink = 'mailto:' + (fb.email || '') + '?subject=' + encodeURIComponent('Response: Seerat Competition Inquiry') + '&body=' + encodeURIComponent('Salam ' + fb.name + ',\n\nIn response to your inquiry: "' + fb.message + '"\n\n');
+
+    return '<tr class="hover:bg-slate-50 text-xs">' +
+      '<td class="p-2.5 font-bold text-slate-900">' + fb.name + '<br/><span class="text-[10px] text-slate-400">' + fb.date + '</span></td>' +
+      '<td class="p-2.5 text-slate-700">' + fb.message + '</td>' +
+      '<td class="p-2.5 font-mono">' + fb.phone + '</td>' +
+      '<td class="p-2.5 text-center space-x-2">' +
+        '<a href="' + waLink + '" target="_blank" class="inline-block bg-emerald-600 hover:bg-emerald-700 text-white px-2 py-1 rounded font-bold text-[10px]">' +
+          '<i class="fa-brands fa-whatsapp mr-1"></i> WhatsApp' +
+        '</a>' +
+        '<a href="' + mailLink + '" class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded font-bold text-[10px]">' +
+          '<i class="fa-solid fa-envelope mr-1"></i> Email' +
+        '</a>' +
+      '</td>' +
+    '</tr>';
+  }).join('');
+}
+
+// 5. GLOBAL CONFIGURATION & DIGNITARY MANAGEMENT
 window.saveSuperAdminConfig = function() {
   config.masjidTitle = document.getElementById('cfg-masjid-title').value.trim();
   config.examDate = document.getElementById('cfg-date-time').value.trim();
@@ -889,20 +925,12 @@ window.saveSuperAdminConfig = function() {
   config.pocContact = document.getElementById('cfg-poc').value.trim();
   config.masjidContact = document.getElementById('cfg-masjid-contact').value.trim();
   config.examVenue = document.getElementById('cfg-venue').value.trim();
-  config.youtube = document.getElementById('cfg-yt').value.trim();
-  config.facebook = document.getElementById('cfg-fb').value.trim();
-  config.whatsappChannel = document.getElementById('cfg-wa').value.trim();
-
-  config.prayers.forEach(function(p, idx) {
-    p.adhan = document.getElementById('cfg-p-adhan-' + idx).value;
-    p.iqama = document.getElementById('cfg-p-iqama-' + idx).value;
-  });
+  config.dignitaries.patron = document.getElementById('cfg-dignitary-patron').value.trim();
+  config.dignitaries.chiefGuest = document.getElementById('cfg-dignitary-guest').value.trim();
 
   window.DataStore.set('sm_config', config);
   syncConfigUI();
-  renderPrayerTimes();
-  renderSocialRibbon();
-  alert('Global institutional configurations updated successfully.');
+  alert('Configurations and Dignitary details saved globally.');
 };
 
 // ----------------------------------------------------
@@ -910,7 +938,23 @@ window.saveSuperAdminConfig = function() {
 // ----------------------------------------------------
 window.generateParticipationCertificate = function(ticketNo) {
   var cand = students.find(function(s) { return s.ticketNo === ticketNo; });
-  if (!cand) return alert('Candidate record not found.');
+  if (!cand) return alert('Candidate not found.');
+
+  var guestSignatureSection = config.dignitaries.chiefGuest ? `
+    <div class="text-center space-y-1">
+      <div class="font-serif italic text-sm text-emerald-900 font-bold">${config.dignitaries.chiefGuest}</div>
+      <div class="w-36 h-0.5 bg-slate-400 mx-auto"></div>
+      <span class="font-bold text-emerald-950 block text-[11px]">${config.dignitaries.chiefGuest}</span>
+      <span class="text-[9px] text-slate-500">${config.dignitaries.chiefGuestTitle}</span>
+    </div>
+  ` : `
+    <div class="text-center space-y-1">
+      <div class="font-serif italic text-sm text-emerald-900 font-bold">Controller of Exams</div>
+      <div class="w-36 h-0.5 bg-slate-400 mx-auto"></div>
+      <span class="font-bold text-emerald-950 block text-[11px]">Examination Board</span>
+      <span class="text-[9px] text-slate-500">Academic Wing</span>
+    </div>
+  `;
 
   var certHTML = `
     <div class="border-8 border-double border-amber-600 p-8 bg-[#fdfcf7] text-slate-900 rounded shadow-xl relative overflow-hidden">
@@ -919,7 +963,7 @@ window.generateParticipationCertificate = function(ticketNo) {
         محمد ﷺ
       </div>
 
-      <!-- Top Bismillah & Institutional Header -->
+      <!-- Header & Bismillah -->
       <div class="text-center space-y-1 relative z-10">
         <p class="font-arabic text-3xl font-bold text-emerald-950">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ</p>
         <h2 class="font-cinzel text-xl md:text-2xl font-black text-emerald-900 uppercase tracking-wide">${config.masjidTitle}</h2>
@@ -966,8 +1010,8 @@ window.generateParticipationCertificate = function(ticketNo) {
         <div class="text-center space-y-1">
           <div class="font-arabic text-sm text-emerald-900 font-bold">احسن بن محمد الحمومي</div>
           <div class="w-36 h-0.5 bg-slate-400 mx-auto"></div>
-          <span class="font-bold text-emerald-950 block text-[11px]">Molana Dr. Ahsan Al Hamoomee</span>
-          <span class="text-[9px] text-slate-500">Patron & President</span>
+          <span class="font-bold text-emerald-950 block text-[11px]">${config.dignitaries.patron}</span>
+          <span class="text-[9px] text-slate-500">${config.dignitaries.patronTitle}</span>
         </div>
 
         <div class="w-24 h-24 rounded-full border-2 border-emerald-900 flex flex-col items-center justify-center p-1 text-center bg-emerald-50 shadow-inner">
@@ -977,12 +1021,7 @@ window.generateParticipationCertificate = function(ticketNo) {
           <span class="text-[6px] text-slate-500 font-mono mt-0.5">Verified 2026</span>
         </div>
 
-        <div class="text-center space-y-1">
-          <div class="font-serif italic text-sm text-emerald-900 font-bold">Munavar Zama</div>
-          <div class="w-36 h-0.5 bg-slate-400 mx-auto"></div>
-          <span class="font-bold text-emerald-950 block text-[11px]">Janab Munavar Zama Sahab</span>
-          <span class="text-[9px] text-slate-500">Distinguished Chief Guest</span>
-        </div>
+        ${guestSignatureSection}
       </div>
     </div>
   `;
@@ -996,29 +1035,7 @@ function getStudent(ticketNo) {
 }
 
 // ----------------------------------------------------
-// FACULTY REGISTRATION HANDLER
-// ----------------------------------------------------
-window.handleFacultyRegister = function(e) {
-  e.preventDefault();
-  var fac = {
-    id: "FAC-" + (faculties.length + 101),
-    name: document.getElementById('fac-reg-name').value.trim(),
-    email: document.getElementById('fac-reg-email').value.trim(),
-    phone: document.getElementById('fac-reg-phone').value.trim(),
-    dept: document.getElementById('fac-reg-dept').value,
-    assignedHall: document.getElementById('fac-reg-hall').value,
-    status: "Pending",
-    role: "faculty"
-  };
-
-  faculties.push(fac);
-  window.DataStore.set('sm_faculties', faculties);
-  alert('Faculty Registration Submitted!\nYour profile is currently Pending Approval by Admin or Super Admin.');
-  window.navigateTab('home');
-};
-
-// ----------------------------------------------------
-// STUDENT REGISTRATION HANDLER
+// STUDENT REGISTRATION & ENROLLMENT
 // ----------------------------------------------------
 function generateUniqueHallTicket(gender, category) {
   var prefix = (gender === 'M') ? 'SUN3-B-' : 'SUN3-G-';
@@ -1076,7 +1093,6 @@ window.handleStudentRegister = function(e) {
     phone: phone,
     email: document.getElementById('reg-email').value.trim() || 'N/A',
     idType: document.getElementById('reg-id-type').value,
-    idNumber: "[Govt ID Verified]",
     category: category,
     gender: gender,
     attempt: attempt,
@@ -1099,109 +1115,94 @@ window.handleStudentRegister = function(e) {
 };
 
 // ----------------------------------------------------
-// FEEDBACK DISPATCH HANDLER
-// ----------------------------------------------------
-window.handleFeedbackSubmit = function(e) {
-  e.preventDefault();
-  feedbacks.unshift({
-    id: feedbacks.length + 1,
-    name: document.getElementById('fb-name').value.trim(),
-    phone: document.getElementById('fb-phone').value.trim(),
-    email: document.getElementById('fb-email') ? document.getElementById('fb-email').value.trim() : '',
-    message: document.getElementById('fb-msg').value.trim(),
-    date: new Date().toLocaleDateString('en-IN')
-  });
-  window.DataStore.set('sm_feedbacks', feedbacks);
-  alert('Your message has been sent to the Mosque Committee. We will reply promptly via WhatsApp or Email.');
-  document.getElementById('fb-msg').value = '';
-  window.navigateTab('home');
-};
-
-// ----------------------------------------------------
-// DOCUMENT PRINTERS & PDF GENERATOR
+// DOCUMENT RENDERING (ADMIT CARDS & APPLICATIONS)
 // ----------------------------------------------------
 window.displayHallTicket = function(cand) {
   var area = document.getElementById('printable-document');
-  area.innerHTML = '<div class="border-b-2 border-emerald-900 pb-3 mb-4 flex justify-between items-center">' +
-    '<div>' +
-      '<h2 class="text-lg font-black text-emerald-950 font-cinzel">' + config.compTitle + '</h2>' +
-      '<p class="text-[11px] text-gray-600 font-bold uppercase">' + config.masjidTitle + '</p>' +
-      '<p class="text-[10px] text-emerald-800 font-semibold">' + config.masjidSub + '</p>' +
-    '</div>' +
-    '<div class="text-right">' +
-      '<span class="text-[10px] text-gray-500 font-bold uppercase block">Official Hall Ticket Number</span>' +
-      '<span class="text-lg font-mono font-black text-red-600">' + cand.ticketNo + '</span>' +
-    '</div>' +
-  '</div>' +
+  area.innerHTML = `
+    <div class="border-b-2 border-emerald-900 pb-3 mb-4 flex justify-between items-center">
+      <div>
+        <h2 class="text-lg font-black text-emerald-950 font-cinzel">${config.compTitle}</h2>
+        <p class="text-[11px] text-gray-600 font-bold uppercase">${config.masjidTitle}</p>
+        <p class="text-[10px] text-emerald-800 font-semibold">${config.masjidSub}</p>
+      </div>
+      <div class="text-right">
+        <span class="text-[10px] text-gray-500 font-bold uppercase block">Official Hall Ticket Number</span>
+        <span class="text-lg font-mono font-black text-red-600">${cand.ticketNo}</span>
+      </div>
+    </div>
 
-  '<div class="grid grid-cols-12 gap-4">' +
-    '<div class="col-span-8 space-y-2 text-xs">' +
-      '<p><strong>Candidate Name:</strong> <span class="uppercase font-bold text-slate-900">' + cand.name + '</span></p>' +
-      '<p><strong>Father\'s Name:</strong> <span class="uppercase font-semibold">' + cand.father + '</span></p>' +
-      '<p><strong>Date of Birth:</strong> ' + (cand.dob || 'Verified') + ' | <strong>Gender:</strong> ' + (cand.gender === 'M' ? 'Male Candidate' : 'Female Candidate') + '</p>' +
-      '<p><strong>Academic Category:</strong> <span class="font-bold text-emerald-900">' + cand.category + '</span></p>' +
-      '<div class="p-2.5 bg-amber-50 border border-amber-300 rounded space-y-0.5">' +
-        '<p class="text-xs"><strong>Allocated Aeroplane Desk:</strong> <span class="font-mono text-sm font-black text-red-700">' + (cand.seat || 'Allocated at Gate') + '</span></p>' +
-        '<p class="text-[11px] text-emerald-900"><strong>Reporting & Prep:</strong> ' + config.prepTime + '</p>' +
-        '<p class="text-[11px] text-red-700"><strong>Exam Timing:</strong> ' + config.examTime + '</p>' +
-      '</div>' +
-      '<p><strong>Exam Date:</strong> ' + config.examDate + '</p>' +
-      '<p><strong>Venue:</strong> ' + config.examVenue + '</p>' +
-    '</div>' +
+    <div class="grid grid-cols-12 gap-4">
+      <div class="col-span-8 space-y-2 text-xs">
+        <p><strong>Candidate Name:</strong> <span class="uppercase font-bold text-slate-900">${cand.name}</span></p>
+        <p><strong>Father's Name:</strong> <span class="uppercase font-semibold">${cand.father}</span></p>
+        <p><strong>Date of Birth:</strong> ${cand.dob || 'Verified'} | <strong>Gender:</strong> ${cand.gender === 'M' ? 'Male Candidate' : 'Female Candidate'}</p>
+        <p><strong>Academic Category:</strong> <span class="font-bold text-emerald-900">${cand.category}</span></p>
+        <div class="p-2.5 bg-amber-50 border border-amber-300 rounded space-y-0.5">
+          <p class="text-xs"><strong>Allocated Desk:</strong> <span class="font-mono text-sm font-black text-red-700">${cand.seat || 'Allocated at Gate'}</span></p>
+          <p class="text-[11px] text-emerald-900"><strong>Reporting & Prep:</strong> ${config.prepTime}</p>
+          <p class="text-[11px] text-red-700"><strong>Exam Timing:</strong> ${config.examTime}</p>
+        </div>
+        <p><strong>Exam Date:</strong> ${config.examDate}</p>
+        <p><strong>Venue:</strong> ${config.examVenue}</p>
+      </div>
 
-    '<div class="col-span-4 flex flex-col items-center justify-between border-l pl-4 space-y-3">' +
-      '<div class="w-28 h-32 border-2 border-dashed border-slate-400 bg-slate-50 flex flex-col items-center justify-center text-center p-1 rounded text-[10px] text-slate-500">' +
-        '<i class="fa-regular fa-user text-xl mb-1 text-slate-400"></i>' +
-        '<span>Affix Passport Photo</span>' +
-      '</div>' +
+      <div class="col-span-4 flex flex-col items-center justify-between border-l pl-4 space-y-3">
+        <div class="w-28 h-32 border-2 border-dashed border-slate-400 bg-slate-50 flex flex-col items-center justify-center text-center p-1 rounded text-[10px] text-slate-500">
+          <i class="fa-regular fa-user text-xl mb-1 text-slate-400"></i>
+          <span>Affix Passport Photo</span>
+        </div>
 
-      '<div class="w-28 h-28 rounded-full border-2 border-emerald-900 flex flex-col items-center justify-center text-center p-1.5 bg-emerald-50/50 shadow-inner">' +
-        '<i class="fa-solid fa-certificate text-amber-600 text-sm mb-0.5"></i>' +
-        '<span class="text-[8px] font-black uppercase text-emerald-950 leading-tight">MADARSA AL HAMOOMEA</span>' +
-        '<span class="text-[7px] text-amber-800 font-bold">OFFICIAL SEAL</span>' +
-        '<span class="text-[7px] text-slate-500 font-mono mt-0.5">Verified & Valid</span>' +
-      '</div>' +
-    '</div>' +
-  '</div>' +
+        <div class="w-28 h-28 rounded-full border-2 border-emerald-900 flex flex-col items-center justify-center text-center p-1.5 bg-emerald-50/50 shadow-inner">
+          <i class="fa-solid fa-certificate text-amber-600 text-sm mb-0.5"></i>
+          <span class="text-[8px] font-black uppercase text-emerald-950 leading-tight">MADARSA AL HAMOOMEA</span>
+          <span class="text-[7px] text-amber-800 font-bold">OFFICIAL SEAL</span>
+          <span class="text-[7px] text-slate-500 font-mono mt-0.5">Verified & Valid</span>
+        </div>
+      </div>
+    </div>
 
-  '<div class="mt-6 border-t pt-3 flex justify-between items-center text-[10px] text-slate-600">' +
-    '<span>* Present this Admit Card with your Government ID at the entry hall.</span>' +
-    '<span class="font-bold text-emerald-950">Authorized Registrar Stamp & Signature</span>' +
-  '</div>';
+    <div class="mt-6 border-t pt-3 flex justify-between items-center text-[10px] text-slate-600">
+      <span>* Present this Admit Card with valid Government / College ID at entry gate.</span>
+      <span class="font-bold text-emerald-950">Authorized Registrar Stamp</span>
+    </div>
+  `;
 
   window.navigateTab('printable');
 };
 
 window.displayApplicationForm = function(cand) {
   var area = document.getElementById('printable-document');
-  area.innerHTML = '<div class="text-center border-b-2 border-amber-600 pb-3 mb-4">' +
-    '<p class="font-arabic text-xl font-bold text-emerald-950 leading-none">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ</p>' +
-    '<h2 class="text-base font-extrabold text-emerald-950 uppercase font-cinzel mt-1">' + config.masjidTitle + '</h2>' +
-    '<p class="text-[11px] font-semibold text-amber-700">' + config.masjidSub + '</p>' +
-    '<p class="text-[10px] text-slate-600 font-bold">' + config.compTitle + '</p>' +
-  '</div>' +
-  '<div class="grid grid-cols-2 gap-2 text-xs bg-slate-50 p-3 rounded border">' +
-    '<p><strong>Application ID:</strong> ' + cand.appId + '</p>' +
-    '<p><strong>Hall Ticket No:</strong> <span class="text-red-600 font-bold">' + cand.ticketNo + '</span></p>' +
-    '<p><strong>Candidate:</strong> ' + cand.name + '</p>' +
-    '<p><strong>Father:</strong> ' + cand.father + '</p>' +
-    '<p><strong>DOB:</strong> ' + cand.dob + '</p>' +
-    '<p><strong>Identity Proof:</strong> ' + cand.idType + '</p>' +
-    '<p><strong>Assigned Seat:</strong> ' + cand.seat + '</p>' +
-    '<p><strong>Status:</strong> ' + cand.status + '</p>' +
-  '</div>';
+  area.innerHTML = `
+    <div class="text-center border-b-2 border-amber-600 pb-3 mb-4">
+      <p class="font-arabic text-xl font-bold text-emerald-950 leading-none">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ</p>
+      <h2 class="text-base font-extrabold text-emerald-950 uppercase font-cinzel mt-1">${config.masjidTitle}</h2>
+      <p class="text-[11px] font-semibold text-amber-700">${config.masjidSub}</p>
+      <p class="text-[10px] text-slate-600 font-bold">${config.compTitle}</p>
+    </div>
+    <div class="grid grid-cols-2 gap-2 text-xs bg-slate-50 p-3 rounded border">
+      <p><strong>Application ID:</strong> ${cand.appId}</p>
+      <p><strong>Hall Ticket No:</strong> <span class="text-red-600 font-bold font-mono">${cand.ticketNo}</span></p>
+      <p><strong>Candidate:</strong> ${cand.name}</p>
+      <p><strong>Father:</strong> ${cand.father}</p>
+      <p><strong>DOB:</strong> ${cand.dob}</p>
+      <p><strong>Identity Type:</strong> ${cand.idType}</p>
+      <p><strong>Assigned Seat:</strong> ${cand.seat}</p>
+      <p><strong>Registration Status:</strong> ${cand.status}</p>
+    </div>
+  `;
   window.navigateTab('printable');
 };
 
 window.pullAllApplicationForms = function() {
-  if (students.length === 0) return alert('No applications registered.');
+  if (students.length === 0) return alert('No registered applications to print.');
   var area = document.getElementById('printable-document');
   area.innerHTML = students.map(function(cand, idx) {
     var pb = idx < students.length - 1 ? 'page-break' : '';
     return '<div class="' + pb + ' p-4 mb-4 border-b">' +
       '<h3 class="font-bold text-sm text-emerald-950">' + cand.name + ' (' + cand.ticketNo + ')</h3>' +
       '<p class="text-xs">Father: ' + cand.father + ' | DOB: ' + cand.dob + ' | Seat: ' + cand.seat + '</p>' +
-      '<p class="text-xs font-bold text-amber-800">Status: ' + cand.status + ' | Prize: ' + cand.prize + '</p>' +
+      '<p class="text-xs font-bold text-amber-800">Status: ' + cand.status + ' | Attendance: ' + cand.attendance + '</p>' +
     '</div>';
   }).join('');
   window.navigateTab('printable');
@@ -1229,8 +1230,24 @@ window.handleDocLookup = function(e) {
     return s.phone === phone && s.name.trim().toLowerCase() === name && s.father.trim().toLowerCase() === father;
   });
 
-  if (!cand) return alert('Verification failed: Mobile, name, and father name did not match.');
+  if (!cand) return alert('Verification Failed: Matching student record not found.');
 
   if (type === 'ticket') displayHallTicket(cand);
   else displayApplicationForm(cand);
+};
+
+window.handleFeedbackSubmit = function(e) {
+  e.preventDefault();
+  feedbacks.unshift({
+    id: feedbacks.length + 1,
+    name: document.getElementById('fb-name').value.trim(),
+    phone: document.getElementById('fb-phone').value.trim(),
+    email: document.getElementById('fb-email') ? document.getElementById('fb-email').value.trim() : '',
+    message: document.getElementById('fb-msg').value.trim(),
+    date: new Date().toLocaleDateString('en-IN')
+  });
+  window.DataStore.set('sm_feedbacks', feedbacks);
+  alert('Query Dispatched: Mosque officials will reply via WhatsApp or Email.');
+  document.getElementById('fb-msg').value = '';
+  window.navigateTab('home');
 };
