@@ -1,11 +1,11 @@
-// data.js - Configurations, Clean Storage Initializers, Multi-Language Seerat Data
+// data.js - Configurations, 48 Prizes, Seerat Hub, Model Papers & Clean Initial State
 window.INITIAL_CONFIG = {
   masjidTitle: "SHAHI MASJID BAGH-E-AAM",
   masjidSub: "Under the Aegis of Online Madarsa Al Hamoomea for Islamic & Arabic Studies",
   compTitle: "3rd Seerat-un-Nabi Competition",
   compSubtitle: '"Bench to Exam Hall: Lessons of Discipline & Success from Seerat-un-Nabi ﷺ"',
   compBadge: "Annual Knowledge Contest",
-  compDesc: "Academic competition across Intermediate, Graduate, and Postgraduate levels with dedicated wings for Boys & Girls.",
+  compDesc: "Academic competition across Intermediate, Graduate, and Postgraduate levels with dedicated wings for Boys & Girls. 48 Distinguished Prizes will be distributed InshaAllah.",
   examDate: "Saturday, January 31, 2026",
   prepTime: "09:30 AM to 10:15 AM (Pre-Exam Orientation & Seating)",
   examTime: "10:30 AM to 01:00 PM",
@@ -17,11 +17,11 @@ window.INITIAL_CONFIG = {
   facebook: "https://facebook.com/ShahiMasjidHyderabad",
   instagram: "https://instagram.com/ShahiMasjidHyderabad",
   whatsappChannel: "https://whatsapp.com/channel/ShahiMasjidHyd",
-  // Dignitary / Chief Guest configurations managed directly by Admin
+  resultsPublished: false, // 1-Click Master Result Release Toggle
   dignitaries: {
     patron: "Molana Hafiz Dr Ahsan Bin Mohammed Al Hamoomee Sahab",
     patronTitle: "Patron & President",
-    chiefGuest: "", // Empty: Admin can configure later
+    chiefGuest: "",
     chiefGuestTitle: "Distinguished Guest Speaker"
   },
   seatingConfig: {
@@ -38,12 +38,47 @@ window.INITIAL_CONFIG = {
   ]
 };
 
-// Pure clean initial models (No dummy student, award, or guest filler data)
+// 48 Official Prize Award Packages
+window.INITIAL_PRIZES = [
+  { id: 1, rank: "1st Prize", category: "Postgraduate (Boys)", ht: "Unassigned", name: "To Be Declared", prize: "HP Core i5 Laptop + Trophy", icon: "laptop" },
+  { id: 2, rank: "1st Prize", category: "Postgraduate (Girls)", ht: "Unassigned", name: "To Be Declared", prize: "HP Core i5 Laptop + Trophy", icon: "laptop" },
+  { id: 3, rank: "1st Prize", category: "Graduate (Boys)", ht: "Unassigned", name: "To Be Declared", prize: "HP Core i5 Laptop + Trophy", icon: "laptop" },
+  { id: 4, rank: "1st Prize", category: "Graduate (Girls)", ht: "Unassigned", name: "To Be Declared", prize: "HP Core i5 Laptop + Trophy", icon: "laptop" },
+  { id: 5, rank: "1st Prize", category: "Intermediate (Boys)", ht: "Unassigned", name: "To Be Declared", prize: "HP Core i5 Laptop + Trophy", icon: "laptop" },
+  { id: 6, rank: "1st Prize", category: "Intermediate (Girls)", ht: "Unassigned", name: "To Be Declared", prize: "HP Core i5 Laptop + Trophy", icon: "laptop" },
+  { id: 7, rank: "2nd Prize", category: "Postgraduate (Boys)", ht: "Unassigned", name: "To Be Declared", prize: "Samsung Galaxy Tablet 10.4\"", icon: "tablet-screen-button" },
+  { id: 8, rank: "2nd Prize", category: "Postgraduate (Girls)", ht: "Unassigned", name: "To Be Declared", prize: "Samsung Galaxy Tablet 10.4\"", icon: "tablet-screen-button" },
+  { id: 9, rank: "2nd Prize", category: "Graduate (Boys)", ht: "Unassigned", name: "To Be Declared", prize: "Samsung Galaxy Tablet 10.4\"", icon: "tablet-screen-button" },
+  { id: 10, rank: "2nd Prize", category: "Graduate (Girls)", ht: "Unassigned", name: "To Be Declared", prize: "Samsung Galaxy Tablet 10.4\"", icon: "tablet-screen-button" },
+  { id: 11, rank: "2nd Prize", category: "Intermediate (Boys)", ht: "Unassigned", name: "To Be Declared", prize: "Samsung Galaxy Tablet 10.4\"", icon: "tablet-screen-button" },
+  { id: 12, rank: "2nd Prize", category: "Intermediate (Girls)", ht: "Unassigned", name: "To Be Declared", prize: "Samsung Galaxy Tablet 10.4\"", icon: "tablet-screen-button" },
+  { id: 13, rank: "3rd Prize", category: "Postgraduate (Boys)", ht: "Unassigned", name: "To Be Declared", prize: "Islamic Encyclopedia & Book Set", icon: "book-bookmark" },
+  { id: 14, rank: "3rd Prize", category: "Postgraduate (Girls)", ht: "Unassigned", name: "To Be Declared", prize: "Islamic Encyclopedia & Book Set", icon: "book-bookmark" },
+  { id: 15, rank: "3rd Prize", category: "Graduate (Boys)", ht: "Unassigned", name: "To Be Declared", prize: "Islamic Encyclopedia & Book Set", icon: "book-bookmark" },
+  { id: 16, rank: "3rd Prize", category: "Graduate (Girls)", ht: "Unassigned", name: "To Be Declared", prize: "Islamic Encyclopedia & Book Set", icon: "book-bookmark" },
+  { id: 17, rank: "3rd Prize", category: "Intermediate (Boys)", ht: "Unassigned", name: "To Be Declared", prize: "Islamic Encyclopedia & Book Set", icon: "book-bookmark" },
+  { id: 18, rank: "3rd Prize", category: "Intermediate (Girls)", ht: "Unassigned", name: "To Be Declared", prize: "Islamic Encyclopedia & Book Set", icon: "book-bookmark" }
+];
+
+for (var i = 19; i <= 48; i++) {
+  var isBoy = i % 2 !== 0;
+  window.INITIAL_PRIZES.push({
+    id: i,
+    rank: "Consolation Prize #" + (i - 18),
+    category: (i <= 28 ? "Intermediate" : i <= 38 ? "Graduate" : "Postgraduate") + (isBoy ? " (Boys)" : " (Girls)"),
+    ht: "Unassigned",
+    name: "To Be Declared",
+    prize: "₹5,000 Cash Scholarship + Citation",
+    icon: "money-bill-wave"
+  });
+}
+
+// Clean Initial Arrays
 window.INITIAL_STUDENTS = [];
-window.INITIAL_PRIZES = [];
 window.INITIAL_FACULTIES = [];
 window.INITIAL_FEEDBACKS = [];
 
+// 500+ Words Seerat Hub Text
 window.SEERAT_COMPREHENSIVE_TEXT = {
   en: {
     title: "The Comprehensive Biography of Prophet Muhammad ﷺ",
@@ -56,7 +91,7 @@ window.SEERAT_COMPREHENSIVE_TEXT = {
     wives: "Sayyida Khadijah bint Khuwaylid, Sawdah bint Zam'ah, Aishah bint Abi Bakr, Hafsah bint Umar, Zaynab bint Khuzaymah, Umm Salamah (Hind), Zaynab bint Jahsh, Juwayriyah bint al-Harith, Umm Habibah, Safiyyah bint Huyayy, Maymunah bint al-Harith, and Mariyah al-Qibtiyyah (Ummahat-ul-Momineen R.A).",
     sons: "Al-Qasim, Abdullah (at-Tayyib/at-Tahir), and Ibrahim (R.A).",
     daughters: "Sayyida Zaynab, Sayyida Ruqayyah, Sayyida Umm Kulthum, and Sayyida Fatimah az-Zahra (Razi Allahu Anhunna).",
-    narrative: `The Prophet Muhammad ﷺ was born in Makkah in the Year of the Elephant (circa 570 CE) into the noble Qurayshi clan of Banu Hashim. Born as an orphan, he was fostered in the desert by Halimah as-Sa'diyyah, acquiring eloquence and physical resilience. His mother passed away when he was six years old, followed by his grandfather Abd al-Muttalib two years later, placing him under the protection of his uncle Abu Talib. Throughout his youth, he was revered across Makkah for his unmatched truthfulness, integrity, and fair dealing, earning the honorifics "As-Sadiq" (The Truthful) and "Al-Amin" (The Trustworthy).\n\nAt the age of twenty-five, he married Sayyida Khadijah (R.A), a union built upon profound mutual respect and spiritual devotion. As he approached forty, he frequently retreated to the Cave of Hira on Mount Nur for contemplation. In the month of Ramadan, the Archangel Jibreel descended with the first revelation of the Holy Qur'an: "Recite in the name of your Lord who created" (Surah Al-Alaq). Sayyida Khadijah immediately affirmed his divine mission, becoming the very first person to embrace Islam.\n\nThe initial three years of Da'wah were conducted discreetly, followed by the public declaration atop Mount Safa. The polytheists of Makkah responded with persecution, economic boycotts in Shi'b Abi Talib, and severe torture of early converts. Despite the deaths of both Khadijah and Abu Talib in the "Year of Sorrow" and harsh rejection at Ta'if, the Prophet remained steadfast, commemorated during the miraculous Night Journey and Heavenly Ascension (Al-Isra wal-Mi'raj).\n\nIn 622 CE, following divine command, the Prophet and his companions undertook the Hijrah to Madinah al-Munawwarah. In Madinah, he established the first Islamic state, formulated the historic Constitution of Madinah guaranteeing equal rights to all communities, constructed the Prophet's Mosque, and bonded the Muhajirun and Ansar in brotherhood. The Treaty of Hudaybiyyah in 6 AH paved the way for peaceful spread of Islam, culminating in the peaceful, bloodless Conquest of Makkah in 8 AH, where the Prophet granted general amnesty to his former persecutors.\n\nIn the tenth year of Hijrah, the Prophet performed the Farewell Pilgrimage (Hajjat al-Wada') and delivered his historic sermon atop Mount Arafat, establishing human equality, eradicating racism, upholding women's rights, and declaring the sanctity of life and property. On the 12th of Rabi' al-Awwal, 11 AH (632 CE), the Master of Creation ﷺ passed away in Madinah, leaving behind the Holy Qur'an and his Sunnah as eternal guidance for all humankind.`
+    narrative: `The Prophet Muhammad ﷺ was born in Makkah in the Year of the Elephant (circa 570 CE) into the noble Qurayshi clan of Banu Hashim. Born as an orphan, he was fostered in the desert by Halimah as-Sa'diyyah, acquiring eloquence and physical resilience. His mother passed away when he was six years old, followed by his grandfather Abd al-Muttalib two years later, placing him under the protection of his uncle Abu Talib. Throughout his youth, he was revered across Makkah for his unmatched truthfulness, integrity, and fair dealing, earning the timeless honorifics "As-Sadiq" (The Truthful) and "Al-Amin" (The Trustworthy).\n\nAt the age of twenty-five, he married Sayyida Khadijah (R.A), a union built upon profound mutual respect and spiritual devotion. As he approached forty, he frequently retreated to the Cave of Hira on Mount Nur for contemplation. In the month of Ramadan, the Archangel Jibreel descended with the first revelation of the Holy Qur'an: "Recite in the name of your Lord who created" (Surah Al-Alaq). Sayyida Khadijah immediately affirmed his divine mission, becoming the very first person to embrace Islam.\n\nThe initial three years of Da'wah were conducted discreetly, followed by the public declaration atop Mount Safa. The polytheists of Makkah responded with persecution, economic boycotts in the valley of Shi'b Abi Talib, and severe torture of early converts like Bilal ibn Rabah and the family of Yasir. Despite the deaths of both Khadijah and Abu Talib in the "Year of Sorrow" and harsh rejection at Ta'if, the Prophet remained steadfast, commemorated during the miraculous Night Journey and Heavenly Ascension (Al-Isra wal-Mi'raj).\n\nIn 622 CE, following divine command, the Prophet and his companions undertook the Hijrah to Yathrib (Madinah al-Munawwarah). In Madinah, he established the first Islamic state, formulated the historic Constitution of Madinah guaranteeing equal rights to all communities, constructed the Prophet's Mosque, and bonded the Muhajirun and Ansar in brotherhood. Over the subsequent decade, defensive encounters including the Battles of Badr, Uhud, and the Trench defended the faith against existential threats. The Treaty of Hudaybiyyah in 6 AH paved the way for peaceful spread of Islam, culminating in the peaceful, bloodless Conquest of Makkah in 8 AH, where the Prophet granted general amnesty to his former persecutors.\n\nIn the tenth year of Hijrah, the Prophet performed the Farewell Pilgrimage (Hajjat al-Wada') and delivered his historic sermon atop Mount Arafat, establishing human equality, eradicating racism, upholding women's rights, and declaring the sanctity of life and property. On the 12th of Rabi' al-Awwal, 11 AH (632 CE), the Master of Creation ﷺ passed away in Madinah, leaving behind the Holy Qur'an and his Sunnah as eternal guidance for all humankind.`
   },
   ar: {
     title: "السيرة النبوية الشاملة للرسول المصطفى ﷺ",
@@ -82,7 +117,7 @@ window.SEERAT_COMPREHENSIVE_TEXT = {
     wives: "Hazrat Khadijah, Hazrat Sawdah, Hazrat Aishah Siddiqua, Hazrat Hafsah, Hazrat Zaynab, Hazrat Umm Salamah, Hazrat Juwayriyah, Hazrat Umm Habibah, Hazrat Safiyyah, Hazrat Maymunah, aur Hazrat Mariyah Qibtiyyah (Ummahat-ul-Momineen R.A).",
     sons: "Hazrat Qasim, Hazrat Abdullah, aur Hazrat Ibrahim (R.A).",
     daughters: "Hazrat Zaynab, Hazrat Ruqayyah, Hazrat Umm Kulthum, aur Sayyida Fatimah az-Zahra (Razi Allahu Anhunna).",
-    narrative: `Huzoor Aqdas Muhammad Mustafa ﷺ ki wiladat Makkah Mukarrama me Aam-ul-Feel ke saal hui. Bachpan se hi sachai aur dayanatdari ki bina par Makkah me As-Sadiq aur Al-Amin ke laqab se mashhoor hue. 40 saal ki umr me Ghaar-e-Hira me pehli wahi nazil hui. 622 CE me Madinah Munawwarah Hijrat farmayi, Masjid-e-Nabwi ki tameer hui aur Meesaq-e-Madinah tehreer hua. 8 Hijri me Fatah-e-Makkah ke din aam maafi ka ailan farmaya aur Hujjat-ul-Wada' me insaniyat ka tareekhi manshoor ata farmaya.`
+    narrative: `Huzoor Aqdas Muhammad Mustafa ﷺ ki wiladat Makkah Mukarrama me Aam-ul-Feel ke saal Banu Hashim me hui. Bachpan me Hazrat Halimah ne parwarish ki. 6 saal me walida aur 8 saal me dada ka saya uth gaya. Jawani me Aap ﷺ ko As-Sadiq aur Al-Amin ke laqab se pukara gaya. 25 saal ki umr me Hazrat Khadijah se nikah hua. 40 saal me Ghaar-e-Hira me pehli wahi nazil hui. 622 CE me Madinah Hijrat farmayi aur wahan pehli Islami Riyasat ki buniyaad rakhi. 8 Hijri me Fatah-e-Makkah ke moqa par aam maafi ata farmayi aur Hujjat-ul-Wada' me aalmi manshoor irshad farmaya.`
   }
 };
 
@@ -92,8 +127,8 @@ window.INITIAL_PAPERS = [
 ];
 
 window.INITIAL_NOTICES = [
-  { id: 1, title: "Portal Architecture Updated", date: "Official", desc: "Interactive student profile utilities, dynamic seating grids, and faculty registration approval pipelines are active." },
-  { id: 2, title: "Participation Certificate Engine Online", date: "Certificates", desc: "All approved student registrations are entitled to official Islamic Participation Certificates." }
+  { id: 1, title: "OMR & Admit Card Engines Deployed", date: "Official", desc: "Batch OMR download, 1-click Excel export, and mobile-to-browser sync are live." },
+  { id: 2, title: "Result Release System Online", date: "Results", desc: "Multi-stage faculty verification and 1-click administrative result release are active." }
 ];
 
 window.DataStore = {
