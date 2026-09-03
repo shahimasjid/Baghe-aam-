@@ -1,4 +1,4 @@
-// data.js - Configurations, 48 Prizes, Seerat Hub, Model Papers & Active State Models
+// data.js - Complete Configurations, 48 Prizes, Seerat Hub, Model Papers & Active State Models
 window.INITIAL_CONFIG = {
   masjidTitle: "SHAHI MASJID BAGH-E-AAM",
   masjidSub: "Under the Aegis of Online Madarsa Al Hamoomi for Islamic & Arabic Studies",
