@@ -1,4 +1,4 @@
-// data.js - Configurations, 48 Prizes, Seerat Hub, Model Papers & Clean Initial State
+// data.js - Complete Configurations, 48 Prizes, Seerat Hub, Model Papers & Active State Models
 window.INITIAL_CONFIG = {
   masjidTitle: "SHAHI MASJID BAGH-E-AAM",
   masjidSub: "Under the Aegis of Online Madarsa Al Hamoomi for Islamic & Arabic Studies",
@@ -25,9 +25,9 @@ window.INITIAL_CONFIG = {
     chiefGuestTitle: "Distinguished Guest Speaker"
   },
   seatingConfig: {
-    layoutType: "theater", // 'theater', '2x2', '3x3', '4x4', 'nxn'
-    rows: 15,
-    colsPerRow: 14 // 4 Left, 6 Center, 4 Right
+    layoutType: "theater",
+    rows: 20,
+    colsPerRow: 14
   },
   prayers: [
     { name: "Fajr", adhan: "5:18 AM", iqama: "5:45 AM" },
@@ -38,7 +38,6 @@ window.INITIAL_CONFIG = {
   ]
 };
 
-// 48 Official Prize Packages
 window.INITIAL_PRIZES = [
   { id: 1, rank: "1st Prize", category: "Postgraduate (Boys)", ht: "Unassigned", name: "To Be Declared", prize: "HP Core i5 Laptop + Trophy", icon: "laptop" },
   { id: 2, rank: "1st Prize", category: "Postgraduate (Girls)", ht: "Unassigned", name: "To Be Declared", prize: "HP Core i5 Laptop + Trophy", icon: "laptop" },
@@ -75,11 +74,10 @@ for (var i = 19; i <= 48; i++) {
 
 window.INITIAL_STUDENTS = [];
 
-// Default Faculty User
 window.INITIAL_FACULTIES = [
   {
     id: "FAC-101",
-    name: "Moulana Exam Supervisor",
+    name: "Moulana Examination Supervisor",
     username: "Faculty1",
     phone: "Faculty1",
     email: "faculty1@madarsa.org",
