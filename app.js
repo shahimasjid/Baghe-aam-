@@ -1673,7 +1673,7 @@ window.pullAllApplicationForms = function() {
     return '<div class="' + pb + ' p-4 mb-4 border-b">' +
       '<h3 class="font-bold text-sm text-emerald-950">' + cand.name + ' (' + cand.ticketNo + ')</h3>' +
       '<p class="text-xs">Father: ' + cand.father + ' | DOB: ' + cand.dob + ' | Seat: ' + cand.seat + '</p>' +
-      '<p class="text-xs font-bold text-amber-800">Status: ' + cand.status + ' | Attendance: ' + cand.attendance + '</p>' +
+      '<p class="text-xs font-bold text-amber-800">Status: ' + cand.status + ' | Attendance: ' + cand.attendance + '</p>
     '</div>';
   }).join('');
   window.navigateTab('printable');
