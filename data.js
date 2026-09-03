@@ -1,4 +1,4 @@
-// data.js - Complete Configurations, 48 Prizes, Seerat Hub, Model Papers & Active State Models
+// data.js - Configurations, 48 Prizes, Seerat Hub, Model Papers & Active State Models
 window.INITIAL_CONFIG = {
   masjidTitle: "SHAHI MASJID BAGH-E-AAM",
   masjidSub: "Under the Aegis of Online Madarsa Al Hamoomi for Islamic & Arabic Studies",
@@ -13,6 +13,7 @@ window.INITIAL_CONFIG = {
   pocContact: "+91 92900 00000 (Convenor)",
   masjidContact: "040-23200000 / info@shahimasjid.org",
   jumaLine: "Juma Khutbah: 1:00 PM | Juma Ba-Jamat: 1:30 PM (Shahi Masjid)",
+  tickerText: "Important Notice: 3rd Seerat-un-Nabi Competition exam scheduled for Saturday, January 31, 2026. Cinema theater seating matrix and OMR distribution actively initialized. All participants must download admit card with madarsa seal before reporting time.",
   youtube: "https://youtube.com/@ShahiMasjidHyderabad",
   facebook: "https://facebook.com/ShahiMasjidHyderabad",
   instagram: "https://instagram.com/ShahiMasjidHyderabad",
@@ -140,8 +141,8 @@ window.INITIAL_PAPERS = [
 ];
 
 window.INITIAL_NOTICES = [
-  { id: 1, title: "Cinema Theater Layout Matrix Active", date: "System", desc: "Interactive Left, Center, and Right aisle theater seating plan with manual candidate assignment is live." },
-  { id: 2, title: "Faculty Vetting & Approval Queue Online", date: "Staff", desc: "Administrators can approve, edit, or deny faculty access instantly." }
+  { id: 1, title: "Portal Operations & Live Ticker Control Active", date: "System", desc: "Super Admins can edit live marquee ticker text, global exam timings, and portal details directly." },
+  { id: 2, title: "Direct Faculty Generation Online", date: "Staff", desc: "Administrators can directly issue pre-approved faculty accounts with custom passwords." }
 ];
 
 window.DataStore = {
