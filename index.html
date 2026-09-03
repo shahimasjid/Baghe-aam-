@@ -84,8 +84,6 @@
         <button onclick="navigateTab('doc-lookup')" class="px-2.5 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Admit & OMR</button>
         <button onclick="navigateTab('results-public')" class="px-2.5 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Results</button>
         <button onclick="navigateTab('feedback')" class="px-2.5 py-1.5 hover:text-emerald-900 rounded hover:bg-emerald-50 transition">Helpdesk</button>
-        
-        <!-- Right Header Authentication Slot -->
         <span id="nav-auth-slot" class="ml-2"></span>
       </nav>
     </div>
@@ -512,7 +510,7 @@
           </div>
         </div>
 
-        <!-- KPI Statistic Cards (Visible across Admin, Super Admin & Faculty) -->
+        <!-- KPI Statistic Cards -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div class="p-4 bg-white rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
             <div>
@@ -856,7 +854,6 @@
 
       <div class="md:col-span-3 p-6 bg-white flex flex-col justify-center">
         
-        <!-- Standard Login Pane -->
         <div id="modal-login-form">
           <h3 class="text-base font-bold text-emerald-950">Central Portal Sign In</h3>
           <p class="text-xs text-slate-500 mb-4">Authenticate as Student, Faculty, Admin, or Super Admin</p>
@@ -883,7 +880,6 @@
             </button>
           </form>
 
-          <!-- Toggle for Faculty Registration -->
           <div id="modal-faculty-reg-toggle" class="hidden mt-4 pt-3 border-t text-center text-xs">
             <span class="text-slate-500">New invigilator or faculty member?</span>
             <button type="button" onclick="toggleFacultyModalRegistration(true)" class="text-emerald-800 font-bold hover:underline ml-1">
@@ -892,7 +888,6 @@
           </div>
         </div>
 
-        <!-- Embedded Faculty Registration Pane -->
         <div id="modal-faculty-registration-pane" class="hidden text-xs">
           <div class="flex justify-between items-center mb-3">
             <h3 class="text-sm font-bold text-purple-950">Faculty Registration Portal</h3>
