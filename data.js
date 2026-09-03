@@ -4,7 +4,7 @@ window.INITIAL_CONFIG = {
   masjidSub: "Under the Aegis of Online Madarsa Al Hamoomi for Islamic & Arabic Studies",
   compTitle: "3rd Seerat-un-Nabi Competition",
   compSubtitle: '"Bench to Exam Hall: Lessons of Discipline & Success from Seerat-un-Nabi ﷺ"',
-  compBadge: "Annual Knowledge Contest",
+  compBadge: "Executive Command Desk • Hyderabad, India",
   compDesc: "Academic competition across Intermediate, Graduate, and Postgraduate levels with dedicated wings for Boys & Girls. 48 Distinguished Prizes will be distributed InshaAllah.",
   examDate: "Saturday, January 31, 2026",
   prepTime: "09:30 AM to 10:15 AM (Pre-Exam Orientation & Seating)",
