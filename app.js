@@ -1,4 +1,4 @@
-// app.js - Full Interactive Logic: Manual Theater Seat Assignment, Direct Faculty Approval, KPI Sync & Model Paper Upload
+// app.js - Full Interactive Logic: Theater Seating, Direct Faculty Approval, KPI Sync & Model Paper Upload
 var config = window.DataStore.get('sm_config', window.INITIAL_CONFIG);
 var students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
 var prizes = window.DataStore.get('sm_prizes', window.INITIAL_PRIZES);
@@ -10,7 +10,7 @@ var session = getPersistentSession();
 
 var prizeLayoutMode = 'grid';
 var rosterLayoutMode = 'list';
-var pendingSeatAssignmentCode = null;
+var activeTheaterSeatCode = null;
 
 window.dismissGreeting = function() {
   var overlay = document.getElementById('greeting-overlay');
@@ -66,6 +66,8 @@ function startLiveClock() {
 }
 
 function syncConfigUI() {
+  config = window.DataStore.get('sm_config', window.INITIAL_CONFIG);
+
   var setText = function(id, val) {
     var el = document.getElementById(id);
     if (el) el.innerText = val;
@@ -88,11 +90,11 @@ function syncConfigUI() {
 
   var dignitaryBox = document.getElementById('dignitaries-display-box');
   if (dignitaryBox) {
-    var chiefHtml = config.dignitaries.chiefGuest ? 
+    var chiefHtml = config.dignitaries && config.dignitaries.chiefGuest ? 
       `<div class="flex items-center space-x-2.5 p-2.5 bg-black/25 rounded-lg border border-white/10">
         <div class="w-8 h-8 rounded-full bg-amber-500 text-emerald-950 flex items-center justify-center font-bold text-xs"><i class="fa-solid fa-microphone"></i></div>
         <div>
-          <span class="text-[9px] text-amber-300 block font-bold uppercase">${config.dignitaries.chiefGuestTitle}</span>
+          <span class="text-[9px] text-amber-300 block font-bold uppercase">${config.dignitaries.chiefGuestTitle || 'Guest Speaker'}</span>
           <strong class="text-white text-xs">${config.dignitaries.chiefGuest}</strong>
         </div>
       </div>` : '';
@@ -146,6 +148,7 @@ function renderNotices() {
 }
 
 function renderModelPapers() {
+  papers = window.DataStore.get('sm_papers', window.INITIAL_PAPERS);
   var el = document.getElementById('model-papers-list');
   var adminEl = document.getElementById('admin-model-papers-tbody');
   
@@ -157,7 +160,7 @@ function renderModelPapers() {
           '<span class="text-xs text-amber-700 font-semibold">Edition Year: ' + p.year + ' | ' + (p.category || 'General') + '</span>' +
         '</div>' +
         '<a href="' + p.url + '" target="_blank" class="bg-emerald-950 text-amber-300 px-3 py-1.5 rounded text-xs font-bold hover:bg-emerald-900 shadow">' +
-          '<i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> View / Drive' +
+          '<i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Open Drive Link' +
         '</a>' +
       '</div>';
     }).join('');
@@ -166,7 +169,7 @@ function renderModelPapers() {
   if (adminEl) {
     adminEl.innerHTML = papers.map(function(p, idx) {
       return '<tr class="hover:bg-slate-50 text-xs">' +
-        '<td class="p-2 font-bold">' + p.title + '</td>' +
+        '<td class="p-2 font-bold text-slate-900">' + p.title + '</td>' +
         '<td class="p-2">' + p.year + '</td>' +
         '<td class="p-2 font-mono truncate max-w-xs"><a href="' + p.url + '" target="_blank" class="text-blue-600 hover:underline">' + p.url + '</a></td>' +
         '<td class="p-2 text-center">' +
@@ -184,6 +187,7 @@ window.handleUploadModelPaper = function(e) {
   var url = document.getElementById('paper-url').value.trim();
   var category = document.getElementById('paper-category').value;
 
+  papers = window.DataStore.get('sm_papers', window.INITIAL_PAPERS);
   papers.push({
     id: papers.length + 1,
     title: title,
@@ -196,11 +200,12 @@ window.handleUploadModelPaper = function(e) {
   renderModelPapers();
   window.closeModal('modal-add-model-paper');
   document.getElementById('form-add-model-paper').reset();
-  alert('Model Paper added with Drive Link successfully!');
+  alert('Model Paper added with Drive link successfully.');
 };
 
 window.deleteModelPaper = function(idx) {
-  if (confirm('Delete this question paper?')) {
+  if (confirm('Delete this question paper record?')) {
+    papers = window.DataStore.get('sm_papers', window.INITIAL_PAPERS);
     papers.splice(idx, 1);
     window.DataStore.set('sm_papers', papers);
     renderModelPapers();
@@ -208,7 +213,7 @@ window.deleteModelPaper = function(idx) {
 };
 
 // ----------------------------------------------------
-// PRIZES GALLERY DISPLAY
+// 48 PRIZE GALLERY DISPLAY
 // ----------------------------------------------------
 window.switchPrizeLayout = function(mode) {
   prizeLayoutMode = mode;
@@ -319,7 +324,7 @@ window.renderSeeratHubContent = function() {
 };
 
 // ----------------------------------------------------
-// AUTHENTICATION & MULTI-ROLE MODAL / HEADER LOGIC
+// AUTHENTICATION & MULTI-ROLE MODAL LOGIC
 // ----------------------------------------------------
 function saveSession(user, remember24h) {
   var expiry = new Date().getTime() + (remember24h ? 24 * 3600 * 1000 : 2 * 3600 * 1000);
@@ -431,7 +436,6 @@ function executeAuthentication(id, pwd, roleHint) {
     return;
   }
 
-  // Refresh faculties from DataStore
   faculties = window.DataStore.get('sm_faculties', window.INITIAL_FACULTIES);
 
   // Faculty Check
@@ -441,7 +445,7 @@ function executeAuthentication(id, pwd, roleHint) {
 
   if (fac) {
     if (fac.status === 'Denied' || fac.status === 'Blocked') {
-      alert('Access Denied: Your faculty account access has been revoked or denied.');
+      alert('Access Denied: Your faculty account access has been blocked or denied.');
       return;
     }
     if (fac.status === 'Pending') {
@@ -459,7 +463,6 @@ function executeAuthentication(id, pwd, roleHint) {
     }
   }
 
-  // Refresh students from DataStore
   students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
 
   // Student Check
@@ -477,7 +480,7 @@ function executeAuthentication(id, pwd, roleHint) {
     }
   }
 
-  alert('Authentication Failed: Check credentials or complete your enrollment registration.');
+  alert('Authentication Failed: Check credentials or register if you are a new applicant.');
 }
 
 // ----------------------------------------------------
@@ -509,7 +512,7 @@ function refreshDashboardState() {
   pill.className = 'text-[10px] font-black uppercase px-3 py-1 rounded-full ' +
     (role === 'super_admin' ? 'bg-red-100 text-red-700 border border-red-200' : role === 'admin' ? 'bg-amber-100 text-amber-800 border border-amber-200' : role === 'faculty' ? 'bg-purple-100 text-purple-800 border border-purple-200' : 'bg-emerald-100 text-emerald-800 border border-emerald-200');
 
-  // KPI Statistics
+  // Universal KPI Statistics across Admin, Super Admin & Faculty
   document.getElementById('stat-total-students').innerText = students.length;
   document.getElementById('stat-present-count').innerText = students.filter(function(s) { return s.attendance === 'Present'; }).length;
   document.getElementById('stat-faculty-count').innerText = faculties.filter(function(f) { return f.status === 'Approved'; }).length;
@@ -601,9 +604,9 @@ function renderStudentProfileFeatures() {
       <div>
         <i class="fa-solid fa-location-dot text-blue-700 text-2xl mb-2"></i>
         <h4 class="font-bold text-slate-900 text-sm">4. Seating Coordinate Finder</h4>
-        <p class="text-xs text-slate-600 mt-1">Verify assigned row and aisle desk coordinates in Theater Mode.</p>
+        <p class="text-xs text-slate-600 mt-1">Verify assigned row and aisle desk coordinates in Cinema Theater Mode.</p>
       </div>
-      <button onclick="alert('Your Desk Location: ' + '${cand.seat || 'Pending Allotment by Admin'}')" class="mt-3 bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 rounded text-xs">
+      <button onclick="alert('Your Theater Desk Location: ' + '${cand.seat || 'Pending Allotment by Admin'}')" class="mt-3 bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 rounded text-xs">
         Locate Desk
       </button>
     </div>
@@ -720,6 +723,7 @@ function renderFacultyDashboard() {
 }
 
 function renderFacultyAttendanceTable() {
+  students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
   var tbody = document.getElementById('faculty-attendance-tbody');
   if (!tbody) return;
 
@@ -752,12 +756,14 @@ function renderFacultyAttendanceTable() {
 }
 
 window.updateAttendance = function(idx, val) {
+  students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
   students[idx].attendance = val;
   window.DataStore.set('sm_students', students);
   refreshDashboardState();
 };
 
 window.facultyVerifyResult = function(idx) {
+  students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
   students[idx].resultVerified = !students[idx].resultVerified;
   window.DataStore.set('sm_students', students);
   renderFacultyAttendanceTable();
@@ -784,6 +790,7 @@ function renderManagementDashboard() {
 
 // 1. 1-CLICK EXCEL / CSV DATA EXPORT
 window.exportStudentsToExcel = function() {
+  students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
   if (students.length === 0) return alert('No registered students to export.');
   var headers = ['Application ID', 'Hall Ticket No', 'Candidate Name', 'Father Name', 'DOB', 'Mobile Phone', 'Email', 'Category', 'Gender', 'Assigned Seat', 'Exam Attendance', 'Marks', 'Prize Awarded', 'Status', 'Result Verified'];
   var rows = students.map(function(s) {
@@ -819,15 +826,15 @@ window.exportStudentsToExcel = function() {
 // 2. 1-CLICK DATABASE BACKUP & RESTORE
 window.backupDatabaseToJSON = function() {
   var backupData = {
-    version: '5.0',
+    version: '5.5',
     exportDate: new Date().toISOString(),
     config: config,
-    students: students,
-    prizes: prizes,
-    faculties: faculties,
-    notices: notices,
-    papers: papers,
-    feedbacks: feedbacks
+    students: window.DataStore.get('sm_students', window.INITIAL_STUDENTS),
+    prizes: window.DataStore.get('sm_prizes', window.INITIAL_PRIZES),
+    faculties: window.DataStore.get('sm_faculties', window.INITIAL_FACULTIES),
+    notices: window.DataStore.get('sm_notices', window.INITIAL_NOTICES),
+    papers: window.DataStore.get('sm_papers', window.INITIAL_PAPERS),
+    feedbacks: window.DataStore.get('sm_feedbacks', window.INITIAL_FEEDBACKS)
   };
 
   var blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
@@ -886,6 +893,7 @@ window.handleDatabaseRestoreFile = function(e) {
 
 // 3. 1-CLICK GLOBAL RESULT RELEASE
 window.toggleResultsRelease = function() {
+  config = window.DataStore.get('sm_config', window.INITIAL_CONFIG);
   config.resultsPublished = !config.resultsPublished;
   window.DataStore.set('sm_config', config);
   refreshDashboardState();
@@ -894,6 +902,7 @@ window.toggleResultsRelease = function() {
 
 // 4. PROFESSIONAL EXAMINATION OMR SHEET GENERATOR
 window.generateSingleOMR = function(ticketNo) {
+  students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
   var cand = students.find(function(s) { return s.ticketNo === ticketNo; });
   if (!cand) return alert('Candidate not found.');
 
@@ -903,6 +912,7 @@ window.generateSingleOMR = function(ticketNo) {
 };
 
 window.generateBatchOMR = function() {
+  students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
   if (students.length === 0) return alert('No registered candidates to generate OMR sheets.');
   var area = document.getElementById('printable-document');
   area.innerHTML = students.map(function(s, idx) {
@@ -1018,6 +1028,7 @@ function buildProfessionalOMRHTML(cand) {
 
 // 5. 1-CLICK BATCH DOWNLOAD ADMIT CARDS
 window.pullAllAdmitCards = function() {
+  students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
   if (students.length === 0) return alert('No registered candidates to generate Admit Cards.');
   var area = document.getElementById('printable-document');
   area.innerHTML = students.map(function(cand, idx) {
@@ -1027,8 +1038,9 @@ window.pullAllAdmitCards = function() {
   window.navigateTab('printable');
 };
 
-// 6. DYNAMIC THEATER & MATRIX SEATING ENGINE WITH MANUAL CLICK-TO-ASSIGN
+// 6. CINEMA MOVIE THEATER SEATING SYSTEM (WITH DIRECT CLICK-TO-SELECT)
 window.changeSeatingLayoutType = function(type) {
+  config = window.DataStore.get('sm_config', window.INITIAL_CONFIG);
   config.seatingConfig.layoutType = type;
   if (type === 'theater') { config.seatingConfig.colsPerRow = 14; }
   else if (type === '2x2') { config.seatingConfig.colsPerRow = 4; }
@@ -1046,50 +1058,54 @@ window.renderDynamicSeatingMatrix = function() {
   var container = document.getElementById('dynamic-seating-matrix-preview');
   if (!container) return;
 
+  students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
+  config = window.DataStore.get('sm_config', window.INITIAL_CONFIG);
+
   var layout = config.seatingConfig.layoutType || 'theater';
   var cols = config.seatingConfig.colsPerRow || 14;
   var rowsInput = document.getElementById('cfg-seating-rows');
-  var rows = rowsInput ? parseInt(rowsInput.value) || 20 : 20;
+  var rows = rowsInput ? parseInt(rowsInput.value) || 15 : 15;
 
   var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   var html = '';
 
   if (layout === 'theater') {
     html += `
-      <div class="mb-4 text-center">
-        <div class="w-3/4 mx-auto bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 text-amber-300 py-1.5 rounded-t-xl text-[10px] font-black uppercase tracking-widest shadow border-b-2 border-amber-500">
-          <i class="fa-solid fa-chalkboard mr-1.5"></i> CINEMA THEATER STAGE & CENTRAL SCREEN AREA
+      <div class="mb-6 text-center">
+        <div class="w-4/5 mx-auto bg-gradient-to-r from-emerald-950 via-slate-900 to-emerald-950 text-amber-300 py-2 rounded-t-2xl text-xs font-black uppercase tracking-widest shadow-lg border-b-4 border-amber-500 flex items-center justify-center gap-2">
+          <i class="fa-solid fa-film text-amber-400"></i> AUDITORIUM STAGE & EXAMINATION PROJECTION SCREEN <i class="fa-solid fa-film text-amber-400"></i>
         </div>
+        <p class="text-[10px] text-slate-400 mt-1 font-semibold">ALL EYES THIS WAY • FRONT OF HALL</p>
       </div>
     `;
   }
 
-  html += '<div class="space-y-2">';
+  html += '<div class="space-y-2.5">';
 
   for (var r = 1; r <= rows; r++) {
-    html += '<div class="flex items-center gap-1.5 p-1.5 bg-slate-50 border rounded text-xs overflow-x-auto justify-center">' +
-      '<span class="w-12 font-mono font-bold text-slate-500 text-center">R' + r + '</span>';
+    html += '<div class="flex items-center gap-1.5 p-1.5 bg-slate-50 border rounded-lg text-xs overflow-x-auto justify-center shadow-sm">' +
+      '<span class="w-12 font-mono font-bold text-slate-500 text-center">Row ' + r + '</span>';
 
     for (var c = 0; c < cols; c++) {
       var seatLabel = 'R' + r + '-' + alphabet[c];
 
-      // Aisle separation markers
+      // Theater style dual aisle separation markers
       if (layout === 'theater') {
-        if (c === 4) html += '<span class="px-1.5 py-0.5 text-[8px] bg-amber-100 text-amber-800 font-bold rounded">AISLE 1</span>';
-        if (c === 10) html += '<span class="px-1.5 py-0.5 text-[8px] bg-amber-100 text-amber-800 font-bold rounded">AISLE 2</span>';
+        if (c === 4) html += '<span class="px-2 py-1 text-[9px] bg-amber-100 text-amber-800 font-bold rounded shadow-inner">AISLE</span>';
+        if (c === 10) html += '<span class="px-2 py-1 text-[9px] bg-amber-100 text-amber-800 font-bold rounded shadow-inner">AISLE</span>';
       } else if ((layout === '2x2' && c === 2) || (layout === '3x3' && c === 3) || (layout === '4x4' && c === 4) || (layout === 'nxn' && c === Math.floor(cols / 2))) {
-        html += '<span class="px-1.5 py-0.5 text-[8px] bg-amber-100 text-amber-800 font-bold rounded">AISLE</span>';
+        html += '<span class="px-2 py-1 text-[9px] bg-amber-100 text-amber-800 font-bold rounded shadow-inner">AISLE</span>';
       }
 
       var occ = students.find(function(s) { return s.seat && s.seat.indexOf(seatLabel) !== -1; });
       if (occ) {
         var isBoy = occ.gender === 'M';
-        html += '<button onclick="openSeatCandidateAssignModal(\'' + seatLabel + '\')" class="px-1.5 py-1 rounded text-[10px] font-bold border truncate w-16 text-center ' + (isBoy ? 'bg-blue-100 text-blue-900 border-blue-400' : 'bg-pink-100 text-pink-900 border-pink-400') + '" title="Assigned to ' + occ.name + ' (' + occ.ticketNo + ')">' +
-          seatLabel + ' (' + (isBoy ? 'B' : 'G') + ')' +
+        html += '<button onclick="openSeatCandidateAssignModal(\'' + seatLabel + '\')" class="px-2 py-1 rounded-md text-[10px] font-bold border truncate w-16 text-center shadow-sm ' + (isBoy ? 'bg-blue-100 text-blue-900 border-blue-400 hover:bg-blue-200' : 'bg-pink-100 text-pink-900 border-pink-400 hover:bg-pink-200') + '" title="' + occ.name + ' (' + occ.ticketNo + ')">' +
+          '<i class="fa-solid fa-couch mr-0.5"></i> ' + seatLabel + ' (' + (isBoy ? 'B' : 'G') + ')' +
         '</button>';
       } else {
-        html += '<button onclick="openSeatCandidateAssignModal(\'' + seatLabel + '\')" class="px-1.5 py-1 rounded text-[10px] border border-dashed border-slate-300 bg-white hover:border-emerald-700 text-slate-400 w-16 text-center" title="Click to manually assign seat">' +
-          seatLabel +
+        html += '<button onclick="openSeatCandidateAssignModal(\'' + seatLabel + '\')" class="px-2 py-1 rounded-md text-[10px] border border-dashed border-slate-300 bg-white hover:border-emerald-700 hover:bg-emerald-50 text-slate-500 w-16 text-center shadow-sm" title="Open Seat - Click to Book/Assign">' +
+          '<i class="fa-solid fa-couch mr-0.5 text-slate-300"></i> ' + seatLabel +
         '</button>';
       }
     }
@@ -1100,22 +1116,35 @@ window.renderDynamicSeatingMatrix = function() {
 };
 
 window.openSeatCandidateAssignModal = function(seatCode) {
-  pendingSeatAssignmentCode = seatCode;
+  activeTheaterSeatCode = seatCode;
   document.getElementById('modal-seat-code-display').innerText = seatCode;
   
+  students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
+
   var select = document.getElementById('seat-candidate-select');
-  select.innerHTML = '<option value="">-- Select Registered Student --</option>' +
+  select.innerHTML = '<option value="">-- Choose Candidate to Assign --</option>' +
     students.map(function(s) {
-      return '<option value="' + s.ticketNo + '">' + s.name + ' (' + s.ticketNo + ') - Seat: ' + (s.seat || 'Unassigned') + '</option>';
+      var seatText = s.seat ? ' (Current: ' + s.seat + ')' : ' (Unassigned)';
+      return '<option value="' + s.ticketNo + '">' + s.name + ' (' + s.ticketNo + ')' + seatText + '</option>';
     }).join('');
 
   var currentOcc = students.find(function(s) { return s.seat && s.seat.indexOf(seatCode) !== -1; });
   var infoBox = document.getElementById('seat-occupied-info');
   if (currentOcc) {
-    infoBox.innerHTML = '<span class="text-amber-800 font-bold">Currently Occupied: ' + currentOcc.name + ' (' + currentOcc.ticketNo + ')</span>';
+    infoBox.innerHTML = `
+      <div class="p-3 bg-amber-50 border border-amber-300 rounded-lg text-xs space-y-1">
+        <span class="block font-bold text-amber-900"><i class="fa-solid fa-user-tag mr-1 text-amber-700"></i> Assigned Candidate:</span>
+        <p class="font-semibold text-slate-900">${currentOcc.name} (${currentOcc.ticketNo})</p>
+        <p class="text-[11px] text-slate-600">Father: ${currentOcc.father} | Stream: ${currentOcc.category} (${currentOcc.gender === 'M' ? 'Boys' : 'Girls'})</p>
+      </div>
+    `;
     document.getElementById('btn-seat-unassign').classList.remove('hidden');
   } else {
-    infoBox.innerHTML = '<span class="text-emerald-700 font-bold">Status: Seat is Open / Vacant</span>';
+    infoBox.innerHTML = `
+      <div class="p-3 bg-emerald-50 border border-emerald-300 rounded-lg text-xs text-emerald-900 font-semibold flex items-center gap-2">
+        <i class="fa-solid fa-circle-check text-emerald-600 text-sm"></i> Seat ${seatCode} is available for allocation.
+      </div>
+    `;
     document.getElementById('btn-seat-unassign').classList.add('hidden');
   }
 
@@ -1123,34 +1152,37 @@ window.openSeatCandidateAssignModal = function(seatCode) {
 };
 
 window.saveManualSeatAssignment = function() {
-  if (!pendingSeatAssignmentCode) return;
+  if (!activeTheaterSeatCode) return;
   var selectedRoll = document.getElementById('seat-candidate-select').value;
   var hall = document.getElementById('seat-hall-select').value;
 
-  if (!selectedRoll) return alert('Please select a student to assign to this seat.');
+  if (!selectedRoll) return alert('Please select a student from the dropdown list.');
 
+  students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
   var cand = students.find(function(s) { return s.ticketNo === selectedRoll; });
-  if (!cand) return alert('Student not found.');
+  if (!cand) return alert('Candidate not found.');
 
-  // Unseat anyone currently in this seat
+  // Unassign any existing occupant in this seat
   students.forEach(function(s) {
-    if (s.seat && s.seat.indexOf(pendingSeatAssignmentCode) !== -1) {
+    if (s.seat && s.seat.indexOf(activeTheaterSeatCode) !== -1) {
       s.seat = 'Unassigned';
     }
   });
 
-  cand.seat = hall + ' - ' + pendingSeatAssignmentCode;
+  cand.seat = hall + ' - ' + activeTheaterSeatCode;
   window.DataStore.set('sm_students', students);
   window.closeModal('modal-seat-assign');
   renderDynamicSeatingMatrix();
   renderManagementRoster();
-  alert('Assigned seat ' + pendingSeatAssignmentCode + ' to ' + cand.name);
+  refreshDashboardState();
+  alert('Seat ' + activeTheaterSeatCode + ' successfully allocated to ' + cand.name);
 };
 
 window.unassignCurrentSeat = function() {
-  if (!pendingSeatAssignmentCode) return;
+  if (!activeTheaterSeatCode) return;
+  students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
   students.forEach(function(s) {
-    if (s.seat && s.seat.indexOf(pendingSeatAssignmentCode) !== -1) {
+    if (s.seat && s.seat.indexOf(activeTheaterSeatCode) !== -1) {
       s.seat = 'Unassigned';
     }
   });
@@ -1158,10 +1190,12 @@ window.unassignCurrentSeat = function() {
   window.closeModal('modal-seat-assign');
   renderDynamicSeatingMatrix();
   renderManagementRoster();
-  alert('Seat ' + pendingSeatAssignmentCode + ' unassigned successfully.');
+  refreshDashboardState();
+  alert('Seat ' + activeTheaterSeatCode + ' released and marked vacant.');
 };
 
 window.autoGenerateDynamicSeating = function() {
+  students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
   if (students.length === 0) return alert('No registered candidates to arrange.');
   var cols = config.seatingConfig.colsPerRow || 14;
   var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -1184,15 +1218,18 @@ window.autoGenerateDynamicSeating = function() {
   window.DataStore.set('sm_students', students);
   renderDynamicSeatingMatrix();
   renderManagementRoster();
+  refreshDashboardState();
   alert('Seating matrix automatically arranged for all candidates.');
 };
 
 window.clearSeatingPlan = function() {
   if (confirm('Reset seating plan for all candidates?')) {
+    students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
     students.forEach(function(s) { s.seat = 'Unassigned'; });
     window.DataStore.set('sm_students', students);
     renderDynamicSeatingMatrix();
     renderManagementRoster();
+    refreshDashboardState();
   }
 };
 
@@ -1448,6 +1485,8 @@ function renderFeedbackManagement() {
 }
 
 window.saveSuperAdminConfig = function() {
+  config = window.DataStore.get('sm_config', window.INITIAL_CONFIG);
+
   config.masjidTitle = document.getElementById('cfg-masjid-title').value.trim();
   config.examDate = document.getElementById('cfg-date-time').value.trim();
   config.prepTime = document.getElementById('cfg-prep-time').value.trim();
@@ -1467,15 +1506,18 @@ window.saveSuperAdminConfig = function() {
 // PROFESSIONAL ISLAMIC PARTICIPATION CERTIFICATE GENERATOR
 // ----------------------------------------------------
 window.generateParticipationCertificate = function(ticketNo) {
+  students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
+  config = window.DataStore.get('sm_config', window.INITIAL_CONFIG);
+
   var cand = students.find(function(s) { return s.ticketNo === ticketNo; });
   if (!cand) return alert('Candidate not found.');
 
-  var guestSignatureSection = config.dignitaries.chiefGuest ? `
+  var guestSignatureSection = config.dignitaries && config.dignitaries.chiefGuest ? `
     <div class="text-center space-y-1">
       <div class="font-serif italic text-sm text-emerald-900 font-bold">${config.dignitaries.chiefGuest}</div>
       <div class="w-36 h-0.5 bg-slate-400 mx-auto"></div>
       <span class="font-bold text-emerald-950 block text-[11px]">${config.dignitaries.chiefGuest}</span>
-      <span class="text-[9px] text-slate-500">${config.dignitaries.chiefGuestTitle}</span>
+      <span class="text-[9px] text-slate-500">${config.dignitaries.chiefGuestTitle || 'Chief Guest'}</span>
     </div>
   ` : `
     <div class="text-center space-y-1">
@@ -1590,6 +1632,8 @@ window.handleStudentRegister = function(e) {
   var category = document.getElementById('reg-category').value;
   var gender = document.getElementById('reg-gender').value;
 
+  students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
+
   var duplicateBio = students.some(function(s) {
     return s.phone === phone && s.name.toLowerCase() === name.toLowerCase() && s.father.toLowerCase() === father.toLowerCase();
   });
@@ -1643,6 +1687,8 @@ window.handleStudentRegister = function(e) {
 // DOCUMENT RENDERING (HALL TICKETS & ADMIT CARDS)
 // ----------------------------------------------------
 function buildHallTicketHTML(cand) {
+  config = window.DataStore.get('sm_config', window.INITIAL_CONFIG);
+
   return `
     <div class="border-b-2 border-emerald-900 pb-3 mb-4 flex justify-between items-center">
       <div>
@@ -1723,6 +1769,7 @@ window.displayApplicationForm = function(cand) {
 };
 
 window.pullAllApplicationForms = function() {
+  students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
   if (students.length === 0) return alert('No registered applications to print.');
   var area = document.getElementById('printable-document');
   area.innerHTML = students.map(function(cand, idx) {
@@ -1754,6 +1801,8 @@ window.handleDocLookup = function(e) {
   var father = document.getElementById('lookup-father').value.trim().toLowerCase();
   var type = document.getElementById('lookup-doc-type').value;
 
+  students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
+
   var cand = students.find(function(s) {
     return s.phone === phone && s.name.trim().toLowerCase() === name && s.father.trim().toLowerCase() === father;
   });
@@ -1773,6 +1822,8 @@ window.handlePublicResultLookup = function() {
   var resBox = document.getElementById('public-result-display');
   if (!query) return alert('Please enter candidate Hall Ticket number or Full Name.');
 
+  config = window.DataStore.get('sm_config', window.INITIAL_CONFIG);
+
   if (!config.resultsPublished) {
     resBox.classList.remove('hidden');
     resBox.innerHTML = `
@@ -1782,6 +1833,8 @@ window.handlePublicResultLookup = function() {
     `;
     return;
   }
+
+  students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
 
   var cand = students.find(function(s) {
     return s.ticketNo.toLowerCase() === query || s.name.toLowerCase().indexOf(query) !== -1;
@@ -1817,6 +1870,7 @@ window.handlePublicResultLookup = function() {
 
 window.handleFeedbackSubmit = function(e) {
   e.preventDefault();
+  feedbacks = window.DataStore.get('sm_feedbacks', window.INITIAL_FEEDBACKS);
   feedbacks.unshift({
     id: feedbacks.length + 1,
     name: document.getElementById('fb-name').value.trim(),
