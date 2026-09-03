@@ -1,4 +1,4 @@
-// app.js - Full Interactive Logic: Manual Theater Seat Assignment, Direct Faculty Approval, KPI Sync & Model Paper Upload
+// app.js - Full Interactive Logic: Executive Command Desk, OMR, Seating, Sync & Session Stopwatch
 var config = window.DataStore.get('sm_config', window.INITIAL_CONFIG);
 var students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
 var prizes = window.DataStore.get('sm_prizes', window.INITIAL_PRIZES);
@@ -11,6 +11,7 @@ var session = getPersistentSession();
 var prizeLayoutMode = 'grid';
 var rosterLayoutMode = 'list';
 var pendingSeatAssignmentCode = null;
+var sessionSeconds = 0;
 
 window.dismissGreeting = function() {
   var overlay = document.getElementById('greeting-overlay');
@@ -23,6 +24,14 @@ window.navigateTab = function(tabId) {
     var el = document.getElementById('tab-' + id);
     if (el) el.classList.add('hidden');
   });
+
+  // Toggle active styling on tabs
+  document.querySelectorAll('.cmd-nav-btn').forEach(function(btn) {
+    btn.classList.remove('active');
+  });
+  var activeBtn = document.getElementById('nav-btn-' + tabId);
+  if (activeBtn) activeBtn.classList.add('active');
+
   var target = document.getElementById('tab-' + tabId);
   if (target) target.classList.remove('hidden');
   window.scrollTo(0, 0);
@@ -45,6 +54,7 @@ window.closeModal = function(id) {
 
 window.addEventListener('DOMContentLoaded', function() {
   startLiveClock();
+  startSessionTimer();
   renderPrayerTimes();
   renderNotices();
   renderModelPapers();
@@ -56,13 +66,24 @@ window.addEventListener('DOMContentLoaded', function() {
 
 function startLiveClock() {
   var update = function() {
+    var now = new Date();
     var clockEl = document.getElementById('ist-live-clock');
     if (clockEl) {
-      clockEl.innerText = new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true }) + ' IST';
+      clockEl.innerText = now.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true });
     }
   };
   update();
   setInterval(update, 1000);
+}
+
+function startSessionTimer() {
+  setInterval(function() {
+    sessionSeconds++;
+    var mins = Math.floor(sessionSeconds / 60);
+    var secs = sessionSeconds % 60;
+    var el = document.getElementById('active-session-timer');
+    if (el) el.innerText = mins + 'm ' + (secs < 10 ? '0' : '') + secs + 's';
+  }, 1000);
 }
 
 function syncConfigUI() {
@@ -89,19 +110,19 @@ function syncConfigUI() {
   var dignitaryBox = document.getElementById('dignitaries-display-box');
   if (dignitaryBox) {
     var chiefHtml = config.dignitaries.chiefGuest ? 
-      `<div class="flex items-center space-x-2.5 p-2.5 bg-black/25 rounded-lg border border-white/10">
-        <div class="w-8 h-8 rounded-full bg-amber-500 text-emerald-950 flex items-center justify-center font-bold text-xs"><i class="fa-solid fa-microphone"></i></div>
+      `<div class="flex items-center space-x-2.5 p-2.5 bg-cyan-950/40 rounded-lg border border-cyan-500/30">
+        <div class="w-8 h-8 rounded-full bg-cyan-500 text-slate-950 flex items-center justify-center font-bold text-xs"><i class="fa-solid fa-microphone"></i></div>
         <div>
-          <span class="text-[9px] text-amber-300 block font-bold uppercase">${config.dignitaries.chiefGuestTitle}</span>
+          <span class="text-[9px] text-cyan-300 block font-bold uppercase">${config.dignitaries.chiefGuestTitle}</span>
           <strong class="text-white text-xs">${config.dignitaries.chiefGuest}</strong>
         </div>
       </div>` : '';
 
     dignitaryBox.innerHTML = `
-      <div class="flex items-center space-x-2.5 p-2.5 bg-black/25 rounded-lg border border-white/10">
-        <div class="w-8 h-8 rounded-full bg-amber-500 text-emerald-950 flex items-center justify-center font-bold text-xs"><i class="fa-solid fa-user-tie"></i></div>
+      <div class="flex items-center space-x-2.5 p-2.5 bg-cyan-950/40 rounded-lg border border-cyan-500/30">
+        <div class="w-8 h-8 rounded-full bg-cyan-500 text-slate-950 flex items-center justify-center font-bold text-xs"><i class="fa-solid fa-user-tie"></i></div>
         <div>
-          <span class="text-[9px] text-amber-300 block font-bold uppercase">${config.dignitaries.patronTitle}</span>
+          <span class="text-[9px] text-cyan-300 block font-bold uppercase">${config.dignitaries.patronTitle}</span>
           <strong class="text-white text-xs">${config.dignitaries.patron}</strong>
         </div>
       </div>
@@ -124,9 +145,9 @@ function renderPrayerTimes() {
   var container = document.getElementById('prayer-time-table');
   if (!container) return;
   container.innerHTML = config.prayers.map(function(p) {
-    return '<div class="flex justify-between items-center py-1.5 border-b border-slate-100 text-xs">' +
-      '<span class="font-bold text-slate-800">' + p.name + '</span>' +
-      '<span class="text-emerald-800 font-mono font-bold">Iqama: ' + p.iqama + '</span>' +
+    return '<div class="flex justify-between items-center py-1.5 border-b border-cyan-950/40 text-xs">' +
+      '<span class="font-bold text-slate-200">' + p.name + '</span>' +
+      '<span class="text-cyan-400 font-mono font-bold">Iqama: ' + p.iqama + '</span>' +
     '</div>';
   }).join('');
 }
@@ -135,12 +156,12 @@ function renderNotices() {
   var el = document.getElementById('home-notices-container');
   if (!el) return;
   el.innerHTML = notices.map(function(n) {
-    return '<div class="p-2.5 bg-amber-50/70 border border-amber-200 rounded-lg">' +
-      '<div class="flex justify-between font-bold text-slate-900">' +
+    return '<div class="p-2.5 bg-cyan-950/30 border border-cyan-500/30 rounded-lg">' +
+      '<div class="flex justify-between font-bold text-cyan-200">' +
         '<span>' + n.title + '</span>' +
-        '<span class="text-[10px] text-amber-700 font-normal">' + n.date + '</span>' +
+        '<span class="text-[10px] text-amber-400 font-normal">' + n.date + '</span>' +
       '</div>' +
-      '<p class="text-[11px] text-slate-600 mt-1">' + n.desc + '</p>' +
+      '<p class="text-[11px] text-slate-300 mt-1">' + n.desc + '</p>' +
     '</div>';
   }).join('');
 }
@@ -151,12 +172,12 @@ function renderModelPapers() {
   
   if (el) {
     el.innerHTML = papers.map(function(p) {
-      return '<div class="p-4 bg-slate-50 border rounded-lg flex justify-between items-center">' +
+      return '<div class="p-4 bg-slate-900 border border-cyan-500/40 rounded-xl flex justify-between items-center">' +
         '<div>' +
-          '<h4 class="font-bold text-sm text-slate-800">' + p.title + '</h4>' +
-          '<span class="text-xs text-amber-700 font-semibold">Edition Year: ' + p.year + ' | ' + (p.category || 'General') + '</span>' +
+          '<h4 class="font-bold text-sm text-cyan-200">' + p.title + '</h4>' +
+          '<span class="text-xs text-amber-400 font-semibold">Edition Year: ' + p.year + ' | ' + (p.category || 'General') + '</span>' +
         '</div>' +
-        '<a href="' + p.url + '" target="_blank" class="bg-emerald-950 text-amber-300 px-3 py-1.5 rounded text-xs font-bold hover:bg-emerald-900 shadow">' +
+        '<a href="' + p.url + '" target="_blank" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 px-3 py-1.5 rounded-lg text-xs font-black shadow">' +
           '<i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> View / Drive' +
         '</a>' +
       '</div>';
@@ -165,12 +186,12 @@ function renderModelPapers() {
 
   if (adminEl) {
     adminEl.innerHTML = papers.map(function(p, idx) {
-      return '<tr class="hover:bg-slate-50 text-xs">' +
-        '<td class="p-2 font-bold">' + p.title + '</td>' +
-        '<td class="p-2">' + p.year + '</td>' +
-        '<td class="p-2 font-mono truncate max-w-xs"><a href="' + p.url + '" target="_blank" class="text-blue-600 hover:underline">' + p.url + '</a></td>' +
-        '<td class="p-2 text-center">' +
-          '<button onclick="deleteModelPaper(' + idx + ')" class="text-red-600 hover:underline font-bold">Delete</button>' +
+      return '<tr class="hover:bg-slate-800/50 text-xs">' +
+        '<td class="p-2.5 font-bold text-slate-200">' + p.title + '</td>' +
+        '<td class="p-2.5 text-cyan-400">' + p.year + '</td>' +
+        '<td class="p-2.5 font-mono truncate max-w-xs"><a href="' + p.url + '" target="_blank" class="text-cyan-400 hover:underline">' + p.url + '</a></td>' +
+        '<td class="p-2.5 text-center">' +
+          '<button onclick="deleteModelPaper(' + idx + ')" class="text-rose-400 hover:underline font-bold">Delete</button>' +
         '</td>' +
       '</tr>';
     }).join('');
@@ -213,11 +234,11 @@ window.switchPrizeLayout = function(mode) {
   var btnList = document.getElementById('btn-prize-list');
   if (btnGrid && btnList) {
     if (mode === 'grid') {
-      btnGrid.className = 'px-3 py-1 rounded font-bold bg-white text-emerald-950 shadow-sm';
-      btnList.className = 'px-3 py-1 rounded font-bold text-slate-600 hover:text-emerald-950';
+      btnGrid.className = 'px-3 py-1 rounded-lg font-bold bg-cyan-500 text-slate-950 shadow-sm';
+      btnList.className = 'px-3 py-1 rounded-lg font-bold text-slate-400 hover:text-white';
     } else {
-      btnList.className = 'px-3 py-1 rounded font-bold bg-white text-emerald-950 shadow-sm';
-      btnGrid.className = 'px-3 py-1 rounded font-bold text-slate-600 hover:text-emerald-950';
+      btnList.className = 'px-3 py-1 rounded-lg font-bold bg-cyan-500 text-slate-950 shadow-sm';
+      btnGrid.className = 'px-3 py-1 rounded-lg font-bold text-slate-400 hover:text-white';
     }
   }
   renderPrizesDisplay();
@@ -230,40 +251,40 @@ function renderPrizesDisplay() {
   if (prizeLayoutMode === 'grid') {
     container.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4';
     container.innerHTML = prizes.map(function(p) {
-      return '<div class="p-4 bg-gradient-to-br from-white to-amber-50/40 rounded-xl border border-amber-200/80 shadow-sm flex flex-col justify-between">' +
+      return '<div class="p-4 bg-slate-900/90 rounded-xl border border-cyan-500/30 shadow-md flex flex-col justify-between hover:border-cyan-400 transition">' +
         '<div>' +
           '<div class="flex justify-between items-center mb-2">' +
-            '<span class="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-amber-500 text-emerald-950">' + p.rank + '</span>' +
-            '<span class="font-mono text-xs font-bold text-red-600">' + p.ht + '</span>' +
+            '<span class="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-cyan-500 text-slate-950">' + p.rank + '</span>' +
+            '<span class="font-mono text-xs font-bold text-rose-400">' + p.ht + '</span>' +
           '</div>' +
-          '<h3 class="font-bold text-slate-900 text-sm">' + p.name + '</h3>' +
-          '<span class="text-[11px] text-emerald-900 font-semibold">' + p.category + '</span>' +
+          '<h3 class="font-bold text-white text-sm">' + p.name + '</h3>' +
+          '<span class="text-[11px] text-cyan-300 font-semibold">' + p.category + '</span>' +
         '</div>' +
-        '<div class="mt-4 pt-3 border-t border-amber-200 flex items-center gap-2">' +
-          '<div class="w-8 h-8 rounded-lg bg-emerald-950 text-amber-400 flex items-center justify-center font-bold text-sm">' +
+        '<div class="mt-4 pt-3 border-t border-cyan-950/80 flex items-center gap-2">' +
+          '<div class="w-8 h-8 rounded-lg bg-cyan-950 text-cyan-400 flex items-center justify-center font-bold text-sm border border-cyan-500/30">' +
             '<i class="fa-solid fa-' + (p.icon || 'trophy') + '"></i>' +
           '</div>' +
           '<div>' +
             '<span class="text-[10px] text-slate-400 block uppercase font-bold">Allocated Award</span>' +
-            '<span class="text-xs font-bold text-emerald-950">' + p.prize + '</span>' +
+            '<span class="text-xs font-bold text-cyan-200">' + p.prize + '</span>' +
           '</div>' +
         '</div>' +
       '</div>';
     }).join('');
   } else {
-    container.className = 'overflow-x-auto border rounded-xl bg-white shadow-sm';
+    container.className = 'overflow-x-auto border border-cyan-500/40 rounded-xl bg-slate-900 shadow-sm';
     container.innerHTML = '<table class="w-full text-xs text-left">' +
-      '<thead class="bg-slate-100 uppercase text-[10px] text-slate-600 border-b">' +
+      '<thead class="bg-slate-950 uppercase text-[10px] text-cyan-300 border-b border-cyan-500/40">' +
         '<tr><th class="p-3">Rank</th><th class="p-3">Candidate</th><th class="p-3">Hall Ticket</th><th class="p-3">Category</th><th class="p-3">Prize Item</th></tr>' +
       '</thead>' +
-      '<tbody class="divide-y">' +
+      '<tbody class="divide-y divide-slate-800">' +
         prizes.map(function(p) {
-          return '<tr>' +
-            '<td class="p-3 font-bold text-amber-700">' + p.rank + '</td>' +
-            '<td class="p-3 font-bold text-slate-900">' + p.name + '</td>' +
-            '<td class="p-3 font-mono text-red-600 font-bold">' + p.ht + '</td>' +
-            '<td class="p-3">' + p.category + '</td>' +
-            '<td class="p-3 font-bold text-emerald-950">' + p.prize + '</td>' +
+          return '<tr class="hover:bg-slate-800/50">' +
+            '<td class="p-3 font-bold text-amber-400">' + p.rank + '</td>' +
+            '<td class="p-3 font-bold text-white">' + p.name + '</td>' +
+            '<td class="p-3 font-mono text-rose-400 font-bold">' + p.ht + '</td>' +
+            '<td class="p-3 text-slate-300">' + p.category + '</td>' +
+            '<td class="p-3 font-bold text-cyan-300">' + p.prize + '</td>' +
           '</tr>';
         }).join('') +
       '</tbody>' +
@@ -281,29 +302,29 @@ window.renderSeeratHubContent = function() {
   var isRtl = lang === 'ar' ? 'dir="rtl" text-right font-arabic' : '';
 
   container.innerHTML = '<div class="' + isRtl + ' space-y-6">' +
-    '<div class="p-5 bg-gradient-to-br from-amber-50 to-emerald-50 rounded-xl border border-amber-300 space-y-3">' +
-      '<div class="flex justify-between items-center border-b border-amber-200 pb-2">' +
-        '<h3 class="text-base font-bold text-emerald-950 flex items-center gap-2">' +
-          '<i class="fa-solid fa-tree text-amber-600"></i> ' + data.lineageHeader +
+    '<div class="p-5 bg-gradient-to-br from-slate-900 to-slate-950 rounded-xl border border-cyan-500/40 space-y-3">' +
+      '<div class="flex justify-between items-center border-b border-cyan-900/60 pb-2">' +
+        '<h3 class="text-base font-bold text-cyan-300 flex items-center gap-2">' +
+          '<i class="fa-solid fa-tree text-amber-400"></i> ' + data.lineageHeader +
         '</h3>' +
-        '<span class="text-[10px] font-bold bg-amber-500 text-emerald-950 px-2 py-0.5 rounded">' + data.wordCount + '</span>' +
+        '<span class="text-[10px] font-bold bg-cyan-500 text-slate-950 px-2 py-0.5 rounded">' + data.wordCount + '</span>' +
       '</div>' +
-      '<div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs leading-relaxed">' +
-        '<p><strong>Father:</strong> ' + data.father + '</p>' +
-        '<p><strong>Mother:</strong> ' + data.mother + '</p>' +
-        '<p><strong>Grandfather:</strong> ' + data.grandfather + '</p>' +
-        '<p><strong>Protective Uncle:</strong> ' + data.uncle + '</p>' +
-        '<p class="md:col-span-2"><strong>Blessed Wives (Ummahat-ul-Momineen):</strong> ' + data.wives + '</p>' +
-        '<p class="md:col-span-2"><strong>Blessed Sons:</strong> ' + data.sons + '</p>' +
-        '<p class="md:col-span-2"><strong>Blessed Daughters:</strong> ' + data.daughters + '</p>' +
+      '<div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs leading-relaxed text-slate-200">' +
+        '<p><strong class="text-cyan-400">Father:</strong> ' + data.father + '</p>' +
+        '<p><strong class="text-cyan-400">Mother:</strong> ' + data.mother + '</p>' +
+        '<p><strong class="text-cyan-400">Grandfather:</strong> ' + data.grandfather + '</p>' +
+        '<p><strong class="text-cyan-400">Protective Uncle:</strong> ' + data.uncle + '</p>' +
+        '<p class="md:col-span-2"><strong class="text-cyan-400">Blessed Wives (Ummahat-ul-Momineen):</strong> ' + data.wives + '</p>' +
+        '<p class="md:col-span-2"><strong class="text-cyan-400">Blessed Sons:</strong> ' + data.sons + '</p>' +
+        '<p class="md:col-span-2"><strong class="text-cyan-400">Blessed Daughters:</strong> ' + data.daughters + '</p>' +
       '</div>' +
     '</div>' +
 
-    '<div class="p-6 bg-white border border-slate-200 rounded-xl shadow-sm space-y-4 text-xs md:text-sm leading-relaxed text-slate-800">' +
-      '<h3 class="text-base font-bold text-emerald-950 flex items-center gap-2 border-b pb-2">' +
-        '<i class="fa-solid fa-feather-pointed text-emerald-800"></i> ' + data.title +
+    '<div class="p-6 bg-slate-900/90 border border-cyan-500/30 rounded-xl shadow space-y-4 text-xs md:text-sm leading-relaxed text-slate-200">' +
+      '<h3 class="text-base font-bold text-cyan-300 flex items-center gap-2 border-b border-cyan-900/60 pb-2">' +
+        '<i class="fa-solid fa-feather-pointed text-amber-400"></i> ' + data.title +
       '</h3>' +
-      '<div class="prose max-w-none space-y-3 text-justify">' +
+      '<div class="prose max-w-none space-y-3 text-justify text-slate-200">' +
         data.narrative.split('\n\n').map(function(paragraph) {
           return '<p class="leading-relaxed">' + paragraph + '</p>';
         }).join('') +
@@ -346,12 +367,12 @@ function updateAuthUI() {
   var slot = document.getElementById('nav-auth-slot');
   if (!slot) return;
   if (session && session.user) {
-    slot.innerHTML = '<button onclick="navigateTab(\'dashboard\')" class="bg-amber-500 hover:bg-amber-400 text-emerald-950 px-3.5 py-1.5 rounded-lg font-bold shadow">' +
-      'Dashboard (' + session.user.name + ')' +
+    slot.innerHTML = '<button onclick="navigateTab(\'dashboard\')" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black px-4 py-2 rounded-full shadow-lg shadow-cyan-500/20 text-xs flex items-center gap-1.5">' +
+      '<i class="fa-solid fa-key"></i> Dashboard (' + session.user.name.split(' ')[0] + ')' +
     '</button>';
   } else {
-    slot.innerHTML = '<button onclick="openModal(\'modal-auth\')" class="bg-emerald-950 text-amber-300 px-4 py-1.5 rounded-lg font-bold border border-amber-500/60 hover:bg-emerald-900 shadow">' +
-      '<i class="fa-solid fa-right-to-bracket mr-1.5 text-amber-400"></i> Central Portal Sign In' +
+    slot.innerHTML = '<button onclick="openModal(\'modal-auth\')" class="bg-gradient-to-r from-sky-500 to-cyan-400 hover:from-sky-400 hover:to-cyan-300 text-slate-950 font-black px-5 py-2 rounded-full shadow-lg shadow-cyan-500/30 text-xs flex items-center gap-2">' +
+      '<i class="fa-solid fa-key"></i> Admin / Portal Access' +
     '</button>';
   }
 }
@@ -360,7 +381,7 @@ window.setModalRoleHint = function(role) {
   document.getElementById('modal-login-role-hint').value = role;
   ['student', 'faculty', 'admin', 'super'].forEach(function(r) {
     var btn = document.getElementById('role-hint-' + r);
-    if (btn) btn.className = (r === role) ? 'flex-1 py-1.5 rounded-lg bg-white text-emerald-950 font-bold shadow-sm' : 'flex-1 py-1.5 rounded-lg text-slate-600 font-bold';
+    if (btn) btn.className = (r === role) ? 'flex-1 py-2 rounded-lg bg-cyan-500 text-slate-950 font-black shadow' : 'flex-1 py-2 rounded-lg text-slate-400 hover:text-white font-bold';
   });
 
   var facRegisterToggle = document.getElementById('modal-faculty-reg-toggle');
@@ -489,7 +510,7 @@ function refreshDashboardState() {
   var pill = document.getElementById('dash-role-pill');
   pill.innerText = role.replace('_', ' ');
   pill.className = 'text-[10px] font-black uppercase px-3 py-1 rounded-full ' +
-    (role === 'super_admin' ? 'bg-red-100 text-red-700 border border-red-200' : role === 'admin' ? 'bg-amber-100 text-amber-800 border border-amber-200' : role === 'faculty' ? 'bg-purple-100 text-purple-800 border border-purple-200' : 'bg-emerald-100 text-emerald-800 border border-emerald-200');
+    (role === 'super_admin' ? 'bg-rose-950 text-rose-300 border border-rose-500/50' : role === 'admin' ? 'bg-amber-950 text-amber-300 border border-amber-500/50' : role === 'faculty' ? 'bg-purple-950 text-purple-300 border border-purple-500/50' : 'bg-cyan-950 text-cyan-300 border border-cyan-500/50');
 
   document.getElementById('stat-total-students').innerText = students.length;
   document.getElementById('stat-present-count').innerText = students.filter(function(s) { return s.attendance === 'Present'; }).length;
@@ -516,123 +537,123 @@ function renderStudentProfileFeatures() {
   if (!container) return;
 
   var resultsCardHTML = config.resultsPublished ? `
-    <div class="p-4 bg-emerald-50 border border-emerald-300 rounded-xl flex flex-col justify-between">
+    <div class="p-4 bg-slate-900 border border-cyan-500/50 rounded-xl flex flex-col justify-between">
       <div>
-        <i class="fa-solid fa-square-poll-vertical text-emerald-700 text-2xl mb-2"></i>
-        <h4 class="font-bold text-slate-900 text-sm">7. Official Examination Result</h4>
-        <p class="text-xs text-slate-600 mt-1">Score: <strong class="text-emerald-950 font-bold font-mono">${cand.marks || 0}/100</strong></p>
-        <p class="text-xs text-amber-800 font-semibold mt-0.5">Award: ${cand.prize || 'Participant'}</p>
+        <i class="fa-solid fa-square-poll-vertical text-cyan-400 text-2xl mb-2"></i>
+        <h4 class="font-bold text-white text-sm">7. Official Examination Result</h4>
+        <p class="text-xs text-slate-300 mt-1">Score: <strong class="text-cyan-300 font-bold font-mono">${cand.marks || 0}/100</strong></p>
+        <p class="text-xs text-amber-400 font-semibold mt-0.5">Award: ${cand.prize || 'Participant'}</p>
       </div>
-      <span class="text-[10px] text-emerald-800 font-bold mt-2">Released by Central Board</span>
+      <span class="text-[10px] text-cyan-400 font-bold mt-2">Released by Central Board</span>
     </div>
   ` : `
-    <div class="p-4 bg-slate-50 border rounded-xl flex flex-col justify-between">
+    <div class="p-4 bg-slate-900/60 border border-slate-800 rounded-xl flex flex-col justify-between">
       <div>
-        <i class="fa-solid fa-hourglass-half text-amber-600 text-2xl mb-2"></i>
-        <h4 class="font-bold text-slate-900 text-sm">7. Examination Result</h4>
-        <p class="text-xs text-slate-500 mt-1">Verification Status: <span class="font-bold text-slate-700">${cand.resultVerified ? 'Verified by Faculty' : 'Under Evaluation'}</span></p>
-        <p class="text-xs text-amber-800 font-semibold mt-0.5">Awaiting 1-Click Release by Admin</p>
+        <i class="fa-solid fa-hourglass-half text-amber-400 text-2xl mb-2"></i>
+        <h4 class="font-bold text-slate-200 text-sm">7. Examination Result</h4>
+        <p class="text-xs text-slate-400 mt-1">Verification Status: <span class="font-bold text-slate-300">${cand.resultVerified ? 'Verified by Faculty' : 'Under Evaluation'}</span></p>
+        <p class="text-xs text-amber-400 font-semibold mt-0.5">Awaiting 1-Click Release by Admin</p>
       </div>
-      <span class="text-[10px] text-slate-400 font-semibold mt-2">Official Release Pending</span>
+      <span class="text-[10px] text-slate-500 font-semibold mt-2">Official Release Pending</span>
     </div>
   `;
 
   container.innerHTML = `
-    <div class="p-4 bg-amber-50 border border-amber-300 rounded-xl flex flex-col justify-between">
+    <div class="p-4 bg-slate-900 border border-amber-500/40 rounded-xl flex flex-col justify-between">
       <div>
-        <i class="fa-solid fa-certificate text-amber-700 text-2xl mb-2"></i>
-        <h4 class="font-bold text-slate-900 text-sm">1. Islamic Participation Certificate</h4>
-        <p class="text-xs text-slate-600 mt-1">Official certificate with Arabic Hadith, candidate particulars & official Madarsa seal.</p>
+        <i class="fa-solid fa-certificate text-amber-400 text-2xl mb-2"></i>
+        <h4 class="font-bold text-white text-sm">1. Islamic Participation Certificate</h4>
+        <p class="text-xs text-slate-300 mt-1">Official certificate with Arabic Hadith, candidate particulars & seal.</p>
       </div>
-      <button onclick="generateParticipationCertificate('${cand.ticketNo}')" class="mt-3 bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 rounded text-xs shadow">
+      <button onclick="generateParticipationCertificate('${cand.ticketNo}')" class="mt-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-2 rounded-lg text-xs shadow">
         Generate Certificate
       </button>
     </div>
 
-    <div class="p-4 bg-emerald-50 border border-emerald-300 rounded-xl flex flex-col justify-between">
+    <div class="p-4 bg-slate-900 border border-cyan-500/40 rounded-xl flex flex-col justify-between">
       <div>
-        <i class="fa-solid fa-id-badge text-emerald-800 text-2xl mb-2"></i>
-        <h4 class="font-bold text-slate-900 text-sm">2. Official Hall Ticket Admit Card</h4>
-        <p class="text-xs text-slate-600 mt-1">Allocated Desk: <strong class="text-emerald-900 font-mono">${cand.seat || 'Assigned by Gate Incharge'}</strong></p>
+        <i class="fa-solid fa-id-badge text-cyan-400 text-2xl mb-2"></i>
+        <h4 class="font-bold text-white text-sm">2. Official Hall Ticket Admit Card</h4>
+        <p class="text-xs text-slate-300 mt-1">Allocated Desk: <strong class="text-cyan-300 font-mono">${cand.seat || 'Assigned by Gate Incharge'}</strong></p>
       </div>
-      <button onclick="displayHallTicket(getStudent('${cand.ticketNo}'))" class="mt-3 bg-emerald-950 hover:bg-emerald-900 text-amber-300 font-bold py-2 rounded text-xs shadow">
+      <button onclick="displayHallTicket(getStudent('${cand.ticketNo}'))" class="mt-3 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black py-2 rounded-lg text-xs shadow">
         View Admit Card
       </button>
     </div>
 
-    <div class="p-4 bg-purple-50 border border-purple-300 rounded-xl flex flex-col justify-between">
+    <div class="p-4 bg-slate-900 border border-purple-500/40 rounded-xl flex flex-col justify-between">
       <div>
-        <i class="fa-solid fa-table-cells text-purple-800 text-2xl mb-2"></i>
-        <h4 class="font-bold text-slate-900 text-sm">3. Standard Examination OMR Sheet</h4>
-        <p class="text-xs text-slate-600 mt-1">Pre-filled bio grid, roll bubbling matrix & 100-question answer response sheet.</p>
+        <i class="fa-solid fa-table-cells text-purple-400 text-2xl mb-2"></i>
+        <h4 class="font-bold text-white text-sm">3. Standard Examination OMR Sheet</h4>
+        <p class="text-xs text-slate-300 mt-1">Pre-filled bio grid, roll bubbling matrix & 100-question response sheet.</p>
       </div>
-      <button onclick="generateSingleOMR('${cand.ticketNo}')" class="mt-3 bg-purple-900 hover:bg-purple-800 text-white font-bold py-2 rounded text-xs shadow">
+      <button onclick="generateSingleOMR('${cand.ticketNo}')" class="mt-3 bg-purple-600 hover:bg-purple-500 text-white font-black py-2 rounded-lg text-xs shadow">
         Download My OMR Sheet
       </button>
     </div>
 
-    <div class="p-4 bg-blue-50 border border-blue-300 rounded-xl flex flex-col justify-between">
+    <div class="p-4 bg-slate-900 border border-cyan-500/40 rounded-xl flex flex-col justify-between">
       <div>
-        <i class="fa-solid fa-location-dot text-blue-700 text-2xl mb-2"></i>
-        <h4 class="font-bold text-slate-900 text-sm">4. Seating Coordinate Finder</h4>
-        <p class="text-xs text-slate-600 mt-1">Verify assigned row and aisle desk coordinates in Theater Mode.</p>
+        <i class="fa-solid fa-location-dot text-cyan-400 text-2xl mb-2"></i>
+        <h4 class="font-bold text-white text-sm">4. Seating Coordinate Finder</h4>
+        <p class="text-xs text-slate-300 mt-1">Verify assigned row and aisle desk coordinates in Theater Mode.</p>
       </div>
-      <button onclick="alert('Your Desk Location: ' + '${cand.seat || 'Pending Allotment by Admin'}')" class="mt-3 bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 rounded text-xs">
+      <button onclick="alert('Your Desk Location: ' + '${cand.seat || 'Pending Allotment by Admin'}')" class="mt-3 bg-sky-600 hover:bg-sky-500 text-white font-black py-2 rounded-lg text-xs">
         Locate Desk
       </button>
     </div>
 
-    <div class="p-4 bg-slate-50 border rounded-xl flex flex-col justify-between">
+    <div class="p-4 bg-slate-900 border border-slate-700 rounded-xl flex flex-col justify-between">
       <div>
-        <i class="fa-solid fa-book-open text-emerald-900 text-2xl mb-2"></i>
-        <h4 class="font-bold text-slate-900 text-sm">5. Seerat Reference Hub</h4>
-        <p class="text-xs text-slate-600 mt-1">Comprehensive biography, lineage, and exam study modules in 3 languages.</p>
+        <i class="fa-solid fa-book-open text-cyan-400 text-2xl mb-2"></i>
+        <h4 class="font-bold text-white text-sm">5. Seerat Reference Hub</h4>
+        <p class="text-xs text-slate-300 mt-1">Comprehensive biography, lineage, and exam study modules in 3 languages.</p>
       </div>
-      <button onclick="navigateTab('seerat-hub')" class="mt-3 bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 rounded text-xs">
+      <button onclick="navigateTab('seerat-hub')" class="mt-3 bg-slate-800 hover:bg-slate-700 text-white font-black py-2 rounded-lg text-xs">
         Study Hub
       </button>
     </div>
 
-    <div class="p-4 bg-slate-50 border rounded-xl flex flex-col justify-between">
+    <div class="p-4 bg-slate-900 border border-slate-700 rounded-xl flex flex-col justify-between">
       <div>
-        <i class="fa-solid fa-file-pdf text-red-600 text-2xl mb-2"></i>
-        <h4 class="font-bold text-slate-900 text-sm">6. Model Papers & Pattern</h4>
-        <p class="text-xs text-slate-600 mt-1">Download official model question papers & Drive study links.</p>
+        <i class="fa-solid fa-file-pdf text-rose-400 text-2xl mb-2"></i>
+        <h4 class="font-bold text-white text-sm">6. Model Papers & Pattern</h4>
+        <p class="text-xs text-slate-300 mt-1">Download official model question papers & Drive study links.</p>
       </div>
-      <button onclick="navigateTab('model-papers')" class="mt-3 bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 rounded text-xs">
+      <button onclick="navigateTab('model-papers')" class="mt-3 bg-slate-800 hover:bg-slate-700 text-white font-black py-2 rounded-lg text-xs">
         Download Papers
       </button>
     </div>
 
     ${resultsCardHTML}
 
-    <div class="p-4 bg-slate-50 border rounded-xl flex flex-col justify-between">
+    <div class="p-4 bg-slate-900 border border-slate-700 rounded-xl flex flex-col justify-between">
       <div>
-        <i class="fa-solid fa-user-check text-indigo-700 text-2xl mb-2"></i>
-        <h4 class="font-bold text-slate-900 text-sm">8. Live Attendance Status</h4>
-        <p class="text-xs text-slate-600 mt-1">Status: <span class="font-bold text-emerald-800">${cand.attendance || 'Pending Marking'}</span></p>
+        <i class="fa-solid fa-user-check text-indigo-400 text-2xl mb-2"></i>
+        <h4 class="font-bold text-white text-sm">8. Live Attendance Status</h4>
+        <p class="text-xs text-slate-300 mt-1">Status: <span class="font-bold text-cyan-300">${cand.attendance || 'Pending Marking'}</span></p>
       </div>
       <span class="text-[11px] text-slate-400 font-semibold mt-3">Verified by Hall Invigilators</span>
     </div>
 
-    <div class="p-4 bg-slate-50 border rounded-xl flex flex-col justify-between">
+    <div class="p-4 bg-slate-900 border border-slate-700 rounded-xl flex flex-col justify-between">
       <div>
-        <i class="fa-solid fa-comments text-teal-700 text-2xl mb-2"></i>
-        <h4 class="font-bold text-slate-900 text-sm">9. Support Helpdesk</h4>
-        <p class="text-xs text-slate-600 mt-1">Direct inquiries dispatched to Mosque Committee with WhatsApp & Email replies.</p>
+        <i class="fa-solid fa-comments text-teal-400 text-2xl mb-2"></i>
+        <h4 class="font-bold text-white text-sm">9. Support Helpdesk</h4>
+        <p class="text-xs text-slate-300 mt-1">Direct inquiries dispatched to Mosque Committee with WhatsApp & Email replies.</p>
       </div>
-      <button onclick="navigateTab('feedback')" class="mt-3 bg-teal-800 hover:bg-teal-900 text-white font-bold py-2 rounded text-xs">
+      <button onclick="navigateTab('feedback')" class="mt-3 bg-teal-600 hover:bg-teal-500 text-white font-black py-2 rounded-lg text-xs">
         Submit Query
       </button>
     </div>
 
-    <div class="p-4 bg-slate-50 border rounded-xl flex flex-col justify-between">
+    <div class="p-4 bg-slate-900 border border-slate-700 rounded-xl flex flex-col justify-between">
       <div>
-        <i class="fa-solid fa-file-contract text-slate-700 text-2xl mb-2"></i>
-        <h4 class="font-bold text-slate-900 text-sm">10. Verified Application Dossier</h4>
-        <p class="text-xs text-slate-600 mt-1">Formal enrollment application with DOB and verified identity proof record.</p>
+        <i class="fa-solid fa-file-contract text-slate-400 text-2xl mb-2"></i>
+        <h4 class="font-bold text-white text-sm">10. Verified Application Dossier</h4>
+        <p class="text-xs text-slate-300 mt-1">Formal enrollment application with DOB and verified identity proof record.</p>
       </div>
-      <button onclick="displayApplicationForm(getStudent('${cand.ticketNo}'))" class="mt-3 bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 rounded text-xs">
+      <button onclick="displayApplicationForm(getStudent('${cand.ticketNo}'))" class="mt-3 bg-slate-800 hover:bg-slate-700 text-white font-black py-2 rounded-lg text-xs">
         View Dossier
       </button>
     </div>
@@ -694,21 +715,21 @@ function renderFacultyAttendanceTable() {
   }
 
   tbody.innerHTML = students.map(function(s, idx) {
-    return '<tr class="hover:bg-slate-50 text-xs">' +
-      '<td class="p-2.5 font-mono font-bold text-red-600">' + s.ticketNo + '</td>' +
-      '<td class="p-2.5 font-semibold text-slate-900">' + s.name + ' (' + s.category + ')</td>' +
-      '<td class="p-2.5 font-bold text-emerald-800">' + (s.seat || 'Unassigned') + '</td>' +
+    return '<tr class="hover:bg-slate-800/50 text-xs">' +
+      '<td class="p-2.5 font-mono font-bold text-rose-400">' + s.ticketNo + '</td>' +
+      '<td class="p-2.5 font-semibold text-white">' + s.name + ' (' + s.category + ')</td>' +
+      '<td class="p-2.5 font-bold text-cyan-400">' + (s.seat || 'Unassigned') + '</td>' +
       '<td class="p-2.5">' +
-        '<select onchange="updateAttendance(' + idx + ', this.value)" class="border rounded p-1 text-xs font-bold ' +
-          (s.attendance === 'Present' ? 'text-emerald-700 bg-emerald-50 border-emerald-300' : s.attendance === 'Absent' ? 'text-red-700 bg-red-50 border-red-300' : 'text-amber-700 bg-amber-50 border-amber-300') + '">' +
+        '<select onchange="updateAttendance(' + idx + ', this.value)" class="bg-slate-900 border border-cyan-500/40 rounded p-1 text-xs font-bold ' +
+          (s.attendance === 'Present' ? 'text-emerald-400' : s.attendance === 'Absent' ? 'text-rose-400' : 'text-amber-400') + '">' +
           '<option value="Present" ' + (s.attendance === 'Present' ? 'selected' : '') + '>Present</option>' +
           '<option value="Absent" ' + (s.attendance === 'Absent' ? 'selected' : '') + '>Absent</option>' +
           '<option value="Not Interested" ' + (s.attendance === 'Not Interested' ? 'selected' : '') + '>Not Interested</option>' +
         '</select>' +
       '</td>' +
       '<td class="p-2.5 space-x-1 text-center">' +
-        '<button onclick="generateSingleOMR(\'' + s.ticketNo + '\')" class="bg-purple-900 text-white px-2 py-1 rounded text-[10px] font-bold"><i class="fa-solid fa-table-cells mr-1"></i> OMR</button>' +
-        '<button onclick="facultyVerifyResult(' + idx + ')" class="px-2 py-1 rounded text-[10px] font-bold ' + (s.resultVerified ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-700') + '">' +
+        '<button onclick="generateSingleOMR(\'' + s.ticketNo + '\')" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 px-2 py-1 rounded text-[10px] font-black"><i class="fa-solid fa-table-cells mr-1"></i> OMR</button>' +
+        '<button onclick="facultyVerifyResult(' + idx + ')" class="px-2 py-1 rounded text-[10px] font-bold ' + (s.resultVerified ? 'bg-emerald-900/60 text-emerald-300 border border-emerald-500/40' : 'bg-slate-800 text-slate-300 border border-slate-700') + '">' +
           (s.resultVerified ? '<i class="fa-solid fa-check mr-1"></i> Verified' : 'Verify Result') +
         '</button>' +
       '</td>' +
@@ -740,7 +761,7 @@ function renderManagementDashboard() {
   var resBtn = document.getElementById('btn-toggle-results-release');
   if (resBtn) {
     resBtn.innerText = config.resultsPublished ? 'Results Released Globally (Click to Lock)' : '1-Click: Release Results Globally';
-    resBtn.className = config.resultsPublished ? 'bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded text-xs shadow' : 'bg-amber-600 hover:bg-amber-700 text-white font-bold px-3 py-1.5 rounded text-xs shadow';
+    resBtn.className = config.resultsPublished ? 'bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-black px-3 py-2 rounded-lg text-xs shadow' : 'bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-3 py-2 rounded-lg text-xs shadow';
   }
 }
 
@@ -779,7 +800,7 @@ window.exportStudentsToExcel = function() {
 
 window.backupDatabaseToJSON = function() {
   var backupData = {
-    version: '5.0',
+    version: '6.0',
     exportDate: new Date().toISOString(),
     config: config,
     students: students,
@@ -1013,7 +1034,7 @@ window.renderDynamicSeatingMatrix = function() {
   if (layout === 'theater') {
     html += `
       <div class="mb-4 text-center">
-        <div class="w-3/4 mx-auto bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 text-amber-300 py-1.5 rounded-t-xl text-[10px] font-black uppercase tracking-widest shadow border-b-2 border-amber-500">
+        <div class="w-3/4 mx-auto bg-gradient-to-r from-slate-900 via-cyan-950 to-slate-900 text-cyan-300 py-2 rounded-t-xl text-[10px] font-black uppercase tracking-widest shadow border-b-2 border-cyan-400">
           <i class="fa-solid fa-chalkboard mr-1.5"></i> CINEMA THEATER STAGE & CENTRAL SCREEN AREA
         </div>
       </div>
@@ -1023,27 +1044,27 @@ window.renderDynamicSeatingMatrix = function() {
   html += '<div class="space-y-2">';
 
   for (var r = 1; r <= rows; r++) {
-    html += '<div class="flex items-center gap-1.5 p-1.5 bg-slate-50 border rounded text-xs overflow-x-auto justify-center">' +
-      '<span class="w-12 font-mono font-bold text-slate-500 text-center">R' + r + '</span>';
+    html += '<div class="flex items-center gap-1.5 p-1.5 bg-slate-900/80 border border-slate-800 rounded text-xs overflow-x-auto justify-center">' +
+      '<span class="w-12 font-mono font-bold text-cyan-400 text-center">R' + r + '</span>';
 
     for (var c = 0; c < cols; c++) {
       var seatLabel = 'R' + r + '-' + alphabet[c];
 
       if (layout === 'theater') {
-        if (c === 4) html += '<span class="px-1.5 py-0.5 text-[8px] bg-amber-100 text-amber-800 font-bold rounded">AISLE 1</span>';
-        if (c === 10) html += '<span class="px-1.5 py-0.5 text-[8px] bg-amber-100 text-amber-800 font-bold rounded">AISLE 2</span>';
+        if (c === 4) html += '<span class="px-1.5 py-0.5 text-[8px] bg-cyan-950 text-cyan-300 border border-cyan-500/30 font-bold rounded">AISLE 1</span>';
+        if (c === 10) html += '<span class="px-1.5 py-0.5 text-[8px] bg-cyan-950 text-cyan-300 border border-cyan-500/30 font-bold rounded">AISLE 2</span>';
       } else if ((layout === '2x2' && c === 2) || (layout === '3x3' && c === 3) || (layout === '4x4' && c === 4) || (layout === 'nxn' && c === Math.floor(cols / 2))) {
-        html += '<span class="px-1.5 py-0.5 text-[8px] bg-amber-100 text-amber-800 font-bold rounded">AISLE</span>';
+        html += '<span class="px-1.5 py-0.5 text-[8px] bg-cyan-950 text-cyan-300 border border-cyan-500/30 font-bold rounded">AISLE</span>';
       }
 
       var occ = students.find(function(s) { return s.seat && s.seat.indexOf(seatLabel) !== -1; });
       if (occ) {
         var isBoy = occ.gender === 'M';
-        html += '<button onclick="openSeatCandidateAssignModal(\'' + seatLabel + '\')" class="px-1.5 py-1 rounded text-[10px] font-bold border truncate w-16 text-center ' + (isBoy ? 'bg-blue-100 text-blue-900 border-blue-400' : 'bg-pink-100 text-pink-900 border-pink-400') + '" title="Assigned to ' + occ.name + ' (' + occ.ticketNo + ')">' +
+        html += '<button onclick="openSeatCandidateAssignModal(\'' + seatLabel + '\')" class="px-1.5 py-1 rounded text-[10px] font-bold border truncate w-16 text-center ' + (isBoy ? 'bg-sky-950 text-sky-200 border-sky-400' : 'bg-pink-950 text-pink-200 border-pink-400') + '" title="Assigned to ' + occ.name + ' (' + occ.ticketNo + ')">' +
           seatLabel + ' (' + (isBoy ? 'B' : 'G') + ')' +
         '</button>';
       } else {
-        html += '<button onclick="openSeatCandidateAssignModal(\'' + seatLabel + '\')" class="px-1.5 py-1 rounded text-[10px] border border-dashed border-slate-300 bg-white hover:border-emerald-700 text-slate-400 w-16 text-center" title="Click to manually assign seat">' +
+        html += '<button onclick="openSeatCandidateAssignModal(\'' + seatLabel + '\')" class="px-1.5 py-1 rounded text-[10px] border border-dashed border-slate-700 bg-slate-950/60 hover:border-cyan-400 text-slate-400 w-16 text-center" title="Click to manually assign seat">' +
           seatLabel +
         '</button>';
       }
@@ -1067,10 +1088,10 @@ window.openSeatCandidateAssignModal = function(seatCode) {
   var currentOcc = students.find(function(s) { return s.seat && s.seat.indexOf(seatCode) !== -1; });
   var infoBox = document.getElementById('seat-occupied-info');
   if (currentOcc) {
-    infoBox.innerHTML = '<span class="text-amber-800 font-bold">Currently Occupied: ' + currentOcc.name + ' (' + currentOcc.ticketNo + ')</span>';
+    infoBox.innerHTML = '<span class="text-amber-400 font-bold">Currently Occupied: ' + currentOcc.name + ' (' + currentOcc.ticketNo + ')</span>';
     document.getElementById('btn-seat-unassign').classList.remove('hidden');
   } else {
-    infoBox.innerHTML = '<span class="text-emerald-700 font-bold">Status: Seat is Open / Vacant</span>';
+    infoBox.innerHTML = '<span class="text-cyan-400 font-bold">Status: Seat is Open / Vacant</span>';
     document.getElementById('btn-seat-unassign').classList.add('hidden');
   }
 
@@ -1161,20 +1182,20 @@ function renderFacultyApprovalQueue() {
   }
 
   tbody.innerHTML = faculties.map(function(f, idx) {
-    var statusClass = f.status === 'Approved' ? 'bg-emerald-100 text-emerald-800' : f.status === 'Denied' || f.status === 'Blocked' ? 'bg-red-100 text-red-800' : 'bg-amber-100 text-amber-800';
+    var statusClass = f.status === 'Approved' ? 'bg-emerald-950 text-emerald-300 border border-emerald-500/40' : f.status === 'Denied' || f.status === 'Blocked' ? 'bg-rose-950 text-rose-300 border border-rose-500/40' : 'bg-amber-950 text-amber-300 border border-amber-500/40';
 
-    return '<tr class="hover:bg-slate-50 text-xs">' +
-      '<td class="p-2.5 font-bold text-slate-900">' + f.name + '</td>' +
-      '<td class="p-2.5">' + f.dept + '</td>' +
-      '<td class="p-2.5 font-mono">' + (f.username || f.phone) + '</td>' +
-      '<td class="p-2.5 font-mono">' + f.password + '</td>' +
+    return '<tr class="hover:bg-slate-800/50 text-xs">' +
+      '<td class="p-2.5 font-bold text-white">' + f.name + '</td>' +
+      '<td class="p-2.5 text-slate-300">' + f.dept + '</td>' +
+      '<td class="p-2.5 font-mono text-cyan-400">' + (f.username || f.phone) + '</td>' +
+      '<td class="p-2.5 font-mono text-slate-400">' + f.password + '</td>' +
       '<td class="p-2.5"><span class="px-2 py-0.5 rounded text-[10px] font-bold ' + statusClass + '">' + f.status + '</span></td>' +
       '<td class="p-2.5 space-x-1 text-center">' +
-        (f.status !== 'Approved' ? '<button onclick="setFacultyStatus(' + idx + ', \'Approved\')" class="bg-emerald-800 hover:bg-emerald-900 text-white px-2 py-0.5 rounded text-[10px] font-bold shadow">Approve</button>' : '') +
-        (f.status !== 'Denied' && f.status !== 'Blocked' ? '<button onclick="setFacultyStatus(' + idx + ', \'Denied\')" class="bg-red-600 hover:bg-red-700 text-white px-2 py-0.5 rounded text-[10px] font-bold shadow">Deny</button>' : '') +
-        (f.status === 'Approved' ? '<button onclick="setFacultyStatus(' + idx + ', \'Blocked\')" class="bg-amber-600 hover:bg-amber-700 text-white px-2 py-0.5 rounded text-[10px] font-bold shadow">Revoke Access</button>' : '') +
-        '<button onclick="openEditFacultyModal(' + idx + ')" class="text-blue-600 font-bold hover:underline ml-1">Edit</button>' +
-        (session.user.role === 'super_admin' ? '<button onclick="removeFaculty(' + idx + ')" class="text-slate-500 hover:text-red-700 text-[11px] font-bold ml-1">Del</button>' : '') +
+        (f.status !== 'Approved' ? '<button onclick="setFacultyStatus(' + idx + ', \'Approved\')" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 px-2 py-0.5 rounded text-[10px] font-black shadow">Approve</button>' : '') +
+        (f.status !== 'Denied' && f.status !== 'Blocked' ? '<button onclick="setFacultyStatus(' + idx + ', \'Denied\')" class="bg-rose-600 hover:bg-rose-500 text-white px-2 py-0.5 rounded text-[10px] font-bold shadow">Deny</button>' : '') +
+        (f.status === 'Approved' ? '<button onclick="setFacultyStatus(' + idx + ', \'Blocked\')" class="bg-amber-600 hover:bg-amber-500 text-slate-950 px-2 py-0.5 rounded text-[10px] font-black shadow">Revoke Access</button>' : '') +
+        '<button onclick="openEditFacultyModal(' + idx + ')" class="text-cyan-400 font-bold hover:underline ml-1">Edit</button>' +
+        (session.user.role === 'super_admin' ? '<button onclick="removeFaculty(' + idx + ')" class="text-rose-400 hover:underline text-[11px] font-bold ml-1">Del</button>' : '') +
       '</td>' +
     '</tr>';
   }).join('');
@@ -1242,13 +1263,13 @@ window.switchRosterLayout = function(mode) {
   var gridWrap = document.getElementById('roster-grid-wrapper');
 
   if (mode === 'list') {
-    btnList.className = 'px-2 py-0.5 rounded font-bold bg-white text-emerald-950 shadow-sm';
-    btnGrid.className = 'px-2 py-0.5 rounded font-bold text-slate-600 hover:text-emerald-950';
+    btnList.className = 'px-2.5 py-1 rounded font-bold bg-cyan-500 text-slate-950 shadow-sm';
+    btnGrid.className = 'px-2.5 py-1 rounded font-bold text-slate-400 hover:text-white';
     listWrap.classList.remove('hidden');
     gridWrap.classList.add('hidden');
   } else {
-    btnGrid.className = 'px-2 py-0.5 rounded font-bold bg-white text-emerald-950 shadow-sm';
-    btnList.className = 'px-2 py-0.5 rounded font-bold text-slate-600 hover:text-emerald-950';
+    btnGrid.className = 'px-2.5 py-1 rounded font-bold bg-cyan-500 text-slate-950 shadow-sm';
+    btnList.className = 'px-2.5 py-1 rounded font-bold text-slate-400 hover:text-white';
     gridWrap.classList.remove('hidden');
     listWrap.classList.add('hidden');
   }
@@ -1268,40 +1289,40 @@ function renderManagementRoster() {
   }
 
   tbody.innerHTML = students.map(function(s, idx) {
-    var statusClass = s.status === 'Enrolled' ? 'bg-emerald-100 text-emerald-800' : s.status === 'Denied' || s.status === 'Blocked' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800';
+    var statusClass = s.status === 'Enrolled' ? 'bg-cyan-950 text-cyan-300 border border-cyan-500/40' : s.status === 'Denied' || s.status === 'Blocked' ? 'bg-rose-950 text-rose-300 border border-rose-500/40' : 'bg-sky-950 text-sky-300 border border-sky-500/40';
 
-    return '<tr class="hover:bg-slate-50 text-xs">' +
-      '<td class="p-2.5 font-mono font-bold text-red-600">' + s.ticketNo + '</td>' +
-      '<td class="p-2.5 font-semibold text-slate-900">' + s.name + '</td>' +
-      '<td class="p-2.5">' + s.father + '</td>' +
-      '<td class="p-2.5 font-bold text-emerald-800">' + (s.seat || 'Unassigned') + '</td>' +
-      '<td class="p-2.5 font-bold text-amber-800">' + (s.prize || 'None') + '</td>' +
+    return '<tr class="hover:bg-slate-800/50 text-xs">' +
+      '<td class="p-2.5 font-mono font-bold text-rose-400">' + s.ticketNo + '</td>' +
+      '<td class="p-2.5 font-semibold text-white">' + s.name + '</td>' +
+      '<td class="p-2.5 text-slate-300">' + s.father + '</td>' +
+      '<td class="p-2.5 font-bold text-cyan-400">' + (s.seat || 'Unassigned') + '</td>' +
+      '<td class="p-2.5 font-bold text-amber-400">' + (s.prize || 'None') + '</td>' +
       '<td class="p-2.5"><span class="px-2 py-0.5 rounded text-[10px] font-bold ' + statusClass + '">' + s.status + ' (' + (s.attendance || 'Pending') + ')</span></td>' +
       '<td class="p-2.5 text-center space-x-1">' +
-        '<button onclick="openEditCandidateModal(' + idx + ')" class="text-blue-600 hover:underline font-bold">Edit</button>' +
-        '<button onclick="generateSingleOMR(\'' + s.ticketNo + '\')" class="text-purple-700 hover:underline font-bold">OMR</button>' +
-        '<button onclick="generateParticipationCertificate(\'' + s.ticketNo + '\')" class="text-amber-700 hover:underline font-bold">Cert</button>' +
-        '<button onclick="displayHallTicket(students[' + idx + '])" class="text-emerald-700 hover:underline font-bold">Admit</button>' +
-        (session.user.role === 'super_admin' ? '<button onclick="deleteCandidate(' + idx + ')" class="text-red-600 hover:underline">Del</button>' : '') +
+        '<button onclick="openEditCandidateModal(' + idx + ')" class="text-cyan-400 hover:underline font-bold">Edit</button>' +
+        '<button onclick="generateSingleOMR(\'' + s.ticketNo + '\')" class="text-purple-400 hover:underline font-bold">OMR</button>' +
+        '<button onclick="generateParticipationCertificate(\'' + s.ticketNo + '\')" class="text-amber-400 hover:underline font-bold">Cert</button>' +
+        '<button onclick="displayHallTicket(students[' + idx + '])" class="text-emerald-400 hover:underline font-bold">Admit</button>' +
+        (session.user.role === 'super_admin' ? '<button onclick="deleteCandidate(' + idx + ')" class="text-rose-400 hover:underline">Del</button>' : '') +
       '</td>' +
     '</tr>';
   }).join('');
 
   gridWrap.innerHTML = students.map(function(s, idx) {
-    return '<div class="p-3.5 bg-white border rounded-xl shadow-sm space-y-2 text-xs">' +
+    return '<div class="p-3.5 bg-slate-900 border border-slate-800 rounded-xl shadow-sm space-y-2 text-xs">' +
       '<div class="flex justify-between items-center">' +
-        '<span class="font-mono font-bold text-red-600">' + s.ticketNo + '</span>' +
-        '<span class="px-2 py-0.5 rounded text-[10px] font-bold ' + (s.status === 'Blocked' || s.status === 'Denied' ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-800') + '">' + s.status + '</span>' +
+        '<span class="font-mono font-bold text-rose-400">' + s.ticketNo + '</span>' +
+        '<span class="px-2 py-0.5 rounded text-[10px] font-bold ' + (s.status === 'Blocked' || s.status === 'Denied' ? 'bg-rose-950 text-rose-300' : 'bg-cyan-950 text-cyan-300') + '">' + s.status + '</span>' +
       '</div>' +
-      '<h4 class="font-bold text-slate-900">' + s.name + '</h4>' +
-      '<p class="text-slate-500">Father: ' + s.father + ' | DOB: ' + (s.dob || 'N/A') + '</p>' +
-      '<p class="text-emerald-900 font-semibold">Seat: ' + (s.seat || 'Unassigned') + '</p>' +
-      '<p class="text-amber-800 font-bold">Prize: ' + (s.prize || 'None') + '</p>' +
-      '<div class="pt-2 border-t flex justify-end gap-2 text-[11px]">' +
-        '<button onclick="openEditCandidateModal(' + idx + ')" class="text-blue-600 font-bold hover:underline">Edit</button>' +
-        '<button onclick="generateSingleOMR(\'' + s.ticketNo + '\')" class="text-purple-700 font-bold hover:underline">OMR</button>' +
-        '<button onclick="generateParticipationCertificate(\'' + s.ticketNo + '\')" class="text-amber-700 font-bold hover:underline">Cert</button>' +
-        (session.user.role === 'super_admin' ? '<button onclick="deleteCandidate(' + idx + ')" class="text-red-600 hover:underline">Delete</button>' : '') +
+      '<h4 class="font-bold text-white">' + s.name + '</h4>' +
+      '<p class="text-slate-400">Father: ' + s.father + ' | DOB: ' + (s.dob || 'N/A') + '</p>' +
+      '<p class="text-cyan-300 font-semibold">Seat: ' + (s.seat || 'Unassigned') + '</p>' +
+      '<p class="text-amber-400 font-bold">Prize: ' + (s.prize || 'None') + '</p>' +
+      '<div class="pt-2 border-t border-slate-800 flex justify-end gap-2 text-[11px]">' +
+        '<button onclick="openEditCandidateModal(' + idx + ')" class="text-cyan-400 font-bold hover:underline">Edit</button>' +
+        '<button onclick="generateSingleOMR(\'' + s.ticketNo + '\')" class="text-purple-400 font-bold hover:underline">OMR</button>' +
+        '<button onclick="generateParticipationCertificate(\'' + s.ticketNo + '\')" class="text-amber-400 font-bold hover:underline">Cert</button>' +
+        (session.user.role === 'super_admin' ? '<button onclick="deleteCandidate(' + idx + ')" class="text-rose-400 hover:underline">Delete</button>' : '') +
       '</div>' +
     '</div>';
   }).join('');
@@ -1383,15 +1404,15 @@ function renderFeedbackManagement() {
     var waLink = 'https://wa.me/91' + cleanPhone + '?text=' + encodeURIComponent('Salam ' + fb.name + ', regarding your query at Shahi Masjid Seerat Portal: ');
     var mailLink = 'mailto:' + (fb.email || '') + '?subject=' + encodeURIComponent('Response: Seerat Competition Inquiry') + '&body=' + encodeURIComponent('Salam ' + fb.name + ',\n\nIn response to your inquiry: "' + fb.message + '"\n\n');
 
-    return '<tr class="hover:bg-slate-50 text-xs">' +
-      '<td class="p-2.5 font-bold text-slate-900">' + fb.name + '<br/><span class="text-[10px] text-slate-400">' + fb.date + '</span></td>' +
-      '<td class="p-2.5 text-slate-700">' + fb.message + '</td>' +
-      '<td class="p-2.5 font-mono">' + fb.phone + '</td>' +
+    return '<tr class="hover:bg-slate-800/50 text-xs">' +
+      '<td class="p-2.5 font-bold text-white">' + fb.name + '<br/><span class="text-[10px] text-slate-400">' + fb.date + '</span></td>' +
+      '<td class="p-2.5 text-slate-300">' + fb.message + '</td>' +
+      '<td class="p-2.5 font-mono text-cyan-400">' + fb.phone + '</td>' +
       '<td class="p-2.5 text-center space-x-2">' +
-        '<a href="' + waLink + '" target="_blank" class="inline-block bg-emerald-600 hover:bg-emerald-700 text-white px-2 py-1 rounded font-bold text-[10px]">' +
+        '<a href="' + waLink + '" target="_blank" class="inline-block bg-emerald-600 hover:bg-emerald-500 text-slate-950 px-2.5 py-1 rounded font-black text-[10px]">' +
           '<i class="fa-brands fa-whatsapp mr-1"></i> WhatsApp' +
         '</a>' +
-        '<a href="' + mailLink + '" class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded font-bold text-[10px]">' +
+        '<a href="' + mailLink + '" class="inline-block bg-sky-600 hover:bg-sky-500 text-white px-2.5 py-1 rounded font-bold text-[10px]">' +
           '<i class="fa-solid fa-envelope mr-1"></i> Email' +
         '</a>' +
       '</td>' +
@@ -1673,7 +1694,7 @@ window.pullAllApplicationForms = function() {
     return '<div class="' + pb + ' p-4 mb-4 border-b">' +
       '<h3 class="font-bold text-sm text-emerald-950">' + cand.name + ' (' + cand.ticketNo + ')</h3>' +
       '<p class="text-xs">Father: ' + cand.father + ' | DOB: ' + cand.dob + ' | Seat: ' + cand.seat + '</p>' +
-      '<p class="text-xs font-bold text-amber-800">Status: ' + cand.status + ' | Attendance: ' + cand.attendance + '</p>
+      '<p class="text-xs font-bold text-amber-800">Status: ' + cand.status + ' | Attendance: ' + cand.attendance + '</p>' +
     '</div>';
   }).join('');
   window.navigateTab('printable');
@@ -1716,8 +1737,8 @@ window.handlePublicResultLookup = function() {
   if (!config.resultsPublished) {
     resBox.classList.remove('hidden');
     resBox.innerHTML = `
-      <div class="p-4 bg-amber-50 border border-amber-300 rounded-lg text-xs text-amber-900 font-medium">
-        <i class="fa-solid fa-lock mr-1.5 text-amber-600"></i> The official results have not been released publicly by the Board yet.
+      <div class="p-4 bg-amber-950/60 border border-amber-500/50 rounded-lg text-xs text-amber-300 font-medium">
+        <i class="fa-solid fa-lock mr-1.5 text-amber-400"></i> The official results have not been released publicly by the Board yet.
       </div>
     `;
     return;
@@ -1730,7 +1751,7 @@ window.handlePublicResultLookup = function() {
   if (!cand) {
     resBox.classList.remove('hidden');
     resBox.innerHTML = `
-      <div class="p-4 bg-red-50 border border-red-300 rounded-lg text-xs text-red-700 font-bold">
+      <div class="p-4 bg-rose-950/60 border border-rose-500/50 rounded-lg text-xs text-rose-300 font-bold">
         No candidate result record found matching "${query}".
       </div>
     `;
@@ -1739,18 +1760,18 @@ window.handlePublicResultLookup = function() {
 
   resBox.classList.remove('hidden');
   resBox.innerHTML = `
-    <div class="p-4 bg-white border border-emerald-300 rounded-xl shadow-sm text-xs space-y-2">
-      <div class="flex justify-between items-center border-b pb-2">
-        <h4 class="font-bold text-sm text-slate-900">${cand.name}</h4>
-        <span class="font-mono font-bold text-red-600">${cand.ticketNo}</span>
+    <div class="p-4 bg-slate-900 border border-cyan-500/50 rounded-xl shadow text-xs space-y-2">
+      <div class="flex justify-between items-center border-b border-cyan-900/60 pb-2">
+        <h4 class="font-bold text-sm text-white">${cand.name}</h4>
+        <span class="font-mono font-bold text-rose-400">${cand.ticketNo}</span>
       </div>
-      <p><strong>Father's Name:</strong> ${cand.father}</p>
-      <p><strong>Academic Stream:</strong> ${cand.category} (${cand.gender === 'M' ? 'Boys Wing' : 'Girls Wing'})</p>
-      <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded flex justify-between items-center">
-        <span>Score: <strong class="font-mono text-emerald-950 font-bold text-sm">${cand.marks || 0}/100</strong></span>
-        <span>Award: <strong class="text-amber-800 font-bold">${cand.prize || 'Participant'}</strong></span>
+      <p class="text-slate-300"><strong>Father's Name:</strong> ${cand.father}</p>
+      <p class="text-slate-300"><strong>Academic Stream:</strong> ${cand.category} (${cand.gender === 'M' ? 'Boys Wing' : 'Girls Wing'})</p>
+      <div class="p-2.5 bg-slate-950 border border-cyan-500/30 rounded flex justify-between items-center">
+        <span class="text-slate-300">Score: <strong class="font-mono text-cyan-300 font-bold text-sm">${cand.marks || 0}/100</strong></span>
+        <span class="text-slate-300">Award: <strong class="text-amber-400 font-bold">${cand.prize || 'Participant'}</strong></span>
       </div>
-      <p class="text-[10px] text-slate-500">Board Status: Verified & Released</p>
+      <p class="text-[10px] text-cyan-400 font-bold">Board Status: Verified & Released</p>
     </div>
   `;
 };
