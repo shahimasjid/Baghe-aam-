@@ -26,7 +26,7 @@ window.INITIAL_CONFIG = {
   },
   seatingConfig: {
     layoutType: "theater", // 'theater', '2x2', '3x3', '4x4', 'nxn'
-    rows: 20,
+    rows: 15,
     colsPerRow: 14 // 4 Left, 6 Center, 4 Right
   },
   prayers: [
@@ -75,11 +75,11 @@ for (var i = 19; i <= 48; i++) {
 
 window.INITIAL_STUDENTS = [];
 
-// Default Active Faculty Account
+// Default Faculty User
 window.INITIAL_FACULTIES = [
   {
     id: "FAC-101",
-    name: "Moulana Examination Supervisor",
+    name: "Moulana Exam Supervisor",
     username: "Faculty1",
     phone: "Faculty1",
     email: "faculty1@madarsa.org",
@@ -159,7 +159,7 @@ window.DataStore = {
     try {
       localStorage.setItem(key, JSON.stringify(value));
     } catch (e) {
-      console.error('Storage quota exceeded or error saving data:', e);
+      console.error('Storage error:', e);
     }
   }
 };
