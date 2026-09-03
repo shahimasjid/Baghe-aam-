@@ -1,4 +1,4 @@
-// app.js - Full Interactive Engine with Robust Entry Handling
+// app.js - Full Interactive Logic: Admin Faculty Creation, Instant WhatsApp/Email Dispatch, Ticker & Matrix Controls
 var config = window.DataStore.get('sm_config', window.INITIAL_CONFIG);
 var students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
 var prizes = window.DataStore.get('sm_prizes', window.INITIAL_PRIZES);
@@ -12,17 +12,16 @@ var prizeLayoutMode = 'grid';
 var rosterLayoutMode = 'list';
 var pendingSeatAssignmentCode = null;
 var sessionSeconds = 0;
+var lastRegisteredStudent = null;
 
-// FIXED: Enter Official Portal now seamlessly dismisses splash and enters the dashboard view
 window.dismissGreeting = function(targetDestination) {
   var overlay = document.getElementById('greeting-overlay');
   if (overlay) {
     overlay.classList.remove('flex');
     overlay.classList.add('hidden');
-    overlay.style.display = 'none'; // Force style-level hide
+    overlay.style.display = 'none';
   }
   
-  // Directly navigate to dashboard or requested view
   if (targetDestination) {
     navigateTab(targetDestination);
   } else {
@@ -126,6 +125,7 @@ function syncConfigUI() {
   setText('banner-venue-str', config.examVenue);
   setText('txt-juma-announcement', config.jumaLine);
   setText('topbar-poc', config.pocContact);
+  setText('live-ticker-text-display', config.tickerText || config.compDesc);
 
   var dignitaryBox = document.getElementById('dignitaries-display-box');
   if (dignitaryBox) {
@@ -157,6 +157,7 @@ function syncConfigUI() {
   setVal('cfg-poc', config.pocContact);
   setVal('cfg-masjid-contact', config.masjidContact);
   setVal('cfg-venue', config.examVenue);
+  setVal('cfg-ticker-text', config.tickerText || '');
   setVal('cfg-dignitary-patron', config.dignitaries.patron);
   setVal('cfg-dignitary-guest', config.dignitaries.chiefGuest || '');
 }
@@ -503,7 +504,7 @@ function executeAuthentication(id, pwd, roleHint) {
     }
   }
 
-  alert('Authentication Failed: Check credentials or complete your enrollment registration.');
+  alert('Authentication Failed: Check credentials or register if you are a new applicant.');
 }
 
 function refreshDashboardState() {
@@ -515,7 +516,6 @@ function refreshDashboardState() {
   var unauthPrompt = document.getElementById('dashboard-unauth-prompt');
   var authContent = document.getElementById('dashboard-authenticated-content');
 
-  // If not signed in, show sign-in prompt
   if (!isAuth) {
     if (unauthPrompt) unauthPrompt.classList.remove('hidden');
     if (authContent) authContent.classList.add('hidden');
@@ -681,6 +681,9 @@ function renderStudentProfileFeatures() {
   `;
 }
 
+// ----------------------------------------------------
+// FACULTY REGISTRATION & DIRECT ADMIN CREATION
+// ----------------------------------------------------
 window.handleFacultyRegister = function(e) {
   e.preventDefault();
   var name = document.getElementById('fac-reg-name').value.trim();
@@ -693,7 +696,7 @@ window.handleFacultyRegister = function(e) {
   faculties = window.DataStore.get('sm_faculties', window.INITIAL_FACULTIES);
 
   if (faculties.some(function(f) { return f.phone === phone || f.email === email; })) {
-    alert('A faculty application with this phone number or email already exists.');
+    alert('A faculty account with this phone or email already exists.');
     return;
   }
 
@@ -717,6 +720,47 @@ window.handleFacultyRegister = function(e) {
   document.getElementById('modal-faculty-reg-form').reset();
   toggleFacultyModalRegistration(false);
   window.closeModal('modal-auth');
+};
+
+// Admin directly creates approved faculty
+window.handleAdminCreateFaculty = function(e) {
+  e.preventDefault();
+  var name = document.getElementById('admin-fac-name').value.trim();
+  var username = document.getElementById('admin-fac-username').value.trim();
+  var phone = document.getElementById('admin-fac-phone').value.trim();
+  var email = document.getElementById('admin-fac-email').value.trim();
+  var pwd = document.getElementById('admin-fac-pwd').value.trim();
+  var dept = document.getElementById('admin-fac-dept').value;
+  var hall = document.getElementById('admin-fac-hall').value;
+
+  faculties = window.DataStore.get('sm_faculties', window.INITIAL_FACULTIES);
+
+  if (faculties.some(function(f) { return f.phone === phone || (f.username && f.username.toLowerCase() === username.toLowerCase()); })) {
+    alert('A faculty account with this phone or username already exists.');
+    return;
+  }
+
+  var newFac = {
+    id: "FAC-" + (faculties.length + 101),
+    name: name,
+    username: username,
+    phone: phone,
+    email: email,
+    password: pwd,
+    dept: dept,
+    assignedHall: hall,
+    status: "Approved", // Direct admin creation is immediately approved
+    role: "faculty",
+    registeredDate: new Date().toLocaleDateString('en-IN')
+  };
+
+  faculties.push(newFac);
+  window.DataStore.set('sm_faculties', faculties);
+  renderFacultyApprovalQueue();
+  refreshDashboardState();
+  window.closeModal('modal-admin-create-faculty');
+  document.getElementById('form-admin-create-faculty').reset();
+  alert('Faculty account created successfully with active credentials: ' + username + ' / ' + pwd);
 };
 
 function renderFacultyDashboard() {
@@ -821,7 +865,7 @@ window.exportStudentsToExcel = function() {
 
 window.backupDatabaseToJSON = function() {
   var backupData = {
-    version: '6.0',
+    version: '7.0',
     exportDate: new Date().toISOString(),
     config: config,
     students: students,
@@ -1449,12 +1493,13 @@ window.saveSuperAdminConfig = function() {
   config.pocContact = document.getElementById('cfg-poc').value.trim();
   config.masjidContact = document.getElementById('cfg-masjid-contact').value.trim();
   config.examVenue = document.getElementById('cfg-venue').value.trim();
+  config.tickerText = document.getElementById('cfg-ticker-text').value.trim();
   config.dignitaries.patron = document.getElementById('cfg-dignitary-patron').value.trim();
   config.dignitaries.chiefGuest = document.getElementById('cfg-dignitary-guest').value.trim();
 
   window.DataStore.set('sm_config', config);
   syncConfigUI();
-  alert('Configurations and Exam Timings saved globally across portal!');
+  alert('Configurations, Ticker, and Exam Timings saved globally across portal!');
 };
 
 window.generateParticipationCertificate = function(ticketNo) {
@@ -1622,9 +1667,53 @@ window.handleStudentRegister = function(e) {
   students.push(cand);
   window.DataStore.set('sm_students', students);
 
-  saveSession({ id: cand.ticketNo, name: cand.name, role: 'student', data: cand }, true);
-  alert('Enrollment Complete!\nAllotted Hall Ticket ID: ' + ticketNo + '\nAllocated Seat: ' + seat);
-  displayHallTicket(cand);
+  // Set as last registered student and open post-enrollment dispatch dialog
+  lastRegisteredStudent = cand;
+  document.getElementById('disp-student-name').innerText = cand.name;
+  document.getElementById('disp-student-ht').innerText = cand.ticketNo;
+  document.getElementById('disp-student-seat').innerText = cand.seat;
+  document.getElementById('disp-student-contact').innerText = cand.phone + ' | ' + cand.email;
+
+  window.openModal('modal-student-dispatch');
+};
+
+// 1-Click WhatsApp & Email Dispatchers
+window.dispatchCandidateViaWhatsApp = function() {
+  if (!lastRegisteredStudent) return;
+  var s = lastRegisteredStudent;
+  var msg = `*Assalamu Alaikum ${s.name}*,%0A%0AYour enrollment for the *3rd Seerat-un-Nabi Competition* is confirmed!%0A%0A*Hall Ticket ID:* ${s.ticketNo}%0A*Allocated Seat:* ${s.seat}%0A*Reporting Time:* ${config.prepTime}%0A*Exam Date:* ${config.examDate}%0A*Venue:* ${config.examVenue}%0A%0APlease download your official Admit Card and OMR Sheet from the portal:%0A${window.location.href}%0A%0A_Shahi Masjid Bagh-e-Aam & Online Madarsa Al Hamoomi_`;
+  
+  var cleanPhone = s.phone.replace(/[^0-9]/g, '');
+  if (!cleanPhone.startsWith('91') && cleanPhone.length === 10) cleanPhone = '91' + cleanPhone;
+  
+  window.open(`https://api.whatsapp.com/send?phone=${cleanPhone}&text=${msg}`, '_blank');
+};
+
+window.dispatchCandidateViaEmail = function() {
+  if (!lastRegisteredStudent) return;
+  var s = lastRegisteredStudent;
+  var subject = encodeURIComponent(`Enrollment Confirmed: 3rd Seerat-un-Nabi Competition - ${s.ticketNo}`);
+  var body = encodeURIComponent(`Assalamu Alaikum ${s.name},
+
+Your enrollment for the 3rd Seerat-un-Nabi Competition has been successfully confirmed.
+
+Candidate Details:
+------------------------------------------
+Hall Ticket Number: ${s.ticketNo}
+Candidate Name: ${s.name}
+Father's Name: ${s.father}
+Assigned Seat: ${s.seat}
+Reporting Time: ${config.prepTime}
+Exam Time: ${config.examTime}
+Date: ${config.examDate}
+Venue: ${config.examVenue}
+
+Please visit the central portal to download your official Hall Ticket, Standard OMR Sheet, and Islamic Participation Certificate:
+${window.location.href}
+
+Shahi Masjid Bagh-e-Aam & Online Madarsa Al Hamoomi`);
+
+  window.location.href = `mailto:${s.email || ''}?subject=${subject}&body=${body}`;
 };
 
 function buildHallTicketHTML(cand) {
