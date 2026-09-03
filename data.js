@@ -1,4 +1,4 @@
-// data.js - Configurations, 48 Prizes, Seerat Hub, Model Papers & Active State Models
+// data.js - Complete Configurations, 48 Prizes, Seerat Hub, Model Papers & Active State Models
 window.INITIAL_CONFIG = {
   masjidTitle: "SHAHI MASJID BAGH-E-AAM",
   masjidSub: "Under the Aegis of Online Madarsa Al Hamoomi for Islamic & Arabic Studies",
@@ -141,8 +141,8 @@ window.INITIAL_PAPERS = [
 ];
 
 window.INITIAL_NOTICES = [
-  { id: 1, title: "Portal Operations & Live Ticker Control Active", date: "System", desc: "Super Admins can edit live marquee ticker text, global exam timings, and portal details directly." },
-  { id: 2, title: "Direct Faculty Generation Online", date: "Staff", desc: "Administrators can directly issue pre-approved faculty accounts with custom passwords." }
+  { id: 1, title: "Cinema Theater Layout Matrix Active", date: "System", desc: "Interactive Left, Middle, and Right aisle theater seating plan with manual candidate assignment is live." },
+  { id: 2, title: "On-Behalf Student Enrollment Online", date: "Admissions", desc: "Admins and Faculty can directly enroll candidates and dispatch confirmation dossiers." }
 ];
 
 window.DataStore = {
