@@ -1,4 +1,4 @@
-// app.js - Full Interactive Logic: Admin Faculty Creation, Instant WhatsApp/Email Dispatch, Ticker & Matrix Controls
+// app.js - Single Auth Button, Full-Screen Greeting, Theater Wings (Left/Middle/Right) & On-Behalf Registration
 var config = window.DataStore.get('sm_config', window.INITIAL_CONFIG);
 var students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
 var prizes = window.DataStore.get('sm_prizes', window.INITIAL_PRIZES);
@@ -11,9 +11,11 @@ var session = getPersistentSession();
 var prizeLayoutMode = 'grid';
 var rosterLayoutMode = 'list';
 var pendingSeatAssignmentCode = null;
+var pendingSeatWing = 'Center Wing';
 var sessionSeconds = 0;
 var lastRegisteredStudent = null;
 
+// Clean full-screen greeting overlay dismissal
 window.dismissGreeting = function(targetDestination) {
   var overlay = document.getElementById('greeting-overlay');
   if (overlay) {
@@ -25,7 +27,7 @@ window.dismissGreeting = function(targetDestination) {
   if (targetDestination) {
     navigateTab(targetDestination);
   } else {
-    navigateTab('dashboard');
+    navigateTab('home');
   }
 };
 
@@ -384,15 +386,16 @@ window.handleSessionLogout = function() {
   window.navigateTab('home');
 };
 
+// Clean single authentication button in header
 function updateAuthUI() {
   var slot = document.getElementById('nav-auth-slot');
   if (!slot) return;
   if (session && session.user) {
-    slot.innerHTML = '<button onclick="navigateTab(\'dashboard\')" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black px-4 py-2 rounded-full shadow-lg shadow-cyan-500/20 text-xs flex items-center gap-1.5">' +
-      '<i class="fa-solid fa-key"></i> Dashboard (' + session.user.name.split(' ')[0] + ')' +
+    slot.innerHTML = '<button onclick="handleSessionLogout()" class="bg-rose-950 hover:bg-rose-900 text-rose-300 font-bold px-4 py-2 rounded-full border border-rose-500/40 shadow-lg text-xs flex items-center gap-1.5 transition">' +
+      '<i class="fa-solid fa-right-from-bracket"></i> Sign Out (' + session.user.name.split(' ')[0] + ')' +
     '</button>';
   } else {
-    slot.innerHTML = '<button onclick="openModal(\'modal-auth\')" class="bg-gradient-to-r from-sky-500 to-cyan-400 hover:from-sky-400 hover:to-cyan-300 text-slate-950 font-black px-5 py-2 rounded-full shadow-lg shadow-cyan-500/30 text-xs flex items-center gap-2">' +
+    slot.innerHTML = '<button onclick="openModal(\'modal-auth\')" class="bg-gradient-to-r from-sky-500 to-cyan-400 hover:from-sky-400 hover:to-cyan-300 text-slate-950 font-black px-5 py-2 rounded-full shadow-lg shadow-cyan-500/30 text-xs flex items-center gap-2 transition">' +
       '<i class="fa-solid fa-key"></i> Admin / Portal Access' +
     '</button>';
   }
@@ -617,7 +620,7 @@ function renderStudentProfileFeatures() {
       <div>
         <i class="fa-solid fa-location-dot text-cyan-400 text-2xl mb-2"></i>
         <h4 class="font-bold text-white text-sm">4. Seating Coordinate Finder</h4>
-        <p class="text-xs text-slate-300 mt-1">Verify assigned row and aisle desk coordinates in Theater Mode.</p>
+        <p class="text-xs text-slate-300 mt-1">Verify assigned row and wing coordinates in Theater Mode.</p>
       </div>
       <button onclick="alert('Your Desk Location: ' + '${cand.seat || 'Pending Allotment by Admin'}')" class="mt-3 bg-sky-600 hover:bg-sky-500 text-white font-black py-2 rounded-lg text-xs">
         Locate Desk
@@ -722,7 +725,6 @@ window.handleFacultyRegister = function(e) {
   window.closeModal('modal-auth');
 };
 
-// Admin directly creates approved faculty
 window.handleAdminCreateFaculty = function(e) {
   e.preventDefault();
   var name = document.getElementById('admin-fac-name').value.trim();
@@ -749,7 +751,7 @@ window.handleAdminCreateFaculty = function(e) {
     password: pwd,
     dept: dept,
     assignedHall: hall,
-    status: "Approved", // Direct admin creation is immediately approved
+    status: "Approved",
     role: "faculty",
     registeredDate: new Date().toLocaleDateString('en-IN')
   };
@@ -865,7 +867,7 @@ window.exportStudentsToExcel = function() {
 
 window.backupDatabaseToJSON = function() {
   var backupData = {
-    version: '7.0',
+    version: '8.0',
     exportDate: new Date().toISOString(),
     config: config,
     students: students,
@@ -1084,6 +1086,7 @@ window.changeSeatingLayoutType = function(type) {
   renderDynamicSeatingMatrix();
 };
 
+// Explicit theater wing mapping (Left Wing, Middle Wing, Right Wing)
 window.renderDynamicSeatingMatrix = function() {
   var container = document.getElementById('dynamic-seating-matrix-preview');
   if (!container) return;
@@ -1102,6 +1105,11 @@ window.renderDynamicSeatingMatrix = function() {
         <div class="w-3/4 mx-auto bg-gradient-to-r from-slate-900 via-cyan-950 to-slate-900 text-cyan-300 py-2 rounded-t-xl text-[10px] font-black uppercase tracking-widest shadow border-b-2 border-cyan-400">
           <i class="fa-solid fa-chalkboard mr-1.5"></i> CINEMA THEATER STAGE & CENTRAL SCREEN AREA
         </div>
+        <div class="flex justify-around text-[10px] text-cyan-400 font-bold py-1 bg-slate-950/60 border border-slate-800 rounded-b-lg">
+          <span>LEFT WING (Seats 1-4)</span>
+          <span class="text-amber-300">MIDDLE / CENTER WING (Seats 5-10)</span>
+          <span>RIGHT WING (Seats 11-14)</span>
+        </div>
       </div>
     `;
   }
@@ -1110,26 +1118,29 @@ window.renderDynamicSeatingMatrix = function() {
 
   for (var r = 1; r <= rows; r++) {
     html += '<div class="flex items-center gap-1.5 p-1.5 bg-slate-900/80 border border-slate-800 rounded text-xs overflow-x-auto justify-center">' +
-      '<span class="w-12 font-mono font-bold text-cyan-400 text-center">R' + r + '</span>';
+      '<span class="w-12 font-mono font-bold text-cyan-400 text-center">Row ' + r + '</span>';
 
     for (var c = 0; c < cols; c++) {
+      var seatNum = c + 1;
       var seatLabel = 'R' + r + '-' + alphabet[c];
+      var wingName = (c < 4) ? 'Left Wing' : (c < 10) ? 'Middle Wing' : 'Right Wing';
 
+      // Insert Aisle Separators
       if (layout === 'theater') {
-        if (c === 4) html += '<span class="px-1.5 py-0.5 text-[8px] bg-cyan-950 text-cyan-300 border border-cyan-500/30 font-bold rounded">AISLE 1</span>';
-        if (c === 10) html += '<span class="px-1.5 py-0.5 text-[8px] bg-cyan-950 text-cyan-300 border border-cyan-500/30 font-bold rounded">AISLE 2</span>';
+        if (c === 4) html += '<span class="px-2 py-0.5 text-[8px] bg-cyan-950 text-cyan-300 border border-cyan-500/30 font-bold rounded">AISLE 1</span>';
+        if (c === 10) html += '<span class="px-2 py-0.5 text-[8px] bg-cyan-950 text-cyan-300 border border-cyan-500/30 font-bold rounded">AISLE 2</span>';
       } else if ((layout === '2x2' && c === 2) || (layout === '3x3' && c === 3) || (layout === '4x4' && c === 4) || (layout === 'nxn' && c === Math.floor(cols / 2))) {
-        html += '<span class="px-1.5 py-0.5 text-[8px] bg-cyan-950 text-cyan-300 border border-cyan-500/30 font-bold rounded">AISLE</span>';
+        html += '<span class="px-2 py-0.5 text-[8px] bg-cyan-950 text-cyan-300 border border-cyan-500/30 font-bold rounded">AISLE</span>';
       }
 
       var occ = students.find(function(s) { return s.seat && s.seat.indexOf(seatLabel) !== -1; });
       if (occ) {
         var isBoy = occ.gender === 'M';
-        html += '<button onclick="openSeatCandidateAssignModal(\'' + seatLabel + '\')" class="px-1.5 py-1 rounded text-[10px] font-bold border truncate w-16 text-center ' + (isBoy ? 'bg-sky-950 text-sky-200 border-sky-400' : 'bg-pink-950 text-pink-200 border-pink-400') + '" title="Assigned to ' + occ.name + ' (' + occ.ticketNo + ')">' +
+        html += '<button onclick="openSeatCandidateAssignModal(\'' + seatLabel + '\', \'' + wingName + '\')" class="px-1.5 py-1 rounded text-[10px] font-bold border truncate w-16 text-center ' + (isBoy ? 'bg-sky-950 text-sky-200 border-sky-400' : 'bg-pink-950 text-pink-200 border-pink-400') + '" title="Assigned: ' + occ.name + ' (' + wingName + ')">' +
           seatLabel + ' (' + (isBoy ? 'B' : 'G') + ')' +
         '</button>';
       } else {
-        html += '<button onclick="openSeatCandidateAssignModal(\'' + seatLabel + '\')" class="px-1.5 py-1 rounded text-[10px] border border-dashed border-slate-700 bg-slate-950/60 hover:border-cyan-400 text-slate-400 w-16 text-center" title="Click to manually assign seat">' +
+        html += '<button onclick="openSeatCandidateAssignModal(\'' + seatLabel + '\', \'' + wingName + '\')" class="px-1.5 py-1 rounded text-[10px] border border-dashed border-slate-700 bg-slate-950/60 hover:border-cyan-400 text-slate-400 w-16 text-center" title="' + wingName + ' - Click to Assign">' +
           seatLabel +
         '</button>';
       }
@@ -1140,23 +1151,24 @@ window.renderDynamicSeatingMatrix = function() {
   container.innerHTML = html;
 };
 
-window.openSeatCandidateAssignModal = function(seatCode) {
+window.openSeatCandidateAssignModal = function(seatCode, wingName) {
   pendingSeatAssignmentCode = seatCode;
-  document.getElementById('modal-seat-code-display').innerText = seatCode;
+  pendingSeatWing = wingName || 'Center Wing';
+  document.getElementById('modal-seat-code-display').innerText = seatCode + ' (' + pendingSeatWing + ')';
   
   var select = document.getElementById('seat-candidate-select');
   select.innerHTML = '<option value="">-- Select Registered Student --</option>' +
     students.map(function(s) {
-      return '<option value="' + s.ticketNo + '">' + s.name + ' (' + s.ticketNo + ') - Seat: ' + (s.seat || 'Unassigned') + '</option>';
+      return '<option value="' + s.ticketNo + '">' + s.name + ' (' + s.ticketNo + ') - Current: ' + (s.seat || 'Unassigned') + '</option>';
     }).join('');
 
   var currentOcc = students.find(function(s) { return s.seat && s.seat.indexOf(seatCode) !== -1; });
   var infoBox = document.getElementById('seat-occupied-info');
   if (currentOcc) {
-    infoBox.innerHTML = '<span class="text-amber-400 font-bold">Currently Occupied: ' + currentOcc.name + ' (' + currentOcc.ticketNo + ')</span>';
+    infoBox.innerHTML = '<span class="text-amber-400 font-bold">Currently Occupied: ' + currentOcc.name + ' (' + currentOcc.ticketNo + ') in ' + pendingSeatWing + '</span>';
     document.getElementById('btn-seat-unassign').classList.remove('hidden');
   } else {
-    infoBox.innerHTML = '<span class="text-cyan-400 font-bold">Status: Seat is Open / Vacant</span>';
+    infoBox.innerHTML = '<span class="text-cyan-400 font-bold">Status: ' + pendingSeatWing + ' Seat is Open / Vacant</span>';
     document.getElementById('btn-seat-unassign').classList.add('hidden');
   }
 
@@ -1179,12 +1191,12 @@ window.saveManualSeatAssignment = function() {
     }
   });
 
-  cand.seat = hall + ' - ' + pendingSeatAssignmentCode;
+  cand.seat = hall + ' (' + pendingSeatWing + ') - ' + pendingSeatAssignmentCode;
   window.DataStore.set('sm_students', students);
   window.closeModal('modal-seat-assign');
   renderDynamicSeatingMatrix();
   renderManagementRoster();
-  alert('Assigned seat ' + pendingSeatAssignmentCode + ' to ' + cand.name);
+  alert('Assigned seat ' + pendingSeatAssignmentCode + ' in ' + pendingSeatWing + ' to ' + cand.name);
 };
 
 window.unassignCurrentSeat = function() {
@@ -1211,12 +1223,16 @@ window.autoGenerateDynamicSeating = function() {
     if (s.gender === 'M') {
       var rM = Math.floor(mIdx / cols) + 1;
       var cM = alphabet[mIdx % cols];
-      s.seat = 'Hall A (Boys Wing) - R' + rM + '-' + cM;
+      var cIdx = mIdx % cols;
+      var wing = (cIdx < 4) ? 'Left Wing' : (cIdx < 10) ? 'Middle Wing' : 'Right Wing';
+      s.seat = 'Hall A (Boys Wing - ' + wing + ') - R' + rM + '-' + cM;
       mIdx++;
     } else {
       var rF = Math.floor(fIdx / cols) + 1;
       var cF = alphabet[fIdx % cols];
-      s.seat = 'Hall B (Girls Wing) - R' + rF + '-' + cF;
+      var cIdxF = fIdx % cols;
+      var wingF = (cIdxF < 4) ? 'Left Wing' : (cIdxF < 10) ? 'Middle Wing' : 'Right Wing';
+      s.seat = 'Hall B (Girls Wing - ' + wingF + ') - R' + rF + '-' + cF;
       fIdx++;
     }
   });
@@ -1224,7 +1240,7 @@ window.autoGenerateDynamicSeating = function() {
   window.DataStore.set('sm_students', students);
   renderDynamicSeatingMatrix();
   renderManagementRoster();
-  alert('Seating matrix automatically arranged for all candidates.');
+  alert('Seating matrix automatically arranged for all candidates across Left, Middle, and Right wings.');
 };
 
 window.clearSeatingPlan = function() {
@@ -1614,6 +1630,7 @@ function generateUniqueHallTicket(gender, category) {
   return candidateHT;
 }
 
+// Student Registration via Public Desk
 window.handleStudentRegister = function(e) {
   e.preventDefault();
   var name = document.getElementById('reg-name').value.trim();
@@ -1622,6 +1639,33 @@ window.handleStudentRegister = function(e) {
   var phone = document.getElementById('reg-phone').value.trim();
   var category = document.getElementById('reg-category').value;
   var gender = document.getElementById('reg-gender').value;
+  var idType = document.getElementById('reg-id-type').value;
+  var email = document.getElementById('reg-email').value.trim() || 'N/A';
+  var address = document.getElementById('reg-address').value.trim();
+  var pwd = document.getElementById('reg-password').value;
+
+  enrollStudentCore(name, father, dob, phone, email, idType, category, gender, address, pwd, false);
+};
+
+// Admin / Faculty On-Behalf Registration
+window.handleOnBehalfStudentRegister = function(e) {
+  e.preventDefault();
+  var name = document.getElementById('ob-reg-name').value.trim();
+  var father = document.getElementById('ob-reg-father').value.trim();
+  var dob = document.getElementById('ob-reg-dob').value;
+  var phone = document.getElementById('ob-reg-phone').value.trim();
+  var category = document.getElementById('ob-reg-category').value;
+  var gender = document.getElementById('ob-reg-gender').value;
+  var idType = document.getElementById('ob-reg-id-type').value;
+  var email = document.getElementById('ob-reg-email').value.trim() || 'N/A';
+  var address = document.getElementById('ob-reg-address').value.trim();
+  var pwd = document.getElementById('ob-reg-password').value || '1234';
+
+  enrollStudentCore(name, father, dob, phone, email, idType, category, gender, address, pwd, true);
+};
+
+function enrollStudentCore(name, father, dob, phone, email, idType, category, gender, address, pwd, isOnBehalf) {
+  students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
 
   var duplicateBio = students.some(function(s) {
     return s.phone === phone && s.name.toLowerCase() === name.toLowerCase() && s.father.toLowerCase() === father.toLowerCase();
@@ -1632,9 +1676,6 @@ window.handleStudentRegister = function(e) {
     return;
   }
 
-  var attemptEl = document.querySelector('input[name="reg-attempt"]:checked');
-  var attempt = attemptEl ? attemptEl.value : '1st Time (New Applicant)';
-  
   var ticketNo = generateUniqueHallTicket(gender, category);
   var appId = 'APP-HAMOOMI-2026-' + (students.length + 1001);
 
@@ -1648,15 +1689,15 @@ window.handleStudentRegister = function(e) {
     father: father,
     dob: dob,
     phone: phone,
-    email: document.getElementById('reg-email').value.trim() || 'N/A',
-    idType: document.getElementById('reg-id-type').value,
+    email: email,
+    idType: idType,
     category: category,
     gender: gender,
-    attempt: attempt,
+    attempt: '1st Time (New Applicant)',
     seat: seat,
     prize: 'None',
-    address: document.getElementById('reg-address').value.trim(),
-    password: document.getElementById('reg-password').value,
+    address: address,
+    password: pwd,
     marks: 0,
     status: 'Enrolled',
     attendance: 'Pending',
@@ -1667,17 +1708,26 @@ window.handleStudentRegister = function(e) {
   students.push(cand);
   window.DataStore.set('sm_students', students);
 
-  // Set as last registered student and open post-enrollment dispatch dialog
+  if (!isOnBehalf) {
+    saveSession({ id: cand.ticketNo, name: cand.name, role: 'student', data: cand }, true);
+  }
+
   lastRegisteredStudent = cand;
   document.getElementById('disp-student-name').innerText = cand.name;
   document.getElementById('disp-student-ht').innerText = cand.ticketNo;
   document.getElementById('disp-student-seat').innerText = cand.seat;
   document.getElementById('disp-student-contact').innerText = cand.phone + ' | ' + cand.email;
 
-  window.openModal('modal-student-dispatch');
-};
+  if (isOnBehalf) {
+    window.closeModal('modal-on-behalf-enroll');
+    document.getElementById('form-on-behalf-enroll').reset();
+    renderManagementRoster();
+    refreshDashboardState();
+  }
 
-// 1-Click WhatsApp & Email Dispatchers
+  window.openModal('modal-student-dispatch');
+}
+
 window.dispatchCandidateViaWhatsApp = function() {
   if (!lastRegisteredStudent) return;
   var s = lastRegisteredStudent;
