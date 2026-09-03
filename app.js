@@ -1,4 +1,4 @@
-// app.js - Full Interactive Logic: Executive Command Desk, OMR, Seating, Sync & Session Stopwatch
+// app.js - Full Interactive Engine with Robust Entry Handling
 var config = window.DataStore.get('sm_config', window.INITIAL_CONFIG);
 var students = window.DataStore.get('sm_students', window.INITIAL_STUDENTS);
 var prizes = window.DataStore.get('sm_prizes', window.INITIAL_PRIZES);
@@ -13,9 +13,21 @@ var rosterLayoutMode = 'list';
 var pendingSeatAssignmentCode = null;
 var sessionSeconds = 0;
 
-window.dismissGreeting = function() {
+// FIXED: Enter Official Portal now seamlessly dismisses splash and enters the dashboard view
+window.dismissGreeting = function(targetDestination) {
   var overlay = document.getElementById('greeting-overlay');
-  if (overlay) overlay.classList.add('hidden');
+  if (overlay) {
+    overlay.classList.remove('flex');
+    overlay.classList.add('hidden');
+    overlay.style.display = 'none'; // Force style-level hide
+  }
+  
+  // Directly navigate to dashboard or requested view
+  if (targetDestination) {
+    navigateTab(targetDestination);
+  } else {
+    navigateTab('dashboard');
+  }
 };
 
 window.navigateTab = function(tabId) {
@@ -25,7 +37,6 @@ window.navigateTab = function(tabId) {
     if (el) el.classList.add('hidden');
   });
 
-  // Toggle active styling on tabs
   document.querySelectorAll('.cmd-nav-btn').forEach(function(btn) {
     btn.classList.remove('active');
   });
@@ -44,12 +55,20 @@ window.navigateTab = function(tabId) {
 
 window.openModal = function(id) {
   var el = document.getElementById(id);
-  if (el) { el.classList.remove('hidden'); el.classList.add('flex'); }
+  if (el) { 
+    el.classList.remove('hidden'); 
+    el.classList.add('flex'); 
+    el.style.display = 'flex';
+  }
 };
 
 window.closeModal = function(id) {
   var el = document.getElementById(id);
-  if (el) { el.classList.add('hidden'); el.classList.remove('flex'); }
+  if (el) { 
+    el.classList.add('hidden'); 
+    el.classList.remove('flex'); 
+    el.style.display = 'none';
+  }
 };
 
 window.addEventListener('DOMContentLoaded', function() {
@@ -103,6 +122,7 @@ function syncConfigUI() {
   setText('txt-badge-comp', config.compBadge);
   setText('txt-comp-desc', config.compDesc);
   setText('banner-exam-date-str', config.examDate);
+  setText('banner-prep-time', config.prepTime);
   setText('banner-venue-str', config.examVenue);
   setText('txt-juma-announcement', config.jumaLine);
   setText('topbar-poc', config.pocContact);
@@ -483,7 +503,7 @@ function executeAuthentication(id, pwd, roleHint) {
     }
   }
 
-  alert('Authentication Failed: Check credentials or register if you are a new applicant.');
+  alert('Authentication Failed: Check credentials or complete your enrollment registration.');
 }
 
 function refreshDashboardState() {
@@ -495,6 +515,7 @@ function refreshDashboardState() {
   var unauthPrompt = document.getElementById('dashboard-unauth-prompt');
   var authContent = document.getElementById('dashboard-authenticated-content');
 
+  // If not signed in, show sign-in prompt
   if (!isAuth) {
     if (unauthPrompt) unauthPrompt.classList.remove('hidden');
     if (authContent) authContent.classList.add('hidden');
